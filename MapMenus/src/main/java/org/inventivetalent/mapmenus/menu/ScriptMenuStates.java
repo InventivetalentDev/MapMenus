@@ -1,0 +1,117 @@
+/*
+ * Copyright 2016 inventivetalent. All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without modification, are
+ *  permitted provided that the following conditions are met:
+ *
+ *     1. Redistributions of source code must retain the above copyright notice, this list of
+ *        conditions and the following disclaimer.
+ *
+ *     2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *        of conditions and the following disclaimer in the documentation and/or other materials
+ *        provided with the distribution.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ *  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ *  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ *  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ *  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  The views and conclusions contained in the software and documentation are those of the
+ *  authors and contributors and should not be interpreted as representing official policies,
+ *  either expressed or implied, of anybody else.
+ */
+
+package org.inventivetalent.mapmenus.menu;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import lombok.*;
+import org.bukkit.entity.Player;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+/**
+ * Class to store boolean-states specific to keys and players
+ */
+@EqualsAndHashCode
+@ToString
+public class ScriptMenuStates {
+
+	@SerializedName("storage") @Expose public Map<String, Collection<StateEntry>> stateMap = new ConcurrentHashMap<>();
+
+	public void put(String key, Player player) {
+		put(key, player, -1);
+	}
+
+	public void put(String key, Player player, long ttl) {
+		if (key == null || player == null) { return; }
+
+		Collection<StateEntry> collection = stateMap.get(key);
+		if (collection == null) { collection = new CopyOnWriteArrayList<>(); }
+		StateEntry entry = getEntry(key, player);
+		if (entry == null) { entry = new StateEntry(key, player.getUniqueId()); }
+		entry.setTime(System.currentTimeMillis());
+		entry.setTtl(ttl);
+		collection.add(entry);
+		stateMap.put(key, collection);
+	}
+
+	private StateEntry getEntry(String key, Player player) {
+		if (!stateMap.containsKey(key)) { return null; }
+		Collection<StateEntry> entries = stateMap.get(key);
+		for (StateEntry entry : entries) {
+			if (player.getUniqueId().equals(entry.getPlayer())) {
+				if (entry.getTtl() == -1) { return entry; }
+				if (System.currentTimeMillis() - entry.getTime() > entry.getTtl()) {
+					entries.remove(entry);
+					return null;
+				} else {
+					return entry;
+				}
+			}
+		}
+		return null;
+	}
+
+	public boolean get(String key, Player player) {
+		if (key == null || player == null) { return false; }
+
+		return stateMap.containsKey(key) && getEntry(key, player) != null;
+	}
+
+	public void delete(String key, Player player) {
+		if (key == null || player == null) { return; }
+
+		if (!stateMap.containsKey(key)) { return; }
+		Collection<StateEntry> entries = stateMap.get(key);
+		for (StateEntry entry : entries) {
+			if (player.getUniqueId().equals(entry.getPlayer())) {
+				entries.remove(entry);
+				return;
+			}
+		}
+	}
+
+	@Data
+	@AllArgsConstructor
+	@RequiredArgsConstructor
+	@EqualsAndHashCode(exclude = {
+			"time",
+			"ttl" })
+	class StateEntry {
+		@Expose final String key;
+		@Expose final UUID   player;
+		@Expose       long   time;
+		@Expose       long   ttl;
+	}
+
+}
