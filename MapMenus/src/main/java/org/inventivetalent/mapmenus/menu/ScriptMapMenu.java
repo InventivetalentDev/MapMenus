@@ -69,6 +69,7 @@ import java.util.logging.Level;
 public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, IScriptContainer {
 
 	//	private static final Executor SCRIPT_TICK_EXECUTOR = Executors.newSingleThreadExecutor();
+	static final int[][] NULL_INT_ARRAY = new int[0][0];
 
 	@Expose private final String name;
 	public Renderer renderer = new Renderer(this, bounds, this);
@@ -83,7 +84,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	boolean noRenderFunction;
 	boolean noClickFunction;
 
-	protected int[][] itemFrameIds = new int[0][0];
+	protected int[][] itemFrameIds = NULL_INT_ARRAY;
 	@Expose protected UUID[][] itemFrameUUIDs;
 
 	// Script references
@@ -293,32 +294,36 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			public void run() {
 				TimingsHelper.startTiming("MapMenu - refreshItemFrames");
 
-				itemFrameIds = new int[getBlockWidth()][getBlockHeight()];
-				itemFrameUUIDs = new UUID[getBlockWidth()][getBlockHeight()];
+				if(getWorld().getPlayers().isEmpty()){
+					itemFrameIds = NULL_INT_ARRAY;
+				}else {
+					itemFrameIds = new int[getBlockWidth()][getBlockHeight()];
+					itemFrameUUIDs = new UUID[getBlockWidth()][getBlockHeight()];
 
-				//				Vector startVector = new Vector(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
-				Vector2DDouble startVector = minCorner2d;
+					//				Vector startVector = new Vector(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
+					Vector2DDouble startVector = minCorner2d;
 
-				for (Entity entity : getWorld().getEntitiesByClass(ItemFrame.class)) {
-					if (entity instanceof ItemFrame) {
-						for (int y = 0; y < getBlockHeight(); y++) {
-							for (int x1 = 0; x1 < getBlockWidth(); x1++) {
-								int x = facing.isFrameModInverted() ? (getBlockWidth() - 1 - x1) : x1;
-								Vector3DDouble vector3d = facing.getPlane().to3D(startVector.add(x, y), baseVector.getX(), baseVector.getZ());
-								if (entity.getLocation().getBlockZ() == vector3d.getZ().intValue()) {
-									if (entity.getLocation().getBlockX() == vector3d.getX().intValue()) {
-										if (entity.getLocation().getBlockY() == vector3d.getY().intValue()) {
-											itemFrameIds[x1][y] = entity.getEntityId();
-											itemFrameUUIDs[x1][y] = entity.getUniqueId();
+					for (Entity entity : getWorld().getEntitiesByClass(ItemFrame.class)) {
+						if (entity instanceof ItemFrame) {
+							for (int y = 0; y < getBlockHeight(); y++) {
+								for (int x1 = 0; x1 < getBlockWidth(); x1++) {
+									int x = facing.isFrameModInverted() ? (getBlockWidth() - 1 - x1) : x1;
+									Vector3DDouble vector3d = facing.getPlane().to3D(startVector.add(x, y), baseVector.getX(), baseVector.getZ());
+									if (entity.getLocation().getBlockZ() == vector3d.getZ().intValue()) {
+										if (entity.getLocation().getBlockX() == vector3d.getX().intValue()) {
+											if (entity.getLocation().getBlockY() == vector3d.getY().intValue()) {
+												itemFrameIds[x1][y] = entity.getEntityId();
+												itemFrameUUIDs[x1][y] = entity.getUniqueId();
+											}
 										}
 									}
 								}
 							}
 						}
 					}
-				}
 
-				TimingsHelper.stopTiming("MapMenu - refreshItemFrames");
+					TimingsHelper.stopTiming("MapMenu - refreshItemFrames");
+				}
 			}
 		});
 	}
