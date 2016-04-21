@@ -132,7 +132,7 @@ public enum MapFacing {
 			}
 			if (getFaceModZ() < 0) {
 				min = min.add(0, 0, 0.9375);
-				max = max.add(1, 1, 0);
+				max = max.add(1, 1,  0.9375);
 			}
 		}
 		if (plane == Plane.Z) {
@@ -141,7 +141,7 @@ public enum MapFacing {
 			}
 			if (getFaceModX() < 0) {
 				min = min.add(0.9375, 0, 0);
-				max = max.add(0, 1, 1);
+				max = max.add(0.9375, 1, 1);
 			}
 		}
 
