@@ -31,6 +31,7 @@ package org.inventivetalent.mapmenus.menu;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bukkit.Bukkit;
@@ -66,13 +67,14 @@ import java.util.logging.Level;
 @ToString(callSuper = true,
 		  doNotUseGetters = true,
 		  exclude = { "menu" })
+@NoArgsConstructor
 public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, IScriptContainer {
 
 	//	private static final Executor SCRIPT_TICK_EXECUTOR = Executors.newSingleThreadExecutor();
 	static final int[][] NULL_INT_ARRAY = new int[0][0];
 
-	@Expose private final String name;
-	public Renderer renderer = new Renderer(this, bounds, this);
+	@Expose private  String name;
+	public Renderer renderer ;
 
 	protected HoverCallable hoverCallable;
 
@@ -96,6 +98,11 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	public ScriptMapMenu(@NonNull ItemFrame baseFrame, @NonNull Vector3DDouble firstCorner, @NonNull Vector3DDouble secondCorner, @NonNull String name) {
 		super(baseFrame, firstCorner, secondCorner);
 		this.name = name;
+		initRenderer();
+	}
+
+	public void initRenderer() {
+		renderer = new Renderer(this, bounds, this);
 	}
 
 	@Override

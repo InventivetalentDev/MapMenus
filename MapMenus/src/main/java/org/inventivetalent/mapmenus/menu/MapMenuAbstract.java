@@ -30,6 +30,7 @@ package org.inventivetalent.mapmenus.menu;
 
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bukkit.Bukkit;
@@ -42,6 +43,7 @@ import org.inventivetalent.mapmenus.ITickable;
 import org.inventivetalent.mapmenus.MapFacing;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.component.MenuComponentAbstract;
+import org.inventivetalent.mapmenus.component.ScriptComponent;
 import org.inventivetalent.mapmenus.render.IRenderable;
 import org.inventivetalent.vectors.d2.Vector2DDouble;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
@@ -51,19 +53,21 @@ import java.util.*;
 
 @EqualsAndHashCode(doNotUseGetters = true)
 @ToString(doNotUseGetters = true)
+@NoArgsConstructor
 public abstract class MapMenuAbstract implements IRenderable, ITickable, IClickable {
 
-	@Expose protected final String         worldName;
-	@Expose protected final Vector3DDouble blockBaseVector;
-	@Expose protected final Vector3DDouble baseVector;
-	@Expose protected final BoundingBox    boundingBox;
-	@Expose protected final FixedBounds    bounds;
-	@Expose protected final MapFacing      facing;
+	@Expose protected String         worldName;
+	@Expose protected Vector3DDouble blockBaseVector;
+	@Expose protected Vector3DDouble baseVector;
+	@Expose protected BoundingBox    boundingBox;
+	@Expose protected FixedBounds    bounds;
+	@Expose protected MapFacing      facing;
 
-	@Expose protected final Vector2DDouble minCorner2d;
-	@Expose protected final Vector2DDouble maxCorner2d;
+	@Expose protected Vector2DDouble minCorner2d;
+	@Expose protected Vector2DDouble maxCorner2d;
 
-	@Expose protected final Map<UUID, MenuComponentAbstract> components = new HashMap<>();
+	// Don't expose the components; the script is responsible for adding them
+	/*@Expose*/ protected final Map<UUID, ScriptComponent> components = new HashMap<>();
 
 	protected boolean tickLocked;
 
@@ -142,7 +146,7 @@ public abstract class MapMenuAbstract implements IRenderable, ITickable, IClicka
 		return new HashSet<>(components.keySet());
 	}
 
-	public Set<MenuComponentAbstract> getComponents() {
+	public Set<ScriptComponent> getComponents() {
 		return new HashSet<>(components.values());
 	}
 

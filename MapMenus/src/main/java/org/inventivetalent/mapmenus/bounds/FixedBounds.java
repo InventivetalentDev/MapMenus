@@ -30,6 +30,7 @@ package org.inventivetalent.mapmenus.bounds;
 
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
 
@@ -37,13 +38,14 @@ import java.awt.*;
 
 @EqualsAndHashCode
 @ToString
+@NoArgsConstructor
 public class FixedBounds implements IBounds {
 
-	private final        Rectangle bounds;
-	@Expose public final int       x, y, width, height;
+	@Expose public int x, y, width, height;
+	Rectangle rectangle;
 
 	public FixedBounds(Rectangle bounds) {
-		this.bounds = bounds;
+		this.rectangle = bounds;
 		this.x = (int) bounds.getX();
 		this.y = (int) bounds.getY();
 		this.width = (int) bounds.getWidth();
@@ -60,6 +62,11 @@ public class FixedBounds implements IBounds {
 
 	public FixedBounds(int[] array) {
 		this(array[0], array[1], array[2], array[3]);
+	}
+
+	Rectangle getRectangle() {
+		if (rectangle != null) { return rectangle; }
+		return rectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
 
 	@Override
@@ -84,25 +91,21 @@ public class FixedBounds implements IBounds {
 
 	@Override
 	public boolean contains(int x, int y) {
-		return bounds.contains(x, y);
+		return getRectangle().contains(x, y);
 	}
 
 	@Override
 	public boolean contains(int x, int y, int width, int height) {
-		return bounds.contains(x, y, width, height);
+		return getRectangle().contains(x, y, width, height);
 	}
 
 	@Override
 	public boolean contains(IBounds bounds) {
-		return this.bounds.contains(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+		return getRectangle().contains(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
 	}
 
 	public boolean contains(CursorPosition position) {
 		return contains(position.getX(), position.getY());
-	}
-
-	public Rectangle getRectangle() {
-		return this.bounds;
 	}
 
 	public int[] toIntArray() {

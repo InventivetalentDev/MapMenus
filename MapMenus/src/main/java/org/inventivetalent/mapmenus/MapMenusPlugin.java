@@ -79,6 +79,23 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 		(menuScriptManager = new MenuScriptManager(this)).saveDefaultFiles();
 		(componentScriptManager = new ComponentScriptManager(this)).saveDefaultFiles();
+
+		getLogger().fine("Waiting 5 seconds before loading menus...");
+		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+			@Override
+			public void run() {
+				getLogger().info("Loading menus...");
+				menuManager.readMenusFromFile();
+				getLogger().info("Loaded " + menuManager.size() + " menus.");
+			}
+		}, 100);
+	}
+
+	@Override
+	public void onDisable() {
+		getLogger().info("Saving " + menuManager.size() + " menus...");
+		menuManager.writeMenusToFile();
+		getLogger().info("Saved.");
 	}
 
 	ItemFrame firstFrame;
@@ -94,10 +111,13 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 		if (firstFrame == null) {
 			firstFrame = (ItemFrame) event.getRightClicked();
+			event.getPlayer().sendMessage("> set #1");
 			return;
 		}
 		if (secondFrame == null) {
 			secondFrame = (ItemFrame) event.getRightClicked();
+			event.getPlayer().sendMessage("> set #2");
+			event.getPlayer().sendMessage("generating...");
 			Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 				@Override
 				public void run() {
@@ -115,6 +135,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 		firstFrame = null;
 		secondFrame = null;
 
+		event.getPlayer().sendMessage("> reset");
 	}
 
 	@EventHandler

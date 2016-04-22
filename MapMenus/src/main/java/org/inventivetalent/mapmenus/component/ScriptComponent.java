@@ -31,6 +31,7 @@ package org.inventivetalent.mapmenus.component;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bukkit.entity.Player;
@@ -61,6 +62,7 @@ import java.util.logging.Level;
 		  exclude = {
 				  "component",
 				  "menu" })
+@NoArgsConstructor
 public class ScriptComponent extends MenuComponentAbstract implements IScriptContainer {
 
 	@Expose private String       scriptName;

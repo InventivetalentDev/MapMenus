@@ -30,6 +30,7 @@ package org.inventivetalent.mapmenus.component;
 
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.inventivetalent.mapmenus.IClickable;
@@ -43,10 +44,11 @@ import java.util.UUID;
 				   doNotUseGetters = true)
 @ToString(exclude = { "parentBounds" },
 		  doNotUseGetters = true)
+@NoArgsConstructor
 public abstract class MenuComponentAbstract implements IRenderable, ITickable, IClickable {
 
-	@Expose protected final UUID        uuid;
-	protected final         FixedBounds parentBounds;
+	@Expose protected  UUID        uuid;
+	protected          FixedBounds parentBounds;
 	@Expose protected       FixedBounds bounds;
 
 	public MenuComponentAbstract(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds) {

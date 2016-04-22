@@ -36,12 +36,17 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.bukkit.entity.ItemFrame;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
+import org.inventivetalent.mapmenus.TimingsHelper;
+import org.inventivetalent.scriptconfig.RuntimeScriptException;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 @EqualsAndHashCode
 @ToString
@@ -51,10 +56,22 @@ public class MenuManager {
 
 	private MapMenusPlugin plugin;
 
+	private File saveDirectory;
+	private File indexFile;
+
 	@Expose @SerializedName("menus") public Map<String, ScriptMapMenu> menuMap = new HashMap<>();
 
 	public MenuManager(MapMenusPlugin plugin) {
 		this.plugin = plugin;
+
+		try {
+			this.saveDirectory = new File(new File(plugin.getDataFolder(), "saves"), "menus");
+			if (!this.saveDirectory.exists()) { this.saveDirectory.mkdirs(); }
+			this.indexFile = new File(this.saveDirectory, "index.mmi");
+			if (!this.indexFile.exists()) { this.indexFile.createNewFile(); }
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public ScriptMapMenu addMenu(String name, ItemFrame itemFrameA, ItemFrame itemFrameB, String script) {
@@ -101,4 +118,70 @@ public class MenuManager {
 	public Set<ScriptMapMenu> getMenus() {
 		return new HashSet<>(menuMap.values());
 	}
+
+	public int size() {
+		return menuMap.size();
+	}
+
+	public void writeMenusToFile() {
+		TimingsHelper.startTiming("MapMenu - writeToFile");
+
+		for (ScriptMapMenu menu : getMenus()) {
+			plugin.getLogger().fine("Saving '" + menu.getName() + "' in world '" + menu.getWorld().getName() + "'...");
+			try {
+				File saveFile = new File(saveDirectory, URLEncoder.encode(menu.getName() , "UTF-8")+ ".mmd");
+				if (!saveFile.exists()) { saveFile.createNewFile(); }
+				try (Writer writer = new FileWriter(saveFile)) {
+					GSON.toJson(menu, writer);
+				}
+			} catch (IOException e) {
+				plugin.getLogger().log(Level.WARNING, "Failed to save Menu '" + menu.getName() + "'", e);
+			}
+		}
+
+		try {
+			try (Writer writer = new FileWriter(indexFile)) {
+				new Gson().toJson(getMenuNames(), writer);
+			}
+		} catch (IOException e) {
+			plugin.getLogger().log(Level.WARNING, "Failed to save Menu-Index file", e);
+		}
+
+		TimingsHelper.stopTiming("MapMenu - writeToFile");
+	}
+
+	public void readMenusFromFile() {
+		TimingsHelper.startTiming("MapMenu - readFromFile");
+
+		Set<String> index;
+		try {
+			try (Reader reader = new FileReader(indexFile)) {
+				index = (Set<String>) new Gson().fromJson(reader, HashSet.class);
+			}
+		} catch (IOException e) {
+			TimingsHelper.stopTiming("MapMenu - readFromFile");
+			throw new RuntimeScriptException("Failed to load Menu-Index file", e);
+		}
+		if (index == null) {
+			plugin.getLogger().info("No index found > First time startup or data deleted");
+			return;
+		}
+
+		for (String name : index) {
+			try {
+				File file = new File(saveDirectory, URLEncoder.encode(name, "UTF-8")+ ".mmd");
+				try (Reader reader = new FileReader(file)) {
+					ScriptMapMenu loadedMenu = GSON.fromJson(reader, ScriptMapMenu.class);
+					menuMap.put(loadedMenu.getName(), loadedMenu);
+					loadedMenu.initRenderer();
+					loadedMenu.reloadScript();
+				}
+			} catch (IOException e) {
+				plugin.getLogger().log(Level.WARNING, "Failed to load Menu '" + name + "'", e);
+			}
+		}
+
+		TimingsHelper.stopTiming("MapMenu - readFromFile");
+	}
+
 }
