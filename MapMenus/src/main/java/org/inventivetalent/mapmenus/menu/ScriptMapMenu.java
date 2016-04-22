@@ -73,8 +73,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	//	private static final Executor SCRIPT_TICK_EXECUTOR = Executors.newSingleThreadExecutor();
 	static final int[][] NULL_INT_ARRAY = new int[0][0];
 
-	@Expose private  String name;
-	public Renderer renderer ;
+	@Expose private String   name;
+	public          Renderer renderer;
 
 	protected HoverCallable hoverCallable;
 
@@ -145,11 +145,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		// Wrap the script
 		this.script = scriptManager.wrapScript(this.scriptName);
 
-		this.script.setVariable("menu", this);
-		this.script.setVariable("renderer", this.renderer);
-		this.script.setVariable("options", this.options);
-		this.script.setVariable("data", this.data);
-		this.script.setVariable("states", this.states);
+		initScriptVariables();
 		hoverCallable = new HoverCallable() {
 			protected boolean noHoverTextFunction;
 
@@ -194,6 +190,14 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 				TimingsHelper.stopTiming("MapMenu - tick");
 			}
 		}).runTaskTimer(MapMenusPlugin.instance, options.tickSpeed, options.tickSpeed);
+	}
+
+	void initScriptVariables() {
+		this.script.setVariable("menu", this);
+		this.script.setVariable("renderer", this.renderer);
+		this.script.setVariable("options", this.options);
+		this.script.setVariable("data", this.data);
+		this.script.setVariable("states", this.states);
 	}
 
 	public ScriptComponent addComponent(String script, int x, int y, int width, int height) {
@@ -301,9 +305,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			public void run() {
 				TimingsHelper.startTiming("MapMenu - refreshItemFrames");
 
-				if(getWorld().getPlayers().isEmpty()){
+				if (getWorld().getPlayers().isEmpty()) {
 					itemFrameIds = NULL_INT_ARRAY;
-				}else {
+				} else {
 					itemFrameIds = new int[getBlockWidth()][getBlockHeight()];
 					itemFrameUUIDs = new UUID[getBlockWidth()][getBlockHeight()];
 
@@ -313,8 +317,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 					for (Entity entity : getWorld().getEntitiesByClass(ItemFrame.class)) {
 						if (entity instanceof ItemFrame) {
 							if (boundingBox.expand(0.1).contains(new Vector3DDouble(entity.getLocation()))) {
-							for (int y = 0; y < getBlockHeight(); y++) {
-								for (int x1 = 0; x1 < getBlockWidth(); x1++) {
+								for (int y = 0; y < getBlockHeight(); y++) {
+									for (int x1 = 0; x1 < getBlockWidth(); x1++) {
 										int x = facing.isFrameModInverted() ? (getBlockWidth() - 1 - x1) : x1;
 										Vector3DDouble vector3d = facing.getPlane().to3D(startVector.add(x, y), baseVector.getX(), baseVector.getZ());
 										if (entity.getLocation().getBlockZ() == vector3d.getZ().intValue()) {

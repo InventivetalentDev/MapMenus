@@ -114,11 +114,7 @@ public class ScriptComponent extends MenuComponentAbstract implements IScriptCon
 		}
 		this.script = scriptManager.wrapScript(this.scriptName);
 
-		this.script.setVariable("menu", this.menu);
-		this.script.setVariable("component", this);
-		this.script.setVariable("data", this.data);
-		this.script.setVariable("states", this.states);
-
+		initScriptVariables();
 		try {
 			this.script.callFunction("init", this.initArgs);
 		} catch (NoSuchFunctionException e) {
@@ -126,6 +122,13 @@ public class ScriptComponent extends MenuComponentAbstract implements IScriptCon
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + e.getException().getMessage(), e);
 		}
+	}
+
+	void initScriptVariables() {
+		this.script.setVariable("menu", this.menu);
+		this.script.setVariable("component", this);
+		this.script.setVariable("data", this.data);
+		this.script.setVariable("states", this.states);
 	}
 
 	@Override
