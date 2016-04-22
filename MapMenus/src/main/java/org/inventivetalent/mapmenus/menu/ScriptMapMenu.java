@@ -305,7 +305,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 					for (Entity entity : getWorld().getEntitiesByClass(ItemFrame.class)) {
 						if (entity instanceof ItemFrame) {
-							if (boundingBox.contains(new Vector3DDouble(entity.getLocation()))) {
+							if (boundingBox.expand(0.1).contains(new Vector3DDouble(entity.getLocation()))) {
 							for (int y = 0; y < getBlockHeight(); y++) {
 								for (int x1 = 0; x1 < getBlockWidth(); x1++) {
 										int x = facing.isFrameModInverted() ? (getBlockWidth() - 1 - x1) : x1;
