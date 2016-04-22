@@ -179,4 +179,15 @@ public class ScriptComponent extends MenuComponentAbstract implements IScriptCon
 		}
 		return false;
 	}
+
+	@Override
+	public void dispose() {
+		try {
+			script.callFunction("dispose");
+		} catch (NoSuchFunctionException e) {
+			// Ignore this
+		} catch (RuntimeScriptException e) {
+			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling dispose(): " + e.getException().getMessage(), e);
+		}
+	}
 }

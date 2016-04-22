@@ -39,6 +39,7 @@ import org.bukkit.entity.ItemFrame;
 import org.inventivetalent.boundingbox.BoundingBox;
 import org.inventivetalent.boundingbox.BoundingBoxAPI;
 import org.inventivetalent.mapmenus.IClickable;
+import org.inventivetalent.mapmenus.IDisposable;
 import org.inventivetalent.mapmenus.ITickable;
 import org.inventivetalent.mapmenus.MapFacing;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
@@ -54,7 +55,7 @@ import java.util.*;
 @EqualsAndHashCode(doNotUseGetters = true)
 @ToString(doNotUseGetters = true)
 @NoArgsConstructor
-public abstract class MapMenuAbstract implements IRenderable, ITickable, IClickable {
+public abstract class MapMenuAbstract implements IRenderable, ITickable, IClickable,IDisposable {
 
 	@Expose protected String         worldName;
 	@Expose protected Vector3DDouble blockBaseVector;

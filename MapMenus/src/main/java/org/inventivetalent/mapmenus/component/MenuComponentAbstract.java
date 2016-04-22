@@ -34,6 +34,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.inventivetalent.mapmenus.IClickable;
+import org.inventivetalent.mapmenus.IDisposable;
 import org.inventivetalent.mapmenus.ITickable;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.render.IRenderable;
@@ -45,7 +46,7 @@ import java.util.UUID;
 @ToString(exclude = { "parentBounds" },
 		  doNotUseGetters = true)
 @NoArgsConstructor
-public abstract class MenuComponentAbstract implements IRenderable, ITickable, IClickable {
+public abstract class MenuComponentAbstract implements IRenderable, ITickable, IClickable,IDisposable {
 
 	@Expose protected  UUID        uuid;
 	protected          FixedBounds parentBounds;
