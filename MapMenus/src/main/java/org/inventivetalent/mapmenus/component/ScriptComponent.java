@@ -28,7 +28,6 @@
 
 package org.inventivetalent.mapmenus.component;
 
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -40,8 +39,8 @@ import org.inventivetalent.mapmenus.MenuScriptExecutionException;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
-import org.inventivetalent.mapmenus.menu.ScriptMenuData;
-import org.inventivetalent.mapmenus.menu.ScriptMenuStates;
+import org.inventivetalent.mapmenus.menu.data.IData;
+import org.inventivetalent.mapmenus.menu.data.IStates;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
 import org.inventivetalent.mapmenus.script.ScriptManagerAbstract;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
@@ -65,6 +64,7 @@ import java.util.logging.Level;
 @NoArgsConstructor
 public class ScriptComponent extends MenuComponentAbstract implements IScriptContainer {
 
+	public          int          id;
 	@Expose private String       scriptName;
 	private         ScriptConfig script;
 
@@ -76,9 +76,9 @@ public class ScriptComponent extends MenuComponentAbstract implements IScriptCon
 
 	// Script references
 	public ScriptMapMenu menu;
-	public         ScriptComponent  component = this;
-	@Expose public ScriptMenuData   data      = new ScriptMenuData(new JsonObject());
-	@Expose public ScriptMenuStates states    = new ScriptMenuStates();
+	public IData         data;
+	public IStates       states;
+	public ScriptComponent component = this;
 
 	public ScriptComponent(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds, @NonNull String scriptName, Object[] initArgs) {
 		super(uuid, parentBounds, bounds);

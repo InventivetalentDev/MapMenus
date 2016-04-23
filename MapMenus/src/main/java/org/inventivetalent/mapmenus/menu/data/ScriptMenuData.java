@@ -26,7 +26,7 @@
  *  either expressed or implied, of anybody else.
  */
 
-package org.inventivetalent.mapmenus.menu;
+package org.inventivetalent.mapmenus.menu.data;
 
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
@@ -40,14 +40,11 @@ import org.inventivetalent.mapmenus.MapMenusPlugin;
  */
 @EqualsAndHashCode
 @ToString
-public class ScriptMenuData {
+public class ScriptMenuData implements IData {
 
-	@Expose public JsonObject storage;
+	@Expose public JsonObject storage = new JsonObject();
 
-	public ScriptMenuData(JsonObject storage) {
-		this.storage = storage;
-	}
-
+	@Override
 	public void put(String key, Object value) {
 		if (value == null) {
 			storage.remove(key);
@@ -56,31 +53,37 @@ public class ScriptMenuData {
 		}
 	}
 
+	@Override
 	public void put(String key, Player player, Object value, long ttl) {
 		if (key == null || player == null) { return; }
 		if (value instanceof Boolean) {
 			MapMenusPlugin.instance.getLogger().warning("ScriptMenuStates ('states') should be used for boolean values");
 		}
 
-		JsonObject jsonObject = getPlayerStorage(player);
-		JsonElement entryElement = jsonObject.get(key);
+		JsonObject playerStorage = getPlayerStorage(player);
+		JsonElement entryElement = playerStorage.get(key);
 		if (entryElement == null) {
 			entryElement = new JsonObject();
-			jsonObject.add(key, entryElement);
 		}
 		JsonObject entryObject = (JsonObject) entryElement;
 
 		addObjectToJson(entryObject, "value", value);
 		entryObject.addProperty("ttl", ttl);
 		entryObject.addProperty("time", System.currentTimeMillis());
+
+		playerStorage.add(key, entryObject);
+		storage.add(getPlayerKey(player), playerStorage);
+
+		System.out.println(storage);
 	}
 
+	@Override
 	public void put(String key, Player player, Object value) {
 		put(key, player, value, -1);
 	}
 
 	JsonObject getPlayerStorage(Player player) {
-		String objectKey = "__player" + player.getUniqueId() + "__";
+		String objectKey = getPlayerKey(player);
 		JsonElement jsonElement = storage.get(objectKey);
 		if (jsonElement == null) {
 			jsonElement = new JsonObject();
@@ -89,20 +92,30 @@ public class ScriptMenuData {
 		return (JsonObject) jsonElement;
 	}
 
+	String getPlayerKey(Player player) {
+		return "__player" + player.getUniqueId() + "__";
+	}
+
+	@Override
 	public void delete(String key) {
 		storage.remove(key);
 	}
 
+	@Override
 	public void delete(String key, Player player) {
-		JsonObject jsonObject = getPlayerStorage(player);
-		jsonObject.remove(key);
+		JsonObject playerStorage = getPlayerStorage(player);
+		playerStorage.remove(key);
+
+		storage.add(getPlayerKey(player), playerStorage);
 	}
 
+	@Override
 	public Object get(String key) {
 		JsonElement jsonElement = storage.get(key);
 		return parseFromJson(jsonElement);
 	}
 
+	@Override
 	public Object get(String key, Player player) {
 		JsonObject jsonObject = getPlayerStorage(player);
 		JsonElement entryElement = jsonObject.get(key);

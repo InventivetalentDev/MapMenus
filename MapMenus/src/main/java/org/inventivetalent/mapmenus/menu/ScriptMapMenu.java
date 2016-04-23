@@ -28,7 +28,6 @@
 
 package org.inventivetalent.mapmenus.menu;
 
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import jdk.nashorn.api.scripting.JSObject;
 import lombok.EqualsAndHashCode;
@@ -49,6 +48,10 @@ import org.inventivetalent.mapmenus.*;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.component.MenuComponentAbstract;
 import org.inventivetalent.mapmenus.component.ScriptComponent;
+import org.inventivetalent.mapmenus.menu.data.MapperData;
+import org.inventivetalent.mapmenus.menu.data.MapperStates;
+import org.inventivetalent.mapmenus.menu.data.ScriptMenuData;
+import org.inventivetalent.mapmenus.menu.data.ScriptMenuStates;
 import org.inventivetalent.mapmenus.render.IFrameContainer;
 import org.inventivetalent.mapmenus.render.Renderer;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
@@ -91,10 +94,12 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	protected int[][] itemFrameIds = NULL_INT_ARRAY;
 	@Expose protected UUID[][] itemFrameUUIDs;
 
+	int componentCounter = 1;
+
 	// Script references
 	public         ScriptMapMenu    menu    = this;
 	@Expose public ScriptOptions    options = new ScriptOptions();
-	@Expose public ScriptMenuData   data    = new ScriptMenuData(new JsonObject());
+	@Expose public ScriptMenuData   data    = new ScriptMenuData();
 	@Expose public ScriptMenuStates states  = new ScriptMenuStates();
 
 	public ScriptMapMenu(@NonNull ItemFrame baseFrame, @NonNull Vector3DDouble firstCorner, @NonNull Vector3DDouble secondCorner, @NonNull String name) {
@@ -121,6 +126,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		for (MenuComponentAbstract component : getComponents()) {
 			if (component instanceof ScriptComponent) {
 				((ScriptComponent) component).menu = this;
+				((ScriptComponent) component).data = new MapperData(this.data, "__comp#" + ((ScriptComponent) component).id + "__%s");
+				((ScriptComponent) component).states = new MapperStates(this.states, "__comp#" + ((ScriptComponent) component).id + "__%s");
 			}
 			if (component instanceof IScriptContainer) {
 				((IScriptContainer) component).reloadScript();
@@ -219,7 +226,10 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		tickLocked = true;
 
 		ScriptComponent component = new ScriptComponent(this.bounds, bounds, scriptName, initArgs);
+		component.id = componentCounter++;
 		component.menu = this;
+		component.data = new MapperData(this.data, "__comp#" + componentCounter + "__%s");
+		component.states = new MapperStates(this.states, "__comp#" + componentCounter + "__%s");
 		components.put(component.getUuid(), component);
 		component.reloadScript();
 

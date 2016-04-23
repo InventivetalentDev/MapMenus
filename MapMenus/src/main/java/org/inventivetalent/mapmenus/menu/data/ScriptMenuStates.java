@@ -26,39 +26,40 @@
  *  either expressed or implied, of anybody else.
  */
 
-package org.inventivetalent.mapmenus.menu;
+package org.inventivetalent.mapmenus.menu.data;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Class to store boolean-states specific to keys and players
  */
 @EqualsAndHashCode
 @ToString
-public class ScriptMenuStates {
+public class ScriptMenuStates implements IStates {
 
 	@SerializedName("storage") @Expose public Map<String, Collection<StateEntry>> stateMap = new ConcurrentHashMap<>();
 
+	@Override
 	public void put(String key, Player player) {
 		put(key, player, -1);
 	}
 
+	@Override
 	public void put(String key, Player player, long ttl) {
 		if (key == null || player == null) { return; }
 
 		Collection<StateEntry> collection = stateMap.get(key);
-		if (collection == null) { collection = new CopyOnWriteArrayList<>(); }
+		if (collection == null) { collection = new ArrayList<>(); }
 		StateEntry entry = getEntry(key, player);
-		if (entry == null) { entry = new StateEntry(key, player.getUniqueId()); }
+		if (entry == null) {
+			entry = new StateEntry(key, player.getUniqueId());
+		}
 		entry.setTime(System.currentTimeMillis());
 		entry.setTtl(ttl);
 		collection.add(entry);
@@ -67,38 +68,47 @@ public class ScriptMenuStates {
 
 	private StateEntry getEntry(String key, Player player) {
 		if (!stateMap.containsKey(key)) { return null; }
+		StateEntry entry = null;
 		Collection<StateEntry> entries = stateMap.get(key);
-		for (StateEntry entry : entries) {
-			if (player.getUniqueId().equals(entry.getPlayer())) {
-				if (entry.getTtl() == -1) { return entry; }
-				if (System.currentTimeMillis() - entry.getTime() > entry.getTtl()) {
-					entries.remove(entry);
-					return null;
+		for (Iterator<StateEntry> iterator = entries.iterator(); iterator.hasNext(); ) {
+			StateEntry entry0 = iterator.next();
+			if (player.getUniqueId().equals(entry0.getPlayer())) {
+				if (entry0.getTtl() == -1) {
+					entry = entry0;
+					break;
+				}
+				if (System.currentTimeMillis() - entry0.getTime() > entry0.getTtl()) {
+					iterator.remove();
 				} else {
-					return entry;
+					entry = entry0;
+					break;
 				}
 			}
 		}
-		return null;
+		stateMap.put(key, entries);
+		return entry;
 	}
 
+	@Override
 	public boolean get(String key, Player player) {
 		if (key == null || player == null) { return false; }
 
 		return stateMap.containsKey(key) && getEntry(key, player) != null;
 	}
 
+	@Override
 	public void delete(String key, Player player) {
 		if (key == null || player == null) { return; }
 
 		if (!stateMap.containsKey(key)) { return; }
 		Collection<StateEntry> entries = stateMap.get(key);
-		for (StateEntry entry : entries) {
+		for (Iterator<StateEntry> iterator = entries.iterator(); iterator.hasNext(); ) {
+			StateEntry entry = iterator.next();
 			if (player.getUniqueId().equals(entry.getPlayer())) {
-				entries.remove(entry);
-				return;
+				iterator.remove();
 			}
 		}
+		stateMap.put(key, entries);
 	}
 
 	@Data
