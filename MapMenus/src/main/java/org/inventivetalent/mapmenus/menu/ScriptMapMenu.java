@@ -392,6 +392,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 									if (s.equals(baseDirection.getCodeName())) {
 										((JSObject) member).call(ScriptMapMenu.this.menu, value);
 									}
+									if (baseDirection == moveDirection) { continue; }
 									if (s.equals(moveDirection.getCodeName())) {
 										((JSObject) member).call(ScriptMapMenu.this.menu, value);
 									}
