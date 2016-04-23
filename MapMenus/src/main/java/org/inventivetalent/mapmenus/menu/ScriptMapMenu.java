@@ -30,20 +30,22 @@ package org.inventivetalent.mapmenus.menu;
 
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
+import jdk.nashorn.api.scripting.JSObject;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.inventivetalent.mapmanager.controller.MapController;
-import org.inventivetalent.mapmenus.MapMenusPlugin;
-import org.inventivetalent.mapmenus.MenuScriptExecutionException;
-import org.inventivetalent.mapmenus.TimingsHelper;
+import org.inventivetalent.mapmenus.*;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.component.MenuComponentAbstract;
 import org.inventivetalent.mapmenus.component.ScriptComponent;
@@ -323,6 +325,77 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 		// Remove this menu
 		MapMenusPlugin.instance.menuManager.removeMenu(this);
+	}
+
+	public void requestKeyboardInput(final Player player, final Object invocable, final boolean cancelMessage) {
+		if (invocable instanceof JSObject) {
+			MapMenusPlugin.instance.inputListener.listenForChat(player, new Callback<AsyncPlayerChatEvent>() {
+				@Override
+				public void call(AsyncPlayerChatEvent event) {
+					String message = null;
+					if (event != null) {
+						message = event.getMessage();
+						if (cancelMessage) {
+							event.setCancelled(true);
+						}
+					}
+					((JSObject) invocable).call(ScriptMapMenu.this.menu, message);
+				}
+			});
+		} else {
+			MapMenusPlugin.instance.getLogger().warning("Second argument for 'requestKeyboardInput' must be invocable in Menu '" + getName() + "'");
+		}
+	}
+
+	public void requestMovementInput(final Player player, final Object invocable, final boolean cancelMove) {
+		if (invocable instanceof JSObject) {
+			MapMenusPlugin.instance.inputListener.listenForMove(player, new Callback<PlayerMoveEvent>() {
+				@Override
+				public void call(PlayerMoveEvent event) {
+					Location moveDiff = null;
+					if (event != null && event.getFrom().getWorld() == event.getTo().getWorld()) {
+						double x = event.getTo().getX() - event.getFrom().getX();
+						double y = event.getTo().getY() - event.getFrom().getY();
+						double z = event.getTo().getZ() - event.getFrom().getZ();
+						float yaw = event.getTo().getYaw() - event.getFrom().getYaw();
+						float pitch = event.getTo().getPitch() - event.getFrom().getPitch();
+						moveDiff = new Location(event.getFrom().getWorld(), x, y, z, yaw, pitch);
+
+						if (cancelMove) {
+							event.setTo(event.getFrom());
+						}
+					}
+
+					MoveDirection baseDirection = MoveDirection.getBaseDirection(moveDiff);
+					MoveDirection moveDirection = baseDirection.getLookDirection(player.getLocation());
+					double value = baseDirection.getValue(moveDiff);
+
+					if (((JSObject) invocable).keySet().isEmpty()) {// function(type, amount)
+						if (moveDiff == null) {
+							((JSObject) invocable).call(ScriptMapMenu.this.menu, null, 0);
+						} else {
+							((JSObject) invocable).call(ScriptMapMenu.this.menu, moveDirection.getCodeName(), value);
+						}
+					} else {// {north:function(amount){},...}
+						if (moveDiff != null) {
+							for (String s : ((JSObject) invocable).keySet()) {
+								Object member = ((JSObject) invocable).getMember(s);
+								if (member instanceof JSObject) {
+									if (s.equals(baseDirection.getCodeName())) {
+										((JSObject) member).call(ScriptMapMenu.this.menu, value);
+									}
+									if (s.equals(moveDirection.getCodeName())) {
+										((JSObject) member).call(ScriptMapMenu.this.menu, value);
+									}
+								}
+							}
+						}
+					}
+				}
+			});
+		} else {
+			MapMenusPlugin.instance.getLogger().warning("Second argument for 'requestMovementInput' must be invocable in Menu '" + getName() + "'");
+		}
 	}
 
 	public HoverCallable getHoverCallable() {

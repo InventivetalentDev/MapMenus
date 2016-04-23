@@ -60,6 +60,8 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 	public MenuScriptManager      menuScriptManager;
 	public ComponentScriptManager componentScriptManager;
 
+	public InputListener inputListener;
+
 	@Override
 	public void onEnable() {
 		instance = this;
@@ -76,6 +78,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 		Bukkit.getPluginManager().registerEvents(new MenuInteractListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
+		Bukkit.getPluginManager().registerEvents(inputListener = new InputListener(this), this);
 
 		(menuScriptManager = new MenuScriptManager(this)).saveDefaultFiles();
 		(componentScriptManager = new ComponentScriptManager(this)).saveDefaultFiles();
