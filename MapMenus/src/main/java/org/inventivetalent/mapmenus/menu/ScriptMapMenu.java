@@ -349,9 +349,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 							}
 						}
 					}
-
-					TimingsHelper.stopTiming("MapMenu - refreshItemFrames");
 				}
+				TimingsHelper.stopTiming("MapMenu - refreshItemFrames");
 			}
 		});
 	}
