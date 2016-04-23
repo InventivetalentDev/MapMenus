@@ -312,9 +312,17 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling dispose(): " + e.getException().getMessage(), e);
 		}
 
+		// Dispose all components
 		for (MenuComponentAbstract component : getComponents()) {
 			component.dispose();
 		}
+		this.components.clear();
+
+		// Cancel the ticks
+		if (scriptTask != null) { scriptTask.cancel(); }
+
+		// Remove this menu
+		MapMenusPlugin.instance.menuManager.removeMenu(this);
 	}
 
 	public HoverCallable getHoverCallable() {
