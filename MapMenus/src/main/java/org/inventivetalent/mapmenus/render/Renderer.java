@@ -38,6 +38,7 @@ import org.inventivetalent.mapmanager.controller.MultiMapController;
 import org.inventivetalent.mapmanager.manager.MapManager;
 import org.inventivetalent.mapmanager.wrapper.MapWrapper;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
+import org.inventivetalent.mapmenus.TimingsHelper;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.bounds.IBounds;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
@@ -93,10 +94,14 @@ public class Renderer {
 
 	public void render(Player player, boolean display) {
 		// Render the actual menu
+		TimingsHelper.startTiming("MapMenu - render");
 		renderable.render(this.imageGraphics, player);
+		TimingsHelper.stopTiming("MapMenu - render");
 
 		if (display) {
+			TimingsHelper.startTiming("MapMenu - display");
 			display(player);
+			TimingsHelper.stopTiming("MapMenu - display");
 		}
 
 		// Reset image
