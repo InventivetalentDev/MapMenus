@@ -78,7 +78,7 @@ public enum MoveDirection {
 		int cardinal = floor_double(yaw * 4.0F / 360.0F + 0.5D) & 3;
 		System.out.println(cardinal);
 
-		if (this != YAW && this != PITCH) {
+		if (this != YAW && this != PITCH && this != UP && this != DOWN) {
 			if (cardinal == dirForward) { return FORWARD; }
 			if (cardinal == dirBackward) { return BACKWARD; }
 
@@ -144,7 +144,7 @@ public enum MoveDirection {
 			direction = UP;
 		}
 		if (-relativeMove.getY() > highest) {
-			highest = relativeMove.getY();
+			highest = -relativeMove.getY();
 			direction = DOWN;
 		}
 
