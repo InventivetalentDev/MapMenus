@@ -38,6 +38,10 @@ public interface IStates extends IPlayerStorage {
 
 	void put(String key, Player player);
 
+	boolean toggle(String key, Player player, long ttl);
+
+	boolean toggle(String key, Player player);
+
 	boolean get(String key, Player player);
 
 }

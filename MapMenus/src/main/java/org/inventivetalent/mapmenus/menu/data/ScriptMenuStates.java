@@ -66,16 +66,18 @@ public class ScriptMenuStates implements IStates {
 		stateMap.put(key, collection);
 	}
 
+	@Override
 	public boolean toggle(String key, Player player) {
 		return toggle(key, player, -1);
 	}
 
+	@Override
 	public boolean toggle(String key, Player player, long ttl) {
 		boolean b = get(key, player);
-		if (b) {
-			delete(key, player);
-		} else {
+		if (!b) {
 			put(key, player, ttl);
+		} else {
+			delete(key, player);
 		}
 		return !b;
 	}

@@ -55,6 +55,16 @@ public class MapperStates implements IStates {
 	}
 
 	@Override
+	public boolean toggle(String key, Player player, long ttl) {
+		return parentStates.toggle(formatKey(key), player, ttl);
+	}
+
+	@Override
+	public boolean toggle(String key, Player player) {
+		return parentStates.toggle(formatKey(key), player);
+	}
+
+	@Override
 	public boolean get(String key, Player player) {
 		return parentStates.get(formatKey(key), player);
 	}
