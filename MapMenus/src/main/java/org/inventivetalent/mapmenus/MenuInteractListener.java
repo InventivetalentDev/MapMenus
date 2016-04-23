@@ -87,8 +87,6 @@ public class MenuInteractListener implements Listener {
 			if (queryResult != null && queryResult.isFound()) {
 				boolean clickHandled = queryResult.getMenu().click(player, queryResult.getPosition(), action);
 				cancellable.setCancelled(true);
-
-				System.out.println(new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create().toJson(queryResult.getMenu()));
 			}
 		}
 
