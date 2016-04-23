@@ -229,7 +229,6 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		tickLocked = true;
 
 		ScriptComponent component = components.remove(uuid);
-		if (component != null) { component.dispose(); }
 
 		tickLocked = false;
 		return component;

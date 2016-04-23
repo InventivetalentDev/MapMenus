@@ -189,5 +189,9 @@ public class ScriptComponent extends MenuComponentAbstract implements IScriptCon
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling dispose(): " + e.getException().getMessage(), e);
 		}
+
+		if (this.menu != null) {
+			this.menu.removeComponent(getUuid());
+		}
 	}
 }
