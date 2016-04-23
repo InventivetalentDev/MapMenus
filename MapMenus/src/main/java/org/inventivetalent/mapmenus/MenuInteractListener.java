@@ -53,17 +53,11 @@ public class MenuInteractListener implements Listener {
 
 	@EventHandler
 	public void on(MapInteractEvent event) {
-		System.out.println(event);
-		System.out.println(event.getPlayer());
-		System.out.println(event.getVector());
-
 		handleInteract(event.getPlayer(), event, event.getActionID());
 	}
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
-		System.out.println(event);
-
 		int actionId = 0;
 		switch (event.getAction()) {
 			case RIGHT_CLICK_AIR:
