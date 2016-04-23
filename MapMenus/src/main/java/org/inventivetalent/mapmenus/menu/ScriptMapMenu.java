@@ -225,6 +225,16 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		return component;
 	}
 
+	public ScriptComponent removeComponent(UUID uuid) {
+		tickLocked = true;
+
+		ScriptComponent component = components.remove(uuid);
+		if (component != null) { component.dispose(); }
+
+		tickLocked = false;
+		return component;
+	}
+
 	public CursorPosition getCursorPosition(Player player) {
 		return CursorPosition.calculateFor(player, this);
 	}
@@ -296,7 +306,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	@Override
 	public void dispose() {
 		try {
-		script.callFunction("dispose");
+			script.callFunction("dispose");
 		} catch (NoSuchFunctionException e) {
 			// Ignore this
 		} catch (RuntimeScriptException e) {
