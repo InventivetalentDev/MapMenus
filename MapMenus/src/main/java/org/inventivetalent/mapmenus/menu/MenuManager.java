@@ -91,6 +91,20 @@ public class MenuManager {
 		return mapMenu;
 	}
 
+	public void removeMenu(ScriptMapMenu menu) {
+		if (menu != null) {
+			menuMap.remove(menu.getName());
+		}
+	}
+
+	public ScriptMapMenu removeMenu(String name) {
+		ScriptMapMenu menu = menuMap.remove(name);
+		if (menu != null) {
+			menu.dispose();
+		}
+		return menu;
+	}
+
 	public ScriptMapMenu getMenuForBoundingBoxVector(Vector3DDouble vector) {
 		for (ScriptMapMenu mapMenu : getMenus()) {
 			if (mapMenu.boundingBox.contains(vector)) {
@@ -129,7 +143,7 @@ public class MenuManager {
 		for (ScriptMapMenu menu : getMenus()) {
 			plugin.getLogger().fine("Saving '" + menu.getName() + "' in world '" + menu.getWorld().getName() + "'...");
 			try {
-				File saveFile = new File(saveDirectory, URLEncoder.encode(menu.getName() , "UTF-8")+ ".mmd");
+				File saveFile = new File(saveDirectory, URLEncoder.encode(menu.getName(), "UTF-8") + ".mmd");
 				if (!saveFile.exists()) { saveFile.createNewFile(); }
 				try (Writer writer = new FileWriter(saveFile)) {
 					GSON.toJson(menu, writer);
@@ -169,7 +183,7 @@ public class MenuManager {
 
 		for (String name : index) {
 			try {
-				File file = new File(saveDirectory, URLEncoder.encode(name, "UTF-8")+ ".mmd");
+				File file = new File(saveDirectory, URLEncoder.encode(name, "UTF-8") + ".mmd");
 				try (Reader reader = new FileReader(file)) {
 					ScriptMapMenu loadedMenu = GSON.fromJson(reader, ScriptMapMenu.class);
 					menuMap.put(loadedMenu.getName(), loadedMenu);
