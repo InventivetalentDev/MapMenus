@@ -74,9 +74,11 @@ public enum MoveDirection {
 		return getLookDirection(location.getYaw());
 	}
 
+	/**
+	 * Converts the base direction to a directional movement FORWARD, BACKWARD, LEFT or RIGHT
+	 */
 	public MoveDirection getLookDirection(float yaw) {
 		int cardinal = floor_double(yaw * 4.0F / 360.0F + 0.5D) & 3;
-		System.out.println(cardinal);
 
 		if (this != YAW && this != PITCH && this != UP && this != DOWN) {
 			if (cardinal == dirForward) { return FORWARD; }
@@ -117,6 +119,9 @@ public enum MoveDirection {
 		}
 	}
 
+	/**
+	 * Converts the relative movement to NORTH, EAST, SOUTH, WEST, UP, DOWN, PITCH or YAW
+	 */
 	public static MoveDirection getBaseDirection(Location relativeMove) {
 		double highest = 0;
 		MoveDirection direction = NONE;
@@ -148,17 +153,14 @@ public enum MoveDirection {
 			direction = DOWN;
 		}
 
-		//		if (direction == NONE) {
 		if (Math.abs(relativeMove.getYaw()) > highest) {
 			highest = Math.abs(relativeMove.getYaw());
 			direction = YAW;
 		}
-
 		if (Math.abs(relativeMove.getPitch()) > highest) {
 			highest = Math.abs(relativeMove.getPitch());
 			direction = PITCH;
 		}
-		//		}
 
 		return direction;
 	}
