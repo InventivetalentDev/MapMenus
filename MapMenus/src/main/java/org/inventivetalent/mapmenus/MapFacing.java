@@ -39,10 +39,10 @@ public enum MapFacing {
 
 	// @formatter:off
 	//		faceX	faceZ	frameX	frameZ									inverted
-	NORTH(	0, 		-1, 	-1, 	0, 		BlockFace.NORTH, 	Plane.X,	true	),
-	EAST(	+1, 	0, 		0, 		-1, 	BlockFace.EAST, 	Plane.Z,	true	),
-	SOUTH(	0, 		+1, 	+1,		0, 		BlockFace.SOUTH, 	Plane.X,	false	),
-	WEST(	-1, 	0, 		0, 		+1, 	BlockFace.WEST, 	Plane.Z,	false	);
+	NORTH(	+0, 	-1, 	-1, 	+0, 	BlockFace.NORTH, 	Plane.X,	true	),
+	EAST(	+1, 	+0, 	+0, 	-1, 	BlockFace.EAST, 	Plane.Z,	true	),
+	SOUTH(	+0, 	+1, 	+1,		+0, 	BlockFace.SOUTH, 	Plane.X,	false	),
+	WEST(	-1, 	+0, 	+0, 	+1, 	BlockFace.WEST, 	Plane.Z,	false	);
 	// @formatter:on
 
 	// Mod in the direction the frame is facing
