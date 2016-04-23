@@ -32,6 +32,8 @@ import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.bukkit.entity.Player;
+import org.inventivetalent.mapmenus.MapMenusPlugin;
 
 /**
  * Class to store data for menus & components
@@ -50,26 +52,87 @@ public class ScriptMenuData {
 		if (value == null) {
 			storage.remove(key);
 		} else {
-			if (value instanceof String) {
-				storage.addProperty(key, (String) value);
-			} else if (value instanceof Number) {
-				storage.addProperty(key, (Number) value);
-			} else if (value instanceof Boolean) {
-				storage.addProperty(key, (Boolean) value);
-			} else if (value instanceof Character) {
-				storage.addProperty(key, (Character) value);
-			} else {
-				storage.add(key, new JsonParser().parse(value.toString()));
-			}
+			addObjectToJson(storage, key, value);
 		}
+	}
+
+	public void put(String key, Player player, Object value, long ttl) {
+		if (key == null || player == null) { return; }
+		if (value instanceof Boolean) {
+			MapMenusPlugin.instance.getLogger().warning("ScriptMenuStates ('states') should be used for boolean values");
+		}
+
+		JsonObject jsonObject = getPlayerStorage(player);
+		JsonElement entryElement = jsonObject.get(key);
+		if (entryElement == null) {
+			entryElement = new JsonObject();
+			jsonObject.add(key, entryElement);
+		}
+		JsonObject entryObject = (JsonObject) entryElement;
+
+		addObjectToJson(entryObject, "value", value);
+		entryObject.addProperty("ttl", ttl);
+		entryObject.addProperty("time", System.currentTimeMillis());
+	}
+
+	public void put(String key, Player player, Object value) {
+		put(key, player, value, -1);
+	}
+
+	JsonObject getPlayerStorage(Player player) {
+		String objectKey = "__player" + player.getUniqueId() + "__";
+		JsonElement jsonElement = storage.get(objectKey);
+		if (jsonElement == null) {
+			jsonElement = new JsonObject();
+			storage.add(objectKey, jsonElement);
+		}
+		return (JsonObject) jsonElement;
 	}
 
 	public void delete(String key) {
 		storage.remove(key);
 	}
 
+	public void delete(String key, Player player) {
+		JsonObject jsonObject = getPlayerStorage(player);
+		jsonObject.remove(key);
+	}
+
 	public Object get(String key) {
 		JsonElement jsonElement = storage.get(key);
+		return parseFromJson(jsonElement);
+	}
+
+	public Object get(String key, Player player) {
+		JsonObject jsonObject = getPlayerStorage(player);
+		JsonElement entryElement = jsonObject.get(key);
+		if (entryElement == null) { return null; }
+		JsonObject entryObject = (JsonObject) entryElement;
+
+		if (entryObject.get("ttl").getAsLong() == -1) { return parseFromJson(entryObject.get("value")); }
+		if (System.currentTimeMillis() - entryObject.get("time").getAsLong() > entryObject.get("ttl").getAsLong()) {
+			jsonObject.remove(key);
+			return null;
+		} else {
+			return parseFromJson(entryObject.get("value"));
+		}
+	}
+
+	void addObjectToJson(JsonObject jsonObject, String key, Object value) {
+		if (value instanceof String) {
+			jsonObject.addProperty(key, (String) value);
+		} else if (value instanceof Number) {
+			jsonObject.addProperty(key, (Number) value);
+		} else if (value instanceof Boolean) {
+			jsonObject.addProperty(key, (Boolean) value);
+		} else if (value instanceof Character) {
+			jsonObject.addProperty(key, (Character) value);
+		} else {
+			jsonObject.add(key, new JsonParser().parse(value.toString()));
+		}
+	}
+
+	Object parseFromJson(JsonElement jsonElement) {
 		if (jsonElement == null || jsonElement.isJsonNull()) {
 			return null;
 		} else {
