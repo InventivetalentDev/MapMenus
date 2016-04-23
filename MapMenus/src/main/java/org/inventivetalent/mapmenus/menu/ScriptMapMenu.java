@@ -327,6 +327,10 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		MapMenusPlugin.instance.menuManager.removeMenu(this);
 	}
 
+	public void requestKeyboardInput(Player player, Object invocable) {
+		requestKeyboardInput(player, invocable, true);
+	}
+
 	public void requestKeyboardInput(final Player player, final Object invocable, final boolean cancelMessage) {
 		if (invocable instanceof JSObject) {
 			MapMenusPlugin.instance.inputListener.listenForChat(player, new Callback<AsyncPlayerChatEvent>() {
@@ -345,6 +349,10 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		} else {
 			MapMenusPlugin.instance.getLogger().warning("Second argument for 'requestKeyboardInput' must be invocable in Menu '" + getName() + "'");
 		}
+	}
+
+	public void requestMovementInput(Player player, Object invocable) {
+		requestMovementInput(player, invocable, true);
 	}
 
 	public void requestMovementInput(final Player player, final Object invocable, final boolean cancelMove) {
