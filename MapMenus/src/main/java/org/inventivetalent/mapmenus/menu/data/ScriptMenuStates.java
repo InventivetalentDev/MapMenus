@@ -66,6 +66,20 @@ public class ScriptMenuStates implements IStates {
 		stateMap.put(key, collection);
 	}
 
+	public boolean toggle(String key, Player player) {
+		return toggle(key, player, -1);
+	}
+
+	public boolean toggle(String key, Player player, long ttl) {
+		boolean b = get(key, player);
+		if (b) {
+			delete(key, player);
+		} else {
+			put(key, player, ttl);
+		}
+		return !b;
+	}
+
 	private StateEntry getEntry(String key, Player player) {
 		if (!stateMap.containsKey(key)) { return null; }
 		StateEntry entry = null;
