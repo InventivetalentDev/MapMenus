@@ -35,6 +35,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.inventivetalent.mapmanager.event.MapInteractEvent;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
@@ -52,11 +53,16 @@ public class MenuInteractListener implements Listener {
 
 	@EventHandler
 	public void on(MapInteractEvent event) {
+		if (event.getHandID() != 0) { return; }
+		if (event.getActionID() != 2/*interact at*/) { return; }
+
 		handleInteract(event.getPlayer(), event, event.getActionID());
 	}
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND) { return; }
+
 		int actionId = 0;
 		switch (event.getAction()) {
 			case RIGHT_CLICK_AIR:
@@ -66,6 +72,7 @@ public class MenuInteractListener implements Listener {
 			case LEFT_CLICK_AIR:
 			case LEFT_CLICK_BLOCK:
 				actionId = 1;
+				break;
 		}
 		handleInteract(event.getPlayer(), event, actionId);
 	}
