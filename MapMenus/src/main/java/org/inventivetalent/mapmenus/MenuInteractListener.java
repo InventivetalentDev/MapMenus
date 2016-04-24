@@ -57,7 +57,6 @@ public class MenuInteractListener implements Listener {
 			event.setCancelled(true);
 		}
 		if (event.getHandID() != 0) { return; }
-		if (event.getActionID() != 0) { return; }
 
 		handleInteract(event.getPlayer(), event, event.getActionID());
 	}
