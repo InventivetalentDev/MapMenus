@@ -46,6 +46,7 @@ import org.inventivetalent.mapmenus.menu.MenuManager;
 import org.inventivetalent.mapmenus.menu.MenuScriptManager;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
+import org.inventivetalent.pluginannotations.config.ConfigValue;
 import org.inventivetalent.scriptconfig.ScriptConfigProvider;
 
 public class MapMenusPlugin extends JavaPlugin implements Listener {
@@ -61,6 +62,9 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 	public ComponentScriptManager componentScriptManager;
 
 	public InputListener inputListener;
+
+	@ConfigValue(path = "debug.enabled") public   boolean debug          = false;
+	@ConfigValue(path = "debug.particles") public boolean debugParticles = false;
 
 	@Override
 	public void onEnable() {
