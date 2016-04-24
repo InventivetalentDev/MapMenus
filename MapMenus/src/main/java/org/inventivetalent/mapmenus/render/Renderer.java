@@ -31,6 +31,7 @@ package org.inventivetalent.mapmenus.render;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.inventivetalent.mapmanager.controller.MapController;
@@ -110,6 +111,18 @@ public class Renderer {
 
 	public void refresh() {
 		frameContainer.refreshFrames();
+
+		final int[][] frameIds = frameContainer.getItemFrameIds();
+		for (Map.Entry<UUID, MapWrapper> entry : wrapperMap.entrySet()) {
+			final Player player = Bukkit.getPlayer(entry.getKey());
+			if (player == null) { continue; }
+			((MultiMapController) entry.getValue().getController()).showInFrames(player, frameIds, new MultiMapController.DebugCallable() {
+				@Override
+				public String call(MapController mapController, int i, int i1) {
+					return ((ScriptMapMenu) renderable).getHoverCallable().call(player, mapController, i, i1);
+				}
+			});
+		}
 	}
 
 	public MapWrapper removeViewer(OfflinePlayer player) {
@@ -141,14 +154,6 @@ public class Renderer {
 			mapController.update(this.menuImage);
 			//			mapController.sendContent(player);
 		}
-
-		int[][] frameIds = frameContainer.getItemFrameIds();
-		mapController.showInFrames(player, frameIds, new MultiMapController.DebugCallable() {
-			@Override
-			public String call(MapController mapController, int i, int i1) {
-				return ((ScriptMapMenu) renderable).getHoverCallable().call(player, mapController, i, i1);
-			}
-		});
 	}
 
 	// Util render methods
