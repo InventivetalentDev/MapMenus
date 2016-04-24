@@ -56,6 +56,9 @@ public class MenuInteractListener implements Listener {
 		if (event.getItemFrame().hasMetadata("MAP_MENUS_META")) {
 			event.setCancelled(true);
 		}
+		if (event.getActionID() == 2) {// interact_at
+			return;
+		}
 		if (event.getHandID() != 0) { return; }
 
 		handleInteract(event.getPlayer(), event, event.getActionID());
