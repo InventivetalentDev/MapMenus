@@ -248,6 +248,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	}
 
 	public CursorPosition getCursorPosition(Player player) {
+		if (baseVector.distanceSquared(new Vector3DDouble(player.getLocation())) > 1024) {
+			return null;// Player is too far away
+		}
 		return CursorPosition.calculateFor(player, this);
 	}
 
@@ -275,6 +278,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 	@Override
 	public void render(Graphics2D graphics, Player player) {
+		if (baseVector.distanceSquared(new Vector3DDouble(player.getLocation())) > 1024) { return; }// Don't render if the player is more than 32 block away
 		if (!noRenderFunction) {
 			try {
 				script.callFunction("render", graphics, player);
