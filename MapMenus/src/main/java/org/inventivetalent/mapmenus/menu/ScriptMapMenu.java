@@ -42,6 +42,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.inventivetalent.mapmanager.controller.MapController;
 import org.inventivetalent.mapmenus.*;
@@ -450,6 +451,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 												if (entity.getLocation().getBlockY() == vector3d.getY().intValue()) {
 													itemFrameIds[x1][y] = entity.getEntityId();
 													itemFrameUUIDs[x1][y] = entity.getUniqueId();
+
+													entity.setMetadata("MAP_MENUS_META", new FixedMetadataValue(MapMenusPlugin.instance, ScriptMapMenu.this));
 												}
 											}
 										}
