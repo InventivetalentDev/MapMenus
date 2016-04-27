@@ -140,7 +140,7 @@ public class CursorPosition {
 		double menuWidth = mapMenu.getBlockWidth() * 128.0D;
 		double menuHeight = mapMenu.getBlockHeight() * 128.0D;
 
-		Vector3DDouble menuVector = targetVector.clone().subtract(new Vector3DDouble(mapMenu.boundingBox.minX, mapMenu.boundingBox.minY, mapMenu.boundingBox.minZ));
+		Vector3DDouble menuVector = targetVector.clone().subtract(new Vector3DDouble(mapMenu.getBoundingBox().minX, mapMenu.getBoundingBox().minY, mapMenu.getBoundingBox().minZ));
 		double vecX = menuVector.getX();
 		double vecY = menuVector.getY();
 		double vecZ = menuVector.getZ();
@@ -150,7 +150,7 @@ public class CursorPosition {
 		vecY = vecY * menuHeight / mapMenu.getBlockHeight();
 
 		vecY = menuHeight - vecY;// Flip Y around to match the image coordinates
-		if (mapMenu.facing.isFrameModInverted()) {
+		if (mapMenu.getFacing().isFrameModInverted()) {
 			// Also flip X&Z if the direction is inverted
 			vecX = menuWidth - vecX;
 			vecZ = menuWidth - vecZ;
@@ -163,7 +163,7 @@ public class CursorPosition {
 		//		System.out.println("TargetVector: " + targetVector);
 		//		System.out.println(" MenuVector: " + menuVector);
 		//		System.out.println("   ");
-		Vector2DDouble vector2d = mapMenu.facing.getPlane().to2D(menuVector);
+		Vector2DDouble vector2d = mapMenu.getFacing().getPlane().to2D(menuVector);
 
 		TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate:convert");
 		return new CursorPosition(vector2d.getX().intValue(), vector2d.getY().intValue());
@@ -182,7 +182,7 @@ public class CursorPosition {
 		//			if (!menuContainsVector) { -> disabled, when we hit an entity the vector is not inside of the boundingBox
 		//				return null;
 		//			}
-		boolean contains = mapMenu.boundingBox.expand(0.0625).contains(result.vector);
+		boolean contains = mapMenu.getBoundingBox().expand(0.0625).contains(result.vector);
 		if (!contains) {
 			TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate");
 			return null;

@@ -106,7 +106,7 @@ public class MenuManager {
 
 	public ScriptMapMenu getMenuForBoundingBoxVector(Vector3DDouble vector) {
 		for (ScriptMapMenu mapMenu : getMenus()) {
-			if (mapMenu.boundingBox.contains(vector)) {
+			if (mapMenu.getBoundingBox().contains(vector)) {
 				return mapMenu;
 			}
 		}
