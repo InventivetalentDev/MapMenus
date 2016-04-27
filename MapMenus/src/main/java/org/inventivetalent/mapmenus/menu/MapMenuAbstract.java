@@ -55,12 +55,13 @@ import java.util.*;
 @EqualsAndHashCode(doNotUseGetters = true)
 @ToString(doNotUseGetters = true)
 @NoArgsConstructor
-public abstract class MapMenuAbstract implements IRenderable, ITickable, IClickable,IDisposable {
+public abstract class MapMenuAbstract implements IRenderable, ITickable, IClickable, IDisposable {
 
 	@Expose protected String         worldName;
 	@Expose protected Vector3DDouble blockBaseVector;
 	@Expose protected Vector3DDouble baseVector;
 	@Expose protected BoundingBox    boundingBox;
+	@Expose protected BoundingBox    blockBoundingBox;
 	@Expose protected FixedBounds    bounds;
 	@Expose protected MapFacing      facing;
 
@@ -87,6 +88,9 @@ public abstract class MapMenuAbstract implements IRenderable, ITickable, IClicka
 		Vector3DDouble firstVector = new Vector3DDouble(new Vector3DInt(firstCorner));
 		Vector3DDouble secondVector = new Vector3DDouble(new Vector3DInt(secondCorner));
 		this.boundingBox = this.facing.createBoundingBox(firstVector, secondVector);
+		// Combine with the base-block vector to expand it into the block
+
+		this.blockBoundingBox = this.boundingBox.combine(BoundingBoxAPI.getAbsoluteBoundingBox(this.blockBaseVector.toBukkitLocation(getWorld()).getBlock()));
 
 		this.minCorner2d = this.facing.getPlane().to2D(boundingBox.getMinVector());
 		this.maxCorner2d = this.facing.getPlane().to2D(boundingBox.getMaxVector());
@@ -153,9 +157,6 @@ public abstract class MapMenuAbstract implements IRenderable, ITickable, IClicka
 
 	public boolean isOnBlock(Vector3DDouble blockVector) {
 		blockVector = blockVector.add(new Vector3DDouble(.5, .5, .5));
-
-		// Combine with the base-block vector to expand it into the block
-		BoundingBox blockBoundingBox = this.boundingBox.combine(BoundingBoxAPI.getAbsoluteBoundingBox(this.blockBaseVector.toBukkitLocation(getWorld()).getBlock()));
 
 		return blockBoundingBox.contains(blockVector);
 	}

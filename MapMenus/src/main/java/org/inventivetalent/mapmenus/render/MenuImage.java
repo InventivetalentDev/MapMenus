@@ -34,9 +34,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
+import java.util.Arrays;
 import java.util.Hashtable;
 
 public class MenuImage extends BufferedImage {
+
+	protected int[] rgbData;
 
 	public MenuImage(int width, int height, int imageType) {
 		super(width, height, imageType);
@@ -50,7 +53,25 @@ public class MenuImage extends BufferedImage {
 		super(cm, raster, isRasterPremultiplied, properties);
 	}
 
+	@Override
+	public int getRGB(int x, int y) {
+		if (rgbData == null) {
+			rgbData = getRGB(0, 0, getWidth(), getHeight(), null, 0, getWidth());
+		}
+		return rgbData[(y * getWidth()) + x];
+	}
+
+	public boolean contentEqual(ArrayImage arrayImage) {
+		if (arrayImage == null) { return false; }
+		if (rgbData == null) {
+			rgbData = getRGB(0, 0, getWidth(), getHeight(), null, 0, getWidth());
+		}
+
+		return Arrays.equals(rgbData, arrayImage.getData());
+	}
+
 	public ArrayImage toArrayImage() {
 		return new ArrayImage(this);
 	}
+
 }

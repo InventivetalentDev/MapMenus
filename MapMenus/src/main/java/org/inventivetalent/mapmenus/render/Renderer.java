@@ -95,21 +95,23 @@ public class Renderer {
 
 	public void render(Player player, boolean display) {
 		// Render the actual menu
-		TimingsHelper.startTiming("MapMenu - render");
+		TimingsHelper.startTiming("MapMenu:renderer:render");
 		renderable.render(this.imageGraphics, player);
-		TimingsHelper.stopTiming("MapMenu - render");
+		TimingsHelper.stopTiming("MapMenu:renderer:render");
 
 		if (display) {
-			TimingsHelper.startTiming("MapMenu - display");
+			TimingsHelper.startTiming("MapMenu:renderer:display");
 			display(player);
-			TimingsHelper.stopTiming("MapMenu - display");
+			TimingsHelper.stopTiming("MapMenu:render:display");
 		}
 
 		// Reset image
 		this.menuImage.flush();
+		this.menuImage.rgbData = null;
 	}
 
 	public void refresh() {
+		TimingsHelper.startTiming("MapMenu:renderer:refresh");
 		frameContainer.refreshFrames();
 
 		final int[][] frameIds = frameContainer.getItemFrameIds();
@@ -123,6 +125,7 @@ public class Renderer {
 				}
 			});
 		}
+		TimingsHelper.stopTiming("MapMenu:renderer:refresh");
 	}
 
 	public MapWrapper removeViewer(OfflinePlayer player) {
@@ -135,23 +138,37 @@ public class Renderer {
 
 	public void display(final Player player) {
 		MapWrapper mapWrapper = wrapperMap.get(player.getUniqueId());
-		MultiMapController mapController;
+		final MultiMapController[] mapController = new MultiMapController[1];
 		if (mapWrapper == null) {
+			TimingsHelper.startTiming("MapMenu:renderer:display:newWrapper");
+
 			boolean prevCheckDuplicated = MapManager.Options.CHECK_DUPLICATES;
 			MapManager.Options.CHECK_DUPLICATES = false;
 
 			mapWrapper = MapMenusPlugin.instance.mapManager.wrapMultiImage(this.menuImage, ((ScriptMapMenu) renderable).getBlockHeight(), ((ScriptMapMenu) renderable).getBlockWidth());
-			mapController = (MultiMapController) mapWrapper.getController();
+			mapController[0] = (MultiMapController) mapWrapper.getController();
 
-			mapController.addViewer(player);
-			mapController.sendContent(player);
+			mapController[0].addViewer(player);
+			mapController[0].sendContent(player);
 
 			wrapperMap.put(player.getUniqueId(), mapWrapper);
 
 			MapManager.Options.CHECK_DUPLICATES = prevCheckDuplicated;
+
+			TimingsHelper.stopTiming("MapMenu:renderer:display:newWrapper");
 		} else {
-			mapController = (MultiMapController) mapWrapper.getController();
-			mapController.update(this.menuImage);
+			final MapWrapper finalMapWrapper = mapWrapper;
+			Bukkit.getScheduler().runTaskAsynchronously(MapMenusPlugin.instance, new Runnable() {
+				@Override
+				public void run() {
+					TimingsHelper.startTiming("MapMenu:renderer:display:update");
+					mapController[0] = (MultiMapController) finalMapWrapper.getController();
+					if (!menuImage.contentEqual((mapController[0].getContent()))) {
+						mapController[0].update(menuImage);
+					}
+					TimingsHelper.stopTiming("MapMenu:renderer:display:update");
+				}
+			});
 			//			mapController.sendContent(player);
 		}
 	}

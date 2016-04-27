@@ -51,10 +51,9 @@ public class InputListener implements Listener {
 
 	@EventHandler
 	public void on(AsyncPlayerChatEvent event) {
-		Callback<AsyncPlayerChatEvent> callback = CHAT_MAP.remove(event.getPlayer().getUniqueId());
-		if (callback != null) {
+		Callback<AsyncPlayerChatEvent> callback;
+		while ((callback = CHAT_MAP.remove(event.getPlayer().getUniqueId())) != null)
 			callback.call(event);
-		}
 	}
 
 	public void listenForChat(Player player, Callback<AsyncPlayerChatEvent> callback) {
@@ -68,10 +67,9 @@ public class InputListener implements Listener {
 
 	@EventHandler
 	public void on(PlayerMoveEvent event) {
-		Callback<PlayerMoveEvent> callback = MOVE_MAP.remove(event.getPlayer().getUniqueId());
-		if (callback != null) {
+		Callback<PlayerMoveEvent> callback;
+		while ((callback = MOVE_MAP.remove(event.getPlayer().getUniqueId())) != null)
 			callback.call(event);
-		}
 	}
 
 	public void listenForMove(Player player, Callback<PlayerMoveEvent> callback) {

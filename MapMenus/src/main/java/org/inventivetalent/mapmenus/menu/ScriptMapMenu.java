@@ -36,6 +36,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
@@ -44,6 +45,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.inventivetalent.boundingbox.BoundingBoxAPI;
 import org.inventivetalent.mapmanager.controller.MapController;
 import org.inventivetalent.mapmenus.*;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
@@ -278,6 +280,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 	@Override
 	public void render(Graphics2D graphics, Player player) {
+		BoundingBoxAPI.drawParticleOutline(boundingBox, getWorld(), Particle.REDSTONE);
 		if (baseVector.distanceSquared(new Vector3DDouble(player.getLocation())) > 1024) { return; }// Don't render if the player is more than 32 block away
 		if (!noRenderFunction) {
 			try {
@@ -314,7 +317,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		}
 
 		for (MenuComponentAbstract component : getComponents()) {
+			TimingsHelper.startTiming("MapMenu:handleInteract:click:component");
 			if (component.click(player, absolutePosition, action)) { clickHandled = true; }
+			TimingsHelper.stopTiming("MapMenu:handleInteract:click:component");
 		}
 		return clickHandled;
 	}
@@ -434,7 +439,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			public void run() {
 				TimingsHelper.startTiming("MapMenu - refreshItemFrames");
 
-				if (getWorld().getPlayers().isEmpty()) {
+				final World world = getWorld();
+				if (world.getPlayers().isEmpty()) {
 					itemFrameIds = NULL_INT_ARRAY;
 				} else {
 					itemFrameIds = new int[getBlockWidth()][getBlockHeight()];
@@ -443,8 +449,10 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 					//				Vector startVector = new Vector(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
 					Vector2DDouble startVector = minCorner2d;
 
-					for (Entity entity : getWorld().getEntitiesByClass(ItemFrame.class)) {
+					if (MapMenusPlugin.instance.debugParticles) { BoundingBoxAPI.drawParticleOutline(boundingBox, getWorld(), Particle.REDSTONE).run(); }
+					for (Entity entity : world.getNearbyEntities(baseVector.toBukkitLocation(world), getBlockWidth(), getBlockHeight(), getBlockWidth())) {
 						if (entity instanceof ItemFrame) {
+							if (MapMenusPlugin.instance.debugParticles) { getWorld().spawnParticle(Particle.FLAME, entity.getLocation(), 0); }
 							if (boundingBox.expand(0.1).contains(new Vector3DDouble(entity.getLocation()))) {
 								for (int y = 0; y < getBlockHeight(); y++) {
 									for (int x1 = 0; x1 < getBlockWidth(); x1++) {

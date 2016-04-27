@@ -37,7 +37,6 @@ import lombok.ToString;
 import org.bukkit.entity.ItemFrame;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.TimingsHelper;
-import org.inventivetalent.scriptconfig.RuntimeScriptException;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
 import java.io.*;
@@ -174,7 +173,7 @@ public class MenuManager {
 			}
 		} catch (IOException e) {
 			TimingsHelper.stopTiming("MapMenu - readFromFile");
-			throw new RuntimeScriptException("Failed to load Menu-Index file", e);
+			throw new RuntimeException("Failed to load Menu-Index file", e);
 		}
 		if (index == null) {
 			plugin.getLogger().info("No index found > First time startup or data deleted");

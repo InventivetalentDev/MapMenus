@@ -125,6 +125,20 @@ public enum MapFacing {
 		Vector3DDouble min = Vectors.min(a, b);
 		Vector3DDouble max = Vectors.max(a, b);
 
+		if (min.getX() < 0) {
+			min = min.subtract(1, 0, 0);
+		}
+		if (min.getZ() < 0) {
+			min = min.subtract(0, 0, 1);
+		}
+
+		if (max.getX() < 0) {
+			max = max.subtract(1, 0, 0);
+		}
+		if (max.getZ() < 0) {
+			max = max.subtract(0, 0, 1);
+		}
+
 		Plane plane = getPlane();
 		if (plane == Plane.X) {
 			if (getFaceModZ() > 0) {

@@ -28,6 +28,7 @@
 
 package org.inventivetalent.mapmenus;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -52,16 +53,21 @@ public class MenuInteractListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(MapInteractEvent event) {
+	public void on(final MapInteractEvent event) {
 		if (event.getItemFrame().hasMetadata("MAP_MENUS_META")) {
 			event.setCancelled(true);
 		}
-		if (event.getActionID() == 2) {// interact_at
-			return;
-		}
-		if (event.getHandID() != 0) { return; }
+		Bukkit.getScheduler().runTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				if (event.getActionID() == 2) {// interact_at
+					return;
+				}
+				if (event.getHandID() != 0) { return; }
 
-		handleInteract(event.getPlayer(), event, event.getActionID());
+				handleInteract(event.getPlayer(), event, event.getActionID());
+			}
+		});
 	}
 
 	@EventHandler
@@ -82,20 +88,34 @@ public class MenuInteractListener implements Listener {
 		handleInteract(event.getPlayer(), event, actionId);
 	}
 
-	void handleInteract(Player player, Cancellable cancellable, int action/* 0 = interact (right-click), 1 = attack (left-click) */) {
-		TimingsHelper.startTiming("MapMenu - handleInteract");
+	void handleInteract(final Player player, Cancellable cancellable, final int action/* 0 = interact (right-click), 1 = attack (left-click) */) {
+		TimingsHelper.startTiming("MapMenu:handleInteract");
 
 		Block targetBlock = player.getTargetBlock((Set<Material>) null, 16);
 		if (targetBlock != null && targetBlock.getType() != Material.AIR) {
+			TimingsHelper.startTiming("MapMenu:handleInteract:getMenusOnBlock");
 			Set<ScriptMapMenu> menus = plugin.menuManager.getMenusOnBlock(new Vector3DDouble(targetBlock.getLocation()));
-			CursorPosition.CursorMenuQueryResult queryResult = CursorPosition.findMenuByCursor(player, menus);
+			TimingsHelper.stopTiming("MapMenu:handleInteract:getMenusOnBlock");
+
+			TimingsHelper.startTiming("MapMenu:handleInteract:findMenuByCursor");
+			final CursorPosition.CursorMenuQueryResult queryResult = CursorPosition.findMenuByCursor(player, menus);
+			TimingsHelper.stopTiming("MapMenu:handleInteract:findMenuByCursor");
+
 			if (queryResult != null && queryResult.isFound()) {
-				boolean clickHandled = queryResult.getMenu().click(player, queryResult.getPosition(), action);
+				Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+					@Override
+					public void run() {
+						TimingsHelper.startTiming("MapMenu:handleInteract:click");
+						boolean clickHandled = queryResult.getMenu().click(player, queryResult.getPosition(), action);
+						TimingsHelper.stopTiming("MapMenu:handleInteract:click");
+					}
+				});
+
 				cancellable.setCancelled(true);
 			}
 		}
 
-		TimingsHelper.stopTiming("MapMenu - handleInteract");
+		TimingsHelper.stopTiming("MapMenu:handleInteract");
 	}
 
 }

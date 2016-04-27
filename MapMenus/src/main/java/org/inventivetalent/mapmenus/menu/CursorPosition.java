@@ -59,6 +59,8 @@ public class CursorPosition {
 	}
 
 	public static CursorResult calculateRaw(Player player, int cursorDistance) {
+		TimingsHelper.startTiming("MapMenu:CursorPosition:calculate:raw");
+
 		CursorResult result = new CursorResult();
 
 		final Location location = player.getLocation();
@@ -86,14 +88,15 @@ public class CursorPosition {
 			boundingBoxes.add(boundingBox);
 		}
 		if (entities.isEmpty()) {
+			TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate:raw");
 			return null; //There are no item-frames on the target block
 		}
 
 		Vector3DDouble vectorOnBlock;
 		Vector3DDouble lastVector = null;
-		// TODO: Start tracing closer to the target block
+		double start = Math.max(0, targetBlock.getLocation().distance(player.getLocation()) - 2);
 		doubleLoop:
-		for (double d = 0; d < cursorDistance; d += /*ACCURACY*/0.0125) {
+		for (double d = start; d < cursorDistance; d += /*ACCURACY*/0.0125) {
 			vectorOnBlock = direction.clone().multiply(d).add(0, player.getEyeHeight(), 0).add(locationVector);
 			if (vectorOnBlock.toBukkitLocation(location.getWorld()).getBlock().getType() != Material.AIR) {// Block is solid -> we've hit the target block
 				result.blockHit = true;
@@ -119,16 +122,19 @@ public class CursorPosition {
 				}
 			}
 			if (closestFrame == null) {
+				TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate:raw");
 				return null;// This should never happen, since we filtered all the unwanted entities above
 			}
 
 			result.vector = lastVector;
 			result.found = true;
 		}
+		TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate:raw");
 		return result;
 	}
 
 	public static CursorPosition convertVectorToCursor(Vector3DDouble targetVector, ScriptMapMenu mapMenu) {
+		TimingsHelper.startTiming("MapMenu:CursorPosition:calculate:convert");
 		if (targetVector == null || mapMenu == null) { return null; }
 
 		double menuWidth = mapMenu.getBlockWidth() * 128.0D;
@@ -159,15 +165,16 @@ public class CursorPosition {
 		//		System.out.println("   ");
 		Vector2DDouble vector2d = mapMenu.facing.getPlane().to2D(menuVector);
 
+		TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate:convert");
 		return new CursorPosition(vector2d.getX().intValue(), vector2d.getY().intValue());
 	}
 
 	public static CursorPosition calculateFor(Player player, ScriptMapMenu mapMenu) {
-		TimingsHelper.startTiming("MapMenu - CursorPosition#calculate");
+		TimingsHelper.startTiming("MapMenu:CursorPosition:calculate");
 
 		CursorResult result = calculateRaw(player, mapMenu.options.cursorDistance);
 		if (result == null || !result.found) {
-			TimingsHelper.stopTiming("MapMenu - CursorPosition#calculate");
+			TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate");
 			return null;
 		}
 
@@ -177,13 +184,13 @@ public class CursorPosition {
 		//			}
 		boolean contains = mapMenu.boundingBox.expand(0.0625).contains(result.vector);
 		if (!contains) {
-			TimingsHelper.stopTiming("MapMenu - CursorPosition#calculate");
+			TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate");
 			return null;
 		}
 
 		CursorPosition position = convertVectorToCursor(result.vector, mapMenu);
 
-		TimingsHelper.stopTiming("MapMenu - CursorPosition#calculate");
+		TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate");
 		return position;
 	}
 
