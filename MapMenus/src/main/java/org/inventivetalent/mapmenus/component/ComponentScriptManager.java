@@ -41,6 +41,11 @@ public class ComponentScriptManager extends ScriptManagerAbstract {
 
 	@Override
 	protected String[] getDefaultFiles() {
-		return new String[] { "BasicLabel.js" };
+		return new String[] {
+				"BasicButton.js",
+				"BasicCheckbox.js",
+				"BasicInputBox.js",
+				"BasicLabel.js",
+				"MessageButton.js" };
 	}
 }
