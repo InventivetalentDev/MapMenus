@@ -128,7 +128,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 			Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 				@Override
 				public void run() {
-					ScriptMapMenu mapMenu = menuManager.addMenu(name, firstFrame, secondFrame, "ExampleMenu");
+					ScriptMapMenu mapMenu = menuManager.addMenu(name, firstFrame, secondFrame, "Example-PlayerStats");
 
 					System.out.println(new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create().toJson(menuManager));
 

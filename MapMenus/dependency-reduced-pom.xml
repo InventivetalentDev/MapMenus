@@ -54,6 +54,7 @@
                   <include>org.inventivetalent:boundingboxapi**</include>
                   <include>org.inventivetalent:scriptconfig**</include>
                   <include>org.inventivetalent:pluginannotations**</include>
+                  <include>org.inventivetalent:frame-map-util**</include>
                 </includes>
               </artifactSet>
               <relocations>
@@ -127,12 +128,6 @@
       <groupId>org.inventivetalent</groupId>
       <artifactId>mapmanager</artifactId>
       <version>[1.1.6,)</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.inventivetalent</groupId>
-      <artifactId>frame-map-util</artifactId>
-      <version>1.0.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
