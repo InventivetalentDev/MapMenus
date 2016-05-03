@@ -49,8 +49,10 @@ import org.inventivetalent.boundingbox.BoundingBoxAPI;
 import org.inventivetalent.mapmanager.controller.MapController;
 import org.inventivetalent.mapmenus.*;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
+import org.inventivetalent.mapmenus.component.AnonymousScriptComponent;
+import org.inventivetalent.mapmenus.component.FileScriptComponent;
 import org.inventivetalent.mapmenus.component.MenuComponentAbstract;
-import org.inventivetalent.mapmenus.component.ScriptComponent;
+import org.inventivetalent.mapmenus.component.ScriptComponentAbstract;
 import org.inventivetalent.mapmenus.menu.data.MapperData;
 import org.inventivetalent.mapmenus.menu.data.MapperStates;
 import org.inventivetalent.mapmenus.menu.data.ScriptMenuData;
@@ -128,10 +130,10 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 		// Reload component scripts
 		for (MenuComponentAbstract component : getComponents()) {
-			if (component instanceof ScriptComponent) {
-				((ScriptComponent) component).menu = this;
-				((ScriptComponent) component).data = new MapperData(this.data, "__comp#" + ((ScriptComponent) component).id + "__%s");
-				((ScriptComponent) component).states = new MapperStates(this.states, "__comp#" + ((ScriptComponent) component).id + "__%s");
+			if (component instanceof ScriptComponentAbstract) {
+				((ScriptComponentAbstract) component).menu = this;
+				((ScriptComponentAbstract) component).data = new MapperData(this.data, "__comp#" + ((ScriptComponentAbstract) component).id + "__%s");
+				((ScriptComponentAbstract) component).states = new MapperStates(this.states, "__comp#" + ((ScriptComponentAbstract) component).id + "__%s");
 			}
 			if (component instanceof IScriptContainer) {
 				((IScriptContainer) component).reloadScript();
@@ -214,15 +216,19 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		this.script.setVariable("placeholders", this.placeholders);
 	}
 
-	public ScriptComponent addComponent(String script, int x, int y, int width, int height) {
+	/*
+	 * File Script Components
+	 */
+
+	public FileScriptComponent addComponent(String script, int x, int y, int width, int height) {
 		return addComponent(script, x, y, width, height, new Object[0]);
 	}
 
-	public ScriptComponent addComponent(String script, int x, int y, int width, int height, Object... initArgs) {
-		return addComponent(new FixedBounds(x, y, width, height), script, initArgs);
+	public FileScriptComponent addComponent(String script, int x, int y, int width, int height, Object... initArgs) {
+		return addComponent(script, new FixedBounds(x, y, width, height), initArgs);
 	}
 
-	public ScriptComponent addComponent(FixedBounds bounds, String scriptName, Object[] initArgs) {
+	public FileScriptComponent addComponent(String scriptName, FixedBounds bounds, Object[] initArgs) {
 		if (!MapMenusPlugin.instance.componentScriptManager.doesScriptExist(scriptName)) {
 			MapMenusPlugin.instance.getLogger().warning("Component Script '" + scriptName + "' does not exist");
 			return null;
@@ -230,7 +236,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 		tickLocked = true;
 
-		ScriptComponent component = new ScriptComponent(this.bounds, bounds, scriptName, initArgs);
+		FileScriptComponent component = new FileScriptComponent(this.bounds, bounds, scriptName, initArgs);
 		component.id = componentCounter++;
 		component.menu = this;
 		component.data = new MapperData(this.data, "__comp#" + componentCounter + "__%s");
@@ -242,10 +248,36 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		return component;
 	}
 
-	public ScriptComponent removeComponent(UUID uuid) {
+
+	/*
+	 * Anonymous Script Components
+	 */
+
+	public AnonymousScriptComponent addComponent(int x, int y, int width, int height, Object function) {
+		return addComponent(new FixedBounds(x, y, width, height), function);
+	}
+
+	public AnonymousScriptComponent addComponent(FixedBounds bounds, Object function) {
+		if (function == null || !(function instanceof JSObject)) {
+			MapMenusPlugin.instance.getLogger().info("Menu " + getName() + " attempted to add anonymous component, but the parameter is no function (It's " + (function == null ? "null" : function.getClass()) + ")");
+			return null;
+		}
+
 		tickLocked = true;
 
-		ScriptComponent component = components.remove(uuid);
+		AnonymousScriptComponent component = new AnonymousScriptComponent(this.bounds, bounds, (JSObject) function);
+		component.id = componentCounter++;
+		component.menu = this;
+		components.put(component.getUuid(), component);
+
+		tickLocked = false;
+		return component;
+	}
+
+	public ScriptComponentAbstract removeComponent(UUID uuid) {
+		tickLocked = true;
+
+		ScriptComponentAbstract component = components.remove(uuid);
 
 		tickLocked = false;
 		return component;

@@ -40,7 +40,7 @@ import org.inventivetalent.mapmenus.IDisposable;
 import org.inventivetalent.mapmenus.ITickable;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.component.MenuComponentAbstract;
-import org.inventivetalent.mapmenus.component.ScriptComponent;
+import org.inventivetalent.mapmenus.component.ScriptComponentAbstract;
 import org.inventivetalent.mapmenus.render.IRenderable;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
@@ -55,7 +55,7 @@ public abstract class MapMenuAbstract extends BaseFrameMapAbstract implements IR
 	@Expose protected FixedBounds bounds;
 
 	// Don't expose the components; the script is responsible for adding them
-	/*@Expose*/ protected final Map<UUID, ScriptComponent> components = new HashMap<>();
+	/*@Expose*/ protected final Map<UUID, ScriptComponentAbstract> components = new HashMap<>();
 
 	protected boolean tickLocked;
 
@@ -87,7 +87,7 @@ public abstract class MapMenuAbstract extends BaseFrameMapAbstract implements IR
 		return new HashSet<>(components.keySet());
 	}
 
-	public Set<ScriptComponent> getComponents() {
+	public Set<ScriptComponentAbstract> getComponents() {
 		return new HashSet<>(components.values());
 	}
 

@@ -29,19 +29,11 @@
 package org.inventivetalent.mapmenus.component;
 
 import com.google.gson.annotations.Expose;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import org.bukkit.entity.Player;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
-import org.inventivetalent.mapmenus.MenuScriptExecutionException;
-import org.inventivetalent.mapmenus.PlaceholderProvider;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
-import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
-import org.inventivetalent.mapmenus.menu.data.IData;
-import org.inventivetalent.mapmenus.menu.data.IStates;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
 import org.inventivetalent.mapmenus.script.ScriptManagerAbstract;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
@@ -52,43 +44,26 @@ import java.awt.*;
 import java.util.UUID;
 import java.util.logging.Level;
 
+@Data
 @EqualsAndHashCode(callSuper = true,
-				   doNotUseGetters = true,
-				   exclude = {
-						   "component",
-						   "menu" })
+				   doNotUseGetters = true)
 @ToString(callSuper = true,
-		  doNotUseGetters = true,
-		  exclude = {
-				  "component",
-				  "menu" })
+		  doNotUseGetters = true)
 @NoArgsConstructor
-public class ScriptComponent extends MenuComponentAbstract implements IScriptContainer {
+public class FileScriptComponent extends ScriptComponentAbstract implements IScriptContainer {
 
-	public          int          id;
 	@Expose private String       scriptName;
 	private         ScriptConfig script;
 
 	private Object[] initArgs = new Object[0];
 
-	private boolean noTickFunction;
-	private boolean noRenderFunction;
-	private boolean noClickFunction;
-
-	// Script references
-	public ScriptMapMenu menu;
-	public IData         data;
-	public IStates       states;
-	public ScriptComponent     component    = this;
-	public PlaceholderProvider placeholders = MapMenusPlugin.instance.placeholderProvider;
-
-	public ScriptComponent(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds, @NonNull String scriptName, Object[] initArgs) {
+	public FileScriptComponent(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds, @NonNull String scriptName, Object[] initArgs) {
 		super(uuid, parentBounds, bounds);
 		this.scriptName = scriptName;
 		this.initArgs = initArgs;
 	}
 
-	public ScriptComponent(@NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds, @NonNull String scriptName, Object[] initArgs) {
+	public FileScriptComponent(@NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds, @NonNull String scriptName, Object[] initArgs) {
 		this(UUID.randomUUID(), parentBounds, bounds, scriptName, initArgs);
 	}
 
@@ -135,66 +110,22 @@ public class ScriptComponent extends MenuComponentAbstract implements IScriptCon
 	}
 
 	@Override
-	public void tick() {
-		if (noTickFunction) { return; }
-		try {
-			script.callFunction("tick");
-		} catch (NoSuchFunctionException e) {
-			// Ignore this
-			noTickFunction = true;
-		} catch (RuntimeScriptException e) {
-			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling tick(): " + e.getException().getMessage(), e);
-			throw new MenuScriptExecutionException("ScriptException in Component tick()", e);
-		}
+	protected void tick0() throws NoSuchFunctionException, RuntimeScriptException {
+		script.callFunction("tick");
 	}
 
 	@Override
-	public void render(Graphics2D graphics, Player player) {
-		if (noRenderFunction) { return; }
-		try {
-			script.callFunction("render", graphics, player);
-		} catch (NoSuchFunctionException e) {
-			// Ignore this, the element doesn't want to be rendered
-			noRenderFunction = true;
-		} catch (RuntimeScriptException e) {
-			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling render(): " + e.getException().getMessage(), e);
-			throw new MenuScriptExecutionException("ScriptException in Component render()", e);
-		}
+	protected void render0(Graphics2D graphics, Player player) {
+		script.callFunction("render", graphics, player);
 	}
 
 	@Override
-	public boolean click(Player player, CursorPosition absolutePosition, int action) {
-		if (noClickFunction) { return false; }
-		if (!getBounds().contains(absolutePosition.getX(), absolutePosition.getY())) {
-			return false;
-		}
-
-		try {
-			CursorPosition relativePosition = new CursorPosition(absolutePosition.getX() - getBounds().getX(), absolutePosition.getY() - getBounds().getY());
-			Object result = script.callFunction("click", player, relativePosition, absolutePosition, action);
-			return result != null;
-		} catch (NoSuchFunctionException e) {
-			// Ignore this
-			noClickFunction = true;
-		} catch (RuntimeScriptException e) {
-			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling click(): " + e.getException().getMessage(), e);
-			throw new MenuScriptExecutionException("ScriptException in Component click()", e);
-		}
-		return false;
+	protected Object click0(Player player, CursorPosition relativePosition, CursorPosition absolutePosition, int action) {
+		return script.callFunction("click", player, relativePosition, absolutePosition, action);
 	}
 
 	@Override
-	public void dispose() {
-		try {
-			script.callFunction("dispose");
-		} catch (NoSuchFunctionException e) {
-			// Ignore this
-		} catch (RuntimeScriptException e) {
-			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling dispose(): " + e.getException().getMessage(), e);
-		}
-
-		if (this.menu != null) {
-			this.menu.removeComponent(getUuid());
-		}
+	protected void dispose0() throws NoSuchFunctionException, RuntimeScriptException {
+		script.callFunction("dispose");
 	}
 }
