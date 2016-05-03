@@ -29,6 +29,7 @@
 package org.inventivetalent.mapmenus;
 
 import com.google.gson.GsonBuilder;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -61,6 +62,8 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 	public MenuScriptManager      menuScriptManager;
 	public ComponentScriptManager componentScriptManager;
 
+	public PlaceholderProvider placeholderProvider;
+
 	public InputListener inputListener;
 
 	@ConfigValue(path = "debug.enabled") public   boolean debug          = false;
@@ -86,6 +89,17 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 		(menuScriptManager = new MenuScriptManager(this)).saveDefaultFiles();
 		(componentScriptManager = new ComponentScriptManager(this)).saveDefaultFiles();
+
+		placeholderProvider = new PlaceholderProvider(this);
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+			getLogger().info("Found PlaceholderAPI!");
+			placeholderProvider.addReplacer(new PlaceholderProvider.IPlaceholderReplacer() {
+				@Override
+				public String replace(Player player, String string) {
+					return PlaceholderAPI.setPlaceholders(player, string);
+				}
+			});
+		}
 
 		getLogger().fine("Waiting 5 seconds before loading menus...");
 		Bukkit.getScheduler().runTaskLater(this, new Runnable() {

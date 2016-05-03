@@ -174,6 +174,12 @@
             <artifactId>frame-map-util</artifactId>
             <version>[1.0.0,)</version>
         </dependency>
+
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>[2.0.8,)</version>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -204,6 +210,10 @@
         <repository>
             <id>mcstats-repo</id>
             <url>http://repo.mcstats.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>extendedclip-repo</id>
+            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
     </repositories>
 </project>

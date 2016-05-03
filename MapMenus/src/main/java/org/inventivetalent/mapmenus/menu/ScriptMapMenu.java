@@ -100,10 +100,11 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	int componentCounter = 1;
 
 	// Script references
-	public         ScriptMapMenu    menu    = this;
-	@Expose public ScriptOptions    options = new ScriptOptions();
-	@Expose public ScriptMenuData   data    = new ScriptMenuData();
-	@Expose public ScriptMenuStates states  = new ScriptMenuStates();
+	public         ScriptMapMenu       menu         = this;
+	@Expose public ScriptOptions       options      = new ScriptOptions();
+	@Expose public ScriptMenuData      data         = new ScriptMenuData();
+	@Expose public ScriptMenuStates    states       = new ScriptMenuStates();
+	public         PlaceholderProvider placeholders = MapMenusPlugin.instance.placeholderProvider;
 
 	public ScriptMapMenu(@NonNull ItemFrame baseFrame, @NonNull Vector3DDouble firstCorner, @NonNull Vector3DDouble secondCorner, @NonNull String name) {
 		super(baseFrame, firstCorner, secondCorner);
@@ -210,6 +211,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		this.script.setVariable("options", this.options);
 		this.script.setVariable("data", this.data);
 		this.script.setVariable("states", this.states);
+		this.script.setVariable("placeholders", this.placeholders);
 	}
 
 	public ScriptComponent addComponent(String script, int x, int y, int width, int height) {
