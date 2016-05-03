@@ -131,7 +131,7 @@ public class Renderer {
 	public MapWrapper removeViewer(OfflinePlayer player) {
 		MapWrapper wrapper = wrapperMap.remove(player.getUniqueId());
 		if (wrapper != null) {
-			wrapper.getController().removeViewer(player);
+			wrapper.getController().clearViewers();
 		}
 		return wrapper;
 	}
@@ -157,18 +157,12 @@ public class Renderer {
 
 			TimingsHelper.stopTiming("MapMenu:renderer:display:newWrapper");
 		} else {
-			final MapWrapper finalMapWrapper = mapWrapper;
-			Bukkit.getScheduler().runTaskAsynchronously(MapMenusPlugin.instance, new Runnable() {
-				@Override
-				public void run() {
-					TimingsHelper.startTiming("MapMenu:renderer:display:update");
-					mapController[0] = (MultiMapController) finalMapWrapper.getController();
-					if (!menuImage.contentEqual((mapController[0].getContent()))) {
-						mapController[0].update(menuImage);
-					}
-					TimingsHelper.stopTiming("MapMenu:renderer:display:update");
-				}
-			});
+			TimingsHelper.startTiming("MapMenu:renderer:display:update");
+			mapController[0] = (MultiMapController) mapWrapper.getController();
+			if (!menuImage.contentEqual((mapController[0].getContent()))) {
+				mapController[0].update(menuImage);
+			}
+			TimingsHelper.stopTiming("MapMenu:renderer:display:update");
 			//			mapController.sendContent(player);
 		}
 	}
