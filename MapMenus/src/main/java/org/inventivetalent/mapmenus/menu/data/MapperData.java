@@ -79,4 +79,13 @@ public class MapperData implements IData {
 		return parentData.get(formatKey(key), player);
 	}
 
+	@Override
+	public boolean has(String key) {
+		return parentData.has(formatKey(key));
+	}
+
+	@Override
+	public boolean has(String key, Player player) {
+		return parentData.has(formatKey(key), player);
+	}
 }

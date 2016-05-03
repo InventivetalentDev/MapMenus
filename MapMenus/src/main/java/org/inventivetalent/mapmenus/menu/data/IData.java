@@ -44,4 +44,8 @@ public interface IData extends IPlayerStorage {
 
 	Object get(String key, Player player);
 
+	boolean has(String key);
+
+	boolean has(String key, Player player);
+
 }

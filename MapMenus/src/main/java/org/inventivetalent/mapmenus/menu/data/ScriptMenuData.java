@@ -131,6 +131,16 @@ public class ScriptMenuData implements IData {
 		}
 	}
 
+	@Override
+	public boolean has(String key) {
+		return storage.has(key);
+	}
+
+	@Override
+	public boolean has(String key, Player player) {
+		return getPlayerStorage(player).has(key);
+	}
+
 	void addObjectToJson(JsonObject jsonObject, String key, Object value) {
 		if (value instanceof String) {
 			jsonObject.addProperty(key, (String) value);
