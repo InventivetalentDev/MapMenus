@@ -4,7 +4,7 @@ var Bukkit = Java.type("org.bukkit.Bukkit");
 var MinecraftServer = Java.type("net.minecraft.server.v1_9_R1.MinecraftServer");// Note: change the version to your server version
 
 
-var ticks = 0;
+var ticks = 9;
 
 function init() {
     options.tickSpeed = 20;
@@ -12,10 +12,6 @@ function init() {
 
 function tick() {
     if(ticks > 1) {
-        onlinePlayers =""+Bukkit.getOnlinePlayers().size() + " / " + Bukkit.getMaxPlayers();
-        tps = ""+MinecraftServer.getServer().recentTps[0];
-        motd = Bukkit.getMotd();
-
         renderer.render();
     }
     if(ticks > 10) {

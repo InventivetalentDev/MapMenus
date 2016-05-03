@@ -7,7 +7,7 @@ var tps = "0";
 var motd = "";
 var world = "";
 
-var ticks = 0;
+var ticks = 9;
 
 function init() {
     options.tickSpeed = 20;
