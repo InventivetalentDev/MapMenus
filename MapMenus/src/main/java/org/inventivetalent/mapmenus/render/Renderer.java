@@ -31,6 +31,7 @@ package org.inventivetalent.mapmenus.render;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -38,14 +39,21 @@ import org.inventivetalent.mapmanager.controller.MapController;
 import org.inventivetalent.mapmanager.controller.MultiMapController;
 import org.inventivetalent.mapmanager.manager.MapManager;
 import org.inventivetalent.mapmanager.wrapper.MapWrapper;
+import org.inventivetalent.mapmenus.Callback;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.TimingsHelper;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.bounds.IBounds;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -182,6 +190,32 @@ public class Renderer {
 
 	public void drawStringCentered(Graphics graphics, FixedBounds bounds, String text, int xOffset, int yOffset) {
 		drawStringCentered(graphics, bounds.getX() + xOffset, bounds.getY() + yOffset, bounds.getWidth(), bounds.getHeight(), text);
+	}
+
+	public void downloadImageData(final String source, final Callback<String> callback) {
+		Bukkit.getScheduler().runTaskAsynchronously(MapMenusPlugin.instance, new Runnable() {
+			@Override
+			public void run() {
+				try {
+					HttpURLConnection connection = (HttpURLConnection) new URL(source).openConnection();
+					connection.setRequestProperty("User-Agent", "MapMenus/" + MapMenusPlugin.instance.getDescription().getVersion());
+					String base64 = new String(Base64Coder.encode(IOUtils.toByteArray(connection.getInputStream())));
+					callback.call(base64);
+				} catch (Throwable throwable) {
+					MapMenusPlugin.instance.getLogger().warning("Failed to download image '" + source + "'");
+					callback.call("");
+				}
+			}
+		});
+	}
+
+	public void drawImageData(Graphics2D graphics, String imageData, int x, int y, int width, int height) {
+		try {
+			BufferedImage image = ImageIO.read(new ByteArrayInputStream(Base64Coder.decode(imageData)));
+			graphics.drawImage(image, x, y, width, height, null);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
