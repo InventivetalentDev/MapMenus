@@ -75,7 +75,12 @@ public class MenuManager {
 	}
 
 	@Synchronized
-	public ScriptMapMenu addMenu(String name, ItemFrame itemFrameA, ItemFrame itemFrameB, String script) {
+	public boolean doesMenuExist(String name) {
+		return menuMap.containsKey(name);
+	}
+
+	@Synchronized
+	public ScriptMapMenu createMenu(String name, ItemFrame itemFrameA, ItemFrame itemFrameB, String script) {
 		if (menuMap.containsKey(name)) {
 			throw new IllegalArgumentException("Menu '" + name + "' already exists");
 		}
