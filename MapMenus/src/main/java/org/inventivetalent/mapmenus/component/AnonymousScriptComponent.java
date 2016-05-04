@@ -54,21 +54,29 @@ public class AnonymousScriptComponent extends ScriptComponentAbstract {
 
 	@Override
 	protected void tick0() throws NoSuchFunctionException, RuntimeScriptException {
-		((JSObject) script.getMember("tick")).call(this);
+		Object member=script.getMember("tick");
+		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'tick' is null or not JSObject"); }
+		((JSObject) member).call(this);
 	}
 
 	@Override
 	protected void render0(Graphics2D graphics, Player player) throws NoSuchFunctionException, RuntimeScriptException {
-		((JSObject) script.getMember("render")).call(this, graphics, player);
+		Object member=script.getMember("render");
+		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'render' is null or not JSObject"); }
+		((JSObject) member).call(this, graphics, player);
 	}
 
 	@Override
 	protected Object click0(Player player, CursorPosition relativePosition, CursorPosition absolutePosition, int action) throws NoSuchFunctionException, RuntimeScriptException {
-		return ((JSObject) script.getMember("click")).call(this, player, relativePosition, absolutePosition, action);
+		Object member=script.getMember("click");
+		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'render' is null or not JSObject"); }
+		return ((JSObject) member).call(this, player, relativePosition, absolutePosition, action);
 	}
 
 	@Override
 	protected void dispose0() throws NoSuchFunctionException, RuntimeScriptException {
-		((JSObject) script.getMember("dispose")).call(this);
+		Object member=script.getMember("dispose");
+		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'render' is null or not JSObject"); }
+		((JSObject) member).call(this);
 	}
 }
