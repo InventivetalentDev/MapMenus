@@ -1,3 +1,23 @@
 debug:
   enabled: false
   particles: false
+
+message:
+  command:
+    create:
+      setup:
+        first: "&ePlease right-click the &abottom-left corner &eof the menu"
+        second: "&ePlease right-click the &atop-right corner &eof the menu"
+        set:
+          first: "&aFirst corner set"
+          second: "&aSecond corner set"
+        complete: "&aSetup complete! &eCreating menu '%s' with script '%s'..."
+        created: "&aMenu created."
+    remove:
+      removed: "&aMenu removed"
+    error:
+      create:
+        exists: "&cMenu already exists"
+        unknownScript: "&cThat script does not exist"
+      remove:
+        notFound: "&cMenu not found"

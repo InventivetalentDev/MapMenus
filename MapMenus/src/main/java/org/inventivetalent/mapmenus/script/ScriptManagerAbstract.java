@@ -34,6 +34,7 @@ import org.inventivetalent.scriptconfig.api.ScriptConfig;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.*;
 
 public abstract class ScriptManagerAbstract {
 
@@ -68,6 +69,18 @@ public abstract class ScriptManagerAbstract {
 			}
 		}
 		return null;
+	}
+
+	public Collection<String> getScriptsWithExtension() {
+		return new ArrayList<>(Arrays.asList(directory.list()));
+	}
+
+	public Collection<String> getScripts() {
+		Set<String> scripts = new HashSet<>();
+		for (String s : getScriptsWithExtension()) {
+			scripts.add(s.substring(0, (s.length() - ".js".length())));
+		}
+		return scripts;
 	}
 
 	public ScriptConfig wrapScript(String name) {

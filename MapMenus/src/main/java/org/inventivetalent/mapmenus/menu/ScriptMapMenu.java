@@ -30,10 +30,7 @@ package org.inventivetalent.mapmenus.menu;
 
 import com.google.gson.annotations.Expose;
 import jdk.nashorn.api.scripting.JSObject;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -71,6 +68,7 @@ import java.awt.*;
 import java.util.UUID;
 import java.util.logging.Level;
 
+@Data
 @EqualsAndHashCode(callSuper = true,
 				   doNotUseGetters = true,
 				   exclude = { "menu" })

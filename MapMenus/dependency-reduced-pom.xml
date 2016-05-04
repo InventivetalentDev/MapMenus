@@ -55,6 +55,7 @@
                   <include>org.inventivetalent:scriptconfig**</include>
                   <include>org.inventivetalent:pluginannotations**</include>
                   <include>org.inventivetalent:frame-map-util**</include>
+                  <include>org.inventivetalent.spiget-update:bukkit**</include>
                 </includes>
               </artifactSet>
               <relocations>

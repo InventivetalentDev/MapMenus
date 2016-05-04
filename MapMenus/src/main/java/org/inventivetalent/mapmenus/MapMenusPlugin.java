@@ -41,6 +41,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.mapmanager.MapManagerPlugin;
 import org.inventivetalent.mapmanager.manager.MapManager;
+import org.inventivetalent.mapmenus.command.MenuCommands;
 import org.inventivetalent.mapmenus.component.ComponentScriptManager;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.menu.MenuManager;
@@ -71,6 +72,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 	public InputListener inputListener;
 
 	SpigetUpdate spigetUpdate;
+	public boolean updateAvailable;
 
 	@ConfigValue(path = "debug.enabled") public   boolean debug          = false;
 	@ConfigValue(path = "debug.particles") public boolean debugParticles = false;
@@ -81,6 +83,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 		saveDefaultConfig();
 		PluginAnnotations.CONFIG.load(this, this);
+		PluginAnnotations.COMMAND.load(this, new MenuCommands(this));
 
 		Bukkit.getPluginManager().registerEvents(this, this);
 
@@ -127,6 +130,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 			spigetUpdate.checkForUpdate(new UpdateCallback() {
 				@Override
 				public void updateAvailable(String s, String s1, boolean b) {
+					updateAvailable = true;
 					getLogger().info("A new version is available (" + s + "). Download it from https://r.spiget.org/3131");
 				}
 
@@ -169,7 +173,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 			Bukkit.getScheduler().runTaskLater(this, new Runnable() {
 				@Override
 				public void run() {
-					ScriptMapMenu mapMenu = menuManager.addMenu(name, firstFrame, secondFrame, "Example-PlayerStats");
+					ScriptMapMenu mapMenu = menuManager.createMenu(name, firstFrame, secondFrame, "Example-PlayerStats");
 
 					System.out.println(new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create().toJson(menuManager));
 
