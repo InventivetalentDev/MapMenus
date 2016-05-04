@@ -120,7 +120,7 @@ public class Renderer {
 		// Reset component translation
 		this.imageGraphics.translate(0, 0);
 		if (this.imageGraphics instanceof SunGraphics2D) {
-			((SunGraphics2D) this.imageGraphics).transX=0;
+			((SunGraphics2D) this.imageGraphics).transX = 0;
 			((SunGraphics2D) this.imageGraphics).transY = 0;
 		}
 	}
@@ -182,6 +182,16 @@ public class Renderer {
 		}
 	}
 
+	public void dispose() {
+		final int[][] frameIds = frameContainer.getItemFrameIds();
+		for (Map.Entry<UUID, MapWrapper> entry : wrapperMap.entrySet()) {
+			MultiMapController controller = (MultiMapController) wrapperMap.values().iterator().next().getController();
+			controller.clearFrames(Bukkit.getPlayer(entry.getKey()), frameIds);
+			controller.clearViewers();
+		}
+		wrapperMap.clear();
+	}
+
 	// Util render methods
 
 	public void drawStringCentered(Graphics graphics, int x, int y, int width, int height, String text) {
@@ -200,6 +210,7 @@ public class Renderer {
 	}
 
 	public void downloadImageData(final String source, final Callback<String> callback) {
+		if (source == null || source.isEmpty()) { callback.call(""); }
 		Bukkit.getScheduler().runTaskAsynchronously(MapMenusPlugin.instance, new Runnable() {
 			@Override
 			public void run() {
@@ -217,6 +228,7 @@ public class Renderer {
 	}
 
 	public void drawImageData(Graphics2D graphics, String imageData, int x, int y, int width, int height) {
+		if (imageData == null) { return; }
 		try {
 			BufferedImage image = ImageIO.read(new ByteArrayInputStream(Base64Coder.decode(imageData)));
 			graphics.drawImage(image, x, y, width, height, null);
