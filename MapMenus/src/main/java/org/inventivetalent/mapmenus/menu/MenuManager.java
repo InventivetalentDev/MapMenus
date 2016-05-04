@@ -141,7 +141,7 @@ public class MenuManager {
 	}
 
 	@Synchronized
-	public Set<ScriptMapMenu> getFramesInWorld(String worldName) {
+	public Set<ScriptMapMenu> getMenusInWorld(String worldName) {
 		Set<ScriptMapMenu> frames = new HashSet<>();
 		for (ScriptMapMenu menu : menuMap.values()) {
 			if (menu.getWorldName().equals(worldName)) {
