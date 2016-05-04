@@ -49,6 +49,10 @@ import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
 import org.inventivetalent.pluginannotations.config.ConfigValue;
 import org.inventivetalent.scriptconfig.ScriptConfigProvider;
+import org.inventivetalent.update.spiget.SpigetUpdate;
+import org.inventivetalent.update.spiget.UpdateCallback;
+import org.inventivetalent.update.spiget.comparator.VersionComparator;
+import org.mcstats.MetricsLite;
 
 public class MapMenusPlugin extends JavaPlugin implements Listener {
 
@@ -65,6 +69,8 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 	public PlaceholderProvider placeholderProvider;
 
 	public InputListener inputListener;
+
+	SpigetUpdate spigetUpdate;
 
 	@ConfigValue(path = "debug.enabled") public   boolean debug          = false;
 	@ConfigValue(path = "debug.particles") public boolean debugParticles = false;
@@ -110,6 +116,27 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 				getLogger().info("Loaded " + menuManager.size() + " menus.");
 			}
 		}, 100);
+
+		try {
+			MetricsLite metrics = new MetricsLite(this);
+			if (metrics.start()) {
+				getLogger().info("Metrics started");
+			}
+
+			spigetUpdate = new SpigetUpdate(this, 3131).setUserAgent("MapMenus/" + getDescription().getVersion()).setVersionComparator(VersionComparator.SEM_VER);
+			spigetUpdate.checkForUpdate(new UpdateCallback() {
+				@Override
+				public void updateAvailable(String s, String s1, boolean b) {
+					getLogger().info("A new version is available (" + s + "). Download it from https://r.spiget.org/3131");
+				}
+
+				@Override
+				public void upToDate() {
+					getLogger().info("The plugin is up-to-date.");
+				}
+			});
+		} catch (Exception e) {
+		}
 	}
 
 	@Override
