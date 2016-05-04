@@ -33,6 +33,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.EqualsAndHashCode;
+import lombok.Synchronized;
 import lombok.ToString;
 import org.bukkit.entity.ItemFrame;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
@@ -58,7 +59,7 @@ public class MenuManager {
 	private File saveDirectory;
 	private File indexFile;
 
-	@Expose @SerializedName("menus") public Map<String, ScriptMapMenu> menuMap = new HashMap<>();
+	@Expose @SerializedName("menus") private Map<String, ScriptMapMenu> menuMap = new HashMap<>();
 
 	public MenuManager(MapMenusPlugin plugin) {
 		this.plugin = plugin;
@@ -73,6 +74,7 @@ public class MenuManager {
 		}
 	}
 
+	@Synchronized
 	public ScriptMapMenu addMenu(String name, ItemFrame itemFrameA, ItemFrame itemFrameB, String script) {
 		if (menuMap.containsKey(name)) {
 			throw new IllegalArgumentException("Menu '" + name + "' already exists");
@@ -90,12 +92,14 @@ public class MenuManager {
 		return mapMenu;
 	}
 
+	@Synchronized
 	public void removeMenu(ScriptMapMenu menu) {
 		if (menu != null) {
 			menuMap.remove(menu.getName());
 		}
 	}
 
+	@Synchronized
 	public ScriptMapMenu removeMenu(String name) {
 		ScriptMapMenu menu = menuMap.remove(name);
 		if (menu != null) {
@@ -104,6 +108,7 @@ public class MenuManager {
 		return menu;
 	}
 
+	@Synchronized
 	public ScriptMapMenu getMenuForBoundingBoxVector(Vector3DDouble vector) {
 		for (ScriptMapMenu mapMenu : getMenus()) {
 			if (mapMenu.getBoundingBox().contains(vector)) {
@@ -114,6 +119,7 @@ public class MenuManager {
 	}
 
 	// Should in theory only return a maximum of 4 menus
+	@Synchronized
 	public Set<ScriptMapMenu> getMenusOnBlock(Vector3DDouble block) {
 		Set<ScriptMapMenu> menus = new HashSet<>();
 		for (ScriptMapMenu mapMenu : getMenus()) {
@@ -124,18 +130,33 @@ public class MenuManager {
 		return menus;
 	}
 
+	@Synchronized
 	public Set<String> getMenuNames() {
 		return new HashSet<>(menuMap.keySet());
 	}
 
+	@Synchronized
 	public Set<ScriptMapMenu> getMenus() {
 		return new HashSet<>(menuMap.values());
 	}
 
+	@Synchronized
+	public Set<ScriptMapMenu> getFramesInWorld(String worldName) {
+		Set<ScriptMapMenu> frames = new HashSet<>();
+		for (ScriptMapMenu menu : menuMap.values()) {
+			if (menu.getWorldName().equals(worldName)) {
+				frames.add(menu);
+			}
+		}
+		return frames;
+	}
+
+	@Synchronized
 	public int size() {
 		return menuMap.size();
 	}
 
+	@Synchronized
 	public void writeMenusToFile() {
 		TimingsHelper.startTiming("MapMenu - writeToFile");
 
@@ -163,6 +184,7 @@ public class MenuManager {
 		TimingsHelper.stopTiming("MapMenu - writeToFile");
 	}
 
+	@Synchronized
 	public void readMenusFromFile() {
 		TimingsHelper.startTiming("MapMenu - readFromFile");
 
