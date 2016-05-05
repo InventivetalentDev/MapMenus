@@ -117,6 +117,7 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 	@Override
 	public void render(Graphics2D graphics, Player player) {
 		if (noRenderFunction) { return; }
+		if (!visible) { return; }
 		try {
 			// Translate to the component's position
 			graphics.translate(getBounds().x, getBounds().y);
@@ -139,6 +140,7 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 	@Override
 	public boolean click(Player player, CursorPosition absolutePosition, int action) {
 		if (noClickFunction) { return false; }
+		if (!visible) { return false; }
 		if (!getBounds().contains(absolutePosition.getX(), absolutePosition.getY())) {
 			return false;
 		}
