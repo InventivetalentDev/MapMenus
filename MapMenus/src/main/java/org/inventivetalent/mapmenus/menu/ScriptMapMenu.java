@@ -405,7 +405,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	}
 
 	public void requestCommandInput(Player player, Object invocable) {
-		requestKeyboardInput(player, invocable, true);
+		requestCommandInput(player, invocable, true);
 	}
 
 	public void requestCommandInput(Player player, final Object invocable, final boolean cancelCommand) {
