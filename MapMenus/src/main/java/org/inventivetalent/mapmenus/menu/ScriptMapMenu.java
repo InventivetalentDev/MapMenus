@@ -269,6 +269,13 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		component.id = componentCounter++;
 		component.menu = this;
 		components.put(component.getUuid(), component);
+		try {
+			component.init();
+		} catch (NoSuchFunctionException e) {
+			// Ignore
+		} catch (RuntimeScriptException e) {
+			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + e.getException().getMessage(), e);
+		}
 
 		tickLocked = false;
 		return component;
