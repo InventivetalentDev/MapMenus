@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -41,9 +42,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InputListener implements Listener {
 
-	private final Map<UUID, Callback<AsyncPlayerChatEvent>>     CHAT_MAP            = new ConcurrentHashMap<>();
-	private final Map<UUID, Callback<PlayerMoveEvent>>          MOVE_MAP            = new ConcurrentHashMap<>();
-	private final Map<UUID, Callback<PlayerInteractEntityEvent>> ENTITY_INTERACT_MAP = new ConcurrentHashMap<>();
+	private final Map<UUID, Callback<AsyncPlayerChatEvent>>         CHAT_MAP            = new ConcurrentHashMap<>();
+	private final Map<UUID, Callback<PlayerCommandPreprocessEvent>> COMMAND_MAP         = new ConcurrentHashMap<>();
+	private final Map<UUID, Callback<PlayerMoveEvent>>              MOVE_MAP            = new ConcurrentHashMap<>();
+	private final Map<UUID, Callback<PlayerInteractEntityEvent>>    ENTITY_INTERACT_MAP = new ConcurrentHashMap<>();
 
 	private MapMenusPlugin plugin;
 
@@ -62,6 +64,22 @@ public class InputListener implements Listener {
 		if (callback == null) { return; }
 		if (player != null) {
 			CHAT_MAP.put(player.getUniqueId(), callback);
+		} else {
+			callback.call(null);
+		}
+	}
+
+	@EventHandler
+	public void on(PlayerCommandPreprocessEvent event) {
+		Callback<PlayerCommandPreprocessEvent> callback;
+		while ((callback = COMMAND_MAP.remove(event.getPlayer().getUniqueId())) != null)
+			callback.call(event);
+	}
+
+	public void listenForCommand(Player player, Callback<PlayerCommandPreprocessEvent> callback) {
+		if (callback == null) { return; }
+		if (player != null) {
+			COMMAND_MAP.put(player.getUniqueId(), callback);
 		} else {
 			callback.call(null);
 		}

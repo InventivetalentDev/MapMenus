@@ -39,6 +39,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -400,6 +401,30 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			});
 		} else {
 			MapMenusPlugin.instance.getLogger().warning("Second argument for 'requestKeyboardInput' must be invocable in Menu '" + getName() + "'");
+		}
+	}
+
+	public void requestCommandInput(Player player, Object invocable) {
+		requestKeyboardInput(player, invocable, true);
+	}
+
+	public void requestCommandInput(Player player, final Object invocable, final boolean cancelCommand) {
+		if (invocable instanceof JSObject) {
+			MapMenusPlugin.instance.inputListener.listenForCommand(player, new Callback<PlayerCommandPreprocessEvent>() {
+				@Override
+				public void call(PlayerCommandPreprocessEvent event) {
+					String message = null;
+					if (event != null) {
+						message = event.getMessage();
+						if (cancelCommand) {
+							event.setCancelled(true);
+						}
+					}
+					((JSObject) invocable).call(ScriptMapMenu.this.menu, message);
+				}
+			});
+		} else {
+			MapMenusPlugin.instance.getLogger().warning("Second argument for 'requestCommandInput' must be invocable in Menu '" + getName() + "'");
 		}
 	}
 
