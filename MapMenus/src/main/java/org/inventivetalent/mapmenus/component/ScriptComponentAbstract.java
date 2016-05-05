@@ -65,6 +65,8 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 	private boolean noRenderFunction;
 	private boolean noClickFunction;
 
+	private boolean visible = true;
+
 	// Script references
 	public ScriptMapMenu menu;
 	public IData         data;
@@ -74,6 +76,26 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 
 	public ScriptComponentAbstract(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds) {
 		super(uuid, parentBounds, bounds);
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return visible;
+	}
+
+	@Override
+	public void show() {
+		setVisible(true);
+	}
+
+	@Override
+	public void hide() {
+		setVisible(false);
 	}
 
 	@Override

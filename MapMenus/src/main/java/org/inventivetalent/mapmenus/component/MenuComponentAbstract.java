@@ -36,6 +36,7 @@ import lombok.ToString;
 import org.inventivetalent.mapmenus.IClickable;
 import org.inventivetalent.mapmenus.IDisposable;
 import org.inventivetalent.mapmenus.ITickable;
+import org.inventivetalent.mapmenus.IVisibility;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.render.IRenderable;
 
@@ -46,11 +47,11 @@ import java.util.UUID;
 @ToString(exclude = { "parentBounds" },
 		  doNotUseGetters = true)
 @NoArgsConstructor
-public abstract class MenuComponentAbstract implements IRenderable, ITickable, IClickable,IDisposable {
+public abstract class MenuComponentAbstract implements IRenderable, ITickable, IClickable, IDisposable, IVisibility {
 
-	@Expose protected  UUID        uuid;
-	protected          FixedBounds parentBounds;
-	@Expose protected       FixedBounds bounds;
+	@Expose protected UUID        uuid;
+	protected         FixedBounds parentBounds;
+	@Expose protected FixedBounds bounds;
 
 	public MenuComponentAbstract(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds) {
 		this.uuid = uuid;
@@ -76,9 +77,9 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 		return bounds;
 	}
 
-//	public void setBounds(int x, int y, int width, int height) {
-//		setBounds(new FixedBounds(x, y, width, height));
-//	}
+	//	public void setBounds(int x, int y, int width, int height) {
+	//		setBounds(new FixedBounds(x, y, width, height));
+	//	}
 
 	// Method with doubles, so you don't have to always parse all numbers to integers
 	public void setBounds(double x, double y, double width, double height) {
