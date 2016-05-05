@@ -28,26 +28,18 @@
 
 package org.inventivetalent.mapmenus;
 
-import com.google.gson.GsonBuilder;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.eventcallbacks.EventCallbacks;
 import org.inventivetalent.mapmanager.MapManagerPlugin;
 import org.inventivetalent.mapmanager.manager.MapManager;
 import org.inventivetalent.mapmenus.command.MenuCommands;
 import org.inventivetalent.mapmenus.component.ComponentScriptManager;
-import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.menu.MenuManager;
 import org.inventivetalent.mapmenus.menu.MenuScriptManager;
-import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
 import org.inventivetalent.pluginannotations.config.ConfigValue;
 import org.inventivetalent.scriptconfig.ScriptConfigProvider;
@@ -70,7 +62,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 	public PlaceholderProvider placeholderProvider;
 
-//	public InputListener inputListener;
+	//	public InputListener inputListener;
 	public EventCallbacks eventCallbacks;
 
 	SpigetUpdate spigetUpdate;
@@ -96,7 +88,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 		Bukkit.getPluginManager().registerEvents(new MenuInteractListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
-//		Bukkit.getPluginManager().registerEvents(inputListener = new InputListener(this), this);
+		//		Bukkit.getPluginManager().registerEvents(inputListener = new InputListener(this), this);
 		this.eventCallbacks = EventCallbacks.of(this);
 
 		(menuScriptManager = new MenuScriptManager(this)).saveDefaultFiles();
@@ -151,53 +143,6 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 		getLogger().info("Saving " + menuManager.size() + " menus...");
 		menuManager.writeMenusToFile();
 		getLogger().info("Saved.");
-	}
-
-	ItemFrame firstFrame;
-	ItemFrame secondFrame;
-
-	@EventHandler
-	public void on(final PlayerInteractEntityEvent event) {
-		if (!event.getPlayer().isSneaking()) { return; }
-		final String name = "testMenu" + System.currentTimeMillis();
-
-		if (event.getHand() != EquipmentSlot.HAND) { return; }
-		//		menuManager.menuMap.clear();
-
-		if (firstFrame == null) {
-			firstFrame = (ItemFrame) event.getRightClicked();
-			event.getPlayer().sendMessage("> set #1");
-			return;
-		}
-		if (secondFrame == null) {
-			secondFrame = (ItemFrame) event.getRightClicked();
-			event.getPlayer().sendMessage("> set #2");
-			event.getPlayer().sendMessage("generating...");
-			Bukkit.getScheduler().runTaskLater(this, new Runnable() {
-				@Override
-				public void run() {
-					ScriptMapMenu mapMenu = menuManager.createMenu(name, firstFrame, secondFrame, "Example-PlayerStats");
-
-					System.out.println(new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create().toJson(menuManager));
-
-					CursorPosition cursorPosition = CursorPosition.calculateFor(event.getPlayer(), mapMenu);
-					System.out.println(cursorPosition);
-				}
-			}, 20);
-			return;
-		}
-
-		firstFrame = null;
-		secondFrame = null;
-
-		event.getPlayer().sendMessage("> reset");
-	}
-
-	@EventHandler
-	public void on(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
-		//		CursorPosition cursorPosition = CursorPosition.calculateFor(player);
-		//		System.out.println(cursorPosition);
 	}
 
 }
