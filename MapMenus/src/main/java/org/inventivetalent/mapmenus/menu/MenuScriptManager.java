@@ -41,7 +41,10 @@ public class MenuScriptManager extends ScriptManagerAbstract {
 
 	@Override
 	protected String[] getDefaultFiles() {
-		return new String[] { "ExampleMenu.js" };
+		return new String[] {
+				"ExampleMenu.js",
+				"Example-PlayerStats.js",
+				"Example-ServerStats.js" };
 	}
 
 }
