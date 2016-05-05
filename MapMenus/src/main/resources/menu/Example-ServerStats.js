@@ -29,8 +29,6 @@ function tick() {
     renderer.refresh();
   }
   ticks++;
-
-  print(ticks);
 }
 
 function render(graphics, player) {
