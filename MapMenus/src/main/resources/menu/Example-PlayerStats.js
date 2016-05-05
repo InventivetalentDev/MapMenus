@@ -20,8 +20,6 @@ function tick() {
     renderer.refresh();
   }
   ticks++;
-
-  print(ticks);
 }
 
 function render(graphics, player) {
@@ -65,7 +63,6 @@ function render(graphics, player) {
   graphics.setColor(JavaColor.BLACK);
   graphics.drawString("TimePlayed: ", float2int((bounds.width / 2) + 10), 100)
   graphics.setColor(JavaColor.GREEN);
-  //graphics.drawString(""+float2int((JavaSystem.currentTimeMillis()-player.getFirstPlayed())/1000), float2int((bounds.width/2)+90), 100);
   graphics.drawString("" + millisToDaysHoursMinutesSeconds(JavaSystem.currentTimeMillis() - player.getFirstPlayed()), float2int((bounds.width / 2) + 90), 100);
 }
 
