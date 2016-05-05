@@ -44,6 +44,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.inventivetalent.boundingbox.BoundingBoxAPI;
+import org.inventivetalent.eventcallbacks.PlayerEventCallback;
 import org.inventivetalent.mapmanager.controller.MapController;
 import org.inventivetalent.mapmenus.*;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
@@ -386,9 +387,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 	public void requestKeyboardInput(final Player player, final Object invocable, final boolean cancelMessage) {
 		if (invocable instanceof JSObject) {
-			MapMenusPlugin.instance.inputListener.listenForChat(player, new Callback<AsyncPlayerChatEvent>() {
+			MapMenusPlugin.instance.eventCallbacks.listenFor(AsyncPlayerChatEvent.class, new PlayerEventCallback<AsyncPlayerChatEvent>(player) {
 				@Override
-				public void call(AsyncPlayerChatEvent event) {
+				public void callPlayer(AsyncPlayerChatEvent event) {
 					String message = null;
 					if (event != null) {
 						message = event.getMessage();
@@ -410,9 +411,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 	public void requestCommandInput(Player player, final Object invocable, final boolean cancelCommand) {
 		if (invocable instanceof JSObject) {
-			MapMenusPlugin.instance.inputListener.listenForCommand(player, new Callback<PlayerCommandPreprocessEvent>() {
+			MapMenusPlugin.instance.eventCallbacks.listenFor(PlayerCommandPreprocessEvent.class, new PlayerEventCallback<PlayerCommandPreprocessEvent>(player) {
 				@Override
-				public void call(PlayerCommandPreprocessEvent event) {
+				public void callPlayer(PlayerCommandPreprocessEvent event) {
 					String message = null;
 					if (event != null) {
 						message = event.getMessage();
@@ -434,9 +435,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 	public void requestMovementInput(final Player player, final Object invocable, final boolean cancelMove) {
 		if (invocable instanceof JSObject) {
-			MapMenusPlugin.instance.inputListener.listenForMove(player, new Callback<PlayerMoveEvent>() {
+			MapMenusPlugin.instance.eventCallbacks.listenFor(PlayerMoveEvent.class, new PlayerEventCallback<PlayerMoveEvent>(player) {
 				@Override
-				public void call(PlayerMoveEvent event) {
+				public void callPlayer(PlayerMoveEvent event) {
 					Location moveDiff = null;
 					if (event != null && event.getFrom().getWorld() == event.getTo().getWorld()) {
 						double x = event.getTo().getX() - event.getFrom().getX();

@@ -39,6 +39,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.inventivetalent.eventcallbacks.EventCallbacks;
 import org.inventivetalent.mapmanager.MapManagerPlugin;
 import org.inventivetalent.mapmanager.manager.MapManager;
 import org.inventivetalent.mapmenus.command.MenuCommands;
@@ -69,7 +70,8 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 	public PlaceholderProvider placeholderProvider;
 
-	public InputListener inputListener;
+//	public InputListener inputListener;
+	public EventCallbacks eventCallbacks;
 
 	SpigetUpdate spigetUpdate;
 	public boolean updateAvailable;
@@ -94,7 +96,8 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 
 		Bukkit.getPluginManager().registerEvents(new MenuInteractListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
-		Bukkit.getPluginManager().registerEvents(inputListener = new InputListener(this), this);
+//		Bukkit.getPluginManager().registerEvents(inputListener = new InputListener(this), this);
+		this.eventCallbacks = EventCallbacks.of(this);
 
 		(menuScriptManager = new MenuScriptManager(this)).saveDefaultFiles();
 		(componentScriptManager = new ComponentScriptManager(this)).saveDefaultFiles();

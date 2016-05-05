@@ -36,7 +36,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.inventivetalent.mapmenus.Callback;
+import org.inventivetalent.eventcallbacks.PlayerEventCallback;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
@@ -120,9 +120,9 @@ public class MenuCommands {
 
 		sender.sendMessage("  ");
 		sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.first", "create.setup.first"));
-		plugin.inputListener.listenForEntityInteract(sender, new Callback<PlayerInteractEntityEvent>() {
+		plugin.eventCallbacks.listenFor(PlayerInteractEntityEvent.class, new PlayerEventCallback<PlayerInteractEntityEvent>(sender) {
 			@Override
-			public void call(PlayerInteractEntityEvent event) {
+			public void callPlayer(PlayerInteractEntityEvent event) {
 				if (event != null && event.getRightClicked().getType() == EntityType.ITEM_FRAME) {
 					final ItemFrame firstFrame = (ItemFrame) event.getRightClicked();
 					sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.set.first", "create.setup.set.first"));
@@ -132,9 +132,9 @@ public class MenuCommands {
 						@Override
 						public void run() {
 							sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.second", "create.setup.second"));
-							plugin.inputListener.listenForEntityInteract(sender, new Callback<PlayerInteractEntityEvent>() {
+							plugin.eventCallbacks.listenFor(PlayerInteractEntityEvent.class, new PlayerEventCallback<PlayerInteractEntityEvent>(sender) {
 								@Override
-								public void call(final PlayerInteractEntityEvent event) {
+								public void callPlayer(PlayerInteractEntityEvent event) {
 									if (event != null && event.getRightClicked().getType() == EntityType.ITEM_FRAME) {
 										final ItemFrame secondFrame = (ItemFrame) event.getRightClicked();
 										sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.set.second", "create.setup.set.second"));

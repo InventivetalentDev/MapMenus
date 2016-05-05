@@ -90,6 +90,7 @@
                                     <include>org.inventivetalent:pluginannotations**</include>
                                     <include>org.inventivetalent:frame-map-util**</include>
                                     <include>org.inventivetalent.spiget-update:bukkit**</include>
+                                    <include>org.inventivetalent:eventcallbacks**</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -179,6 +180,11 @@
             <groupId>org.inventivetalent.spiget-update</groupId>
             <artifactId>bukkit</artifactId>
             <version>[1.0.1,)</version>
+        </dependency>
+        <dependency>
+            <groupId>org.inventivetalent</groupId>
+            <artifactId>eventcallbacks</artifactId>
+            <version>[1.0.0,)</version>
         </dependency>
 
         <dependency>
