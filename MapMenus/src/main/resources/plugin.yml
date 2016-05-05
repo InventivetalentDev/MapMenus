@@ -1,6 +1,6 @@
 name: MapMenus
 main: org.inventivetalent.mapmenus.MapMenusPlugin
 author: inventivetalent
-version: ${project.version}
+version: 1.0.0
 
 softdepend: [PacketListenerApi, MapManager, PlaceholderAPI]

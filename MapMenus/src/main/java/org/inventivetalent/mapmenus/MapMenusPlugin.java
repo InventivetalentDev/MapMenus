@@ -31,7 +31,9 @@ package org.inventivetalent.mapmenus;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.eventcallbacks.EventCallbacks;
 import org.inventivetalent.mapmanager.MapManagerPlugin;
@@ -143,6 +145,23 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 		getLogger().info("Saving " + menuManager.size() + " menus...");
 		menuManager.writeMenusToFile();
 		getLogger().info("Saved.");
+	}
+
+	@EventHandler
+	public void on(final PlayerJoinEvent event) {
+		if (event.getPlayer().hasPermission("mapmenus.updatecheck")) {
+			spigetUpdate.checkForUpdate(new UpdateCallback() {
+				@Override
+				public void updateAvailable(String s, String s1, boolean b) {
+					updateAvailable = true;
+					event.getPlayer().sendMessage("§aA new version for §6MapMenus §ais available (§7v" + s + "§a). Download it from https://r.spiget.org/3131");
+				}
+
+				@Override
+				public void upToDate() {
+				}
+			});
+		}
 	}
 
 }
