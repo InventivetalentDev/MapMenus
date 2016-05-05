@@ -34,6 +34,9 @@ import org.inventivetalent.scriptconfig.api.ScriptConfig;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.*;
 
 public abstract class ScriptManagerAbstract {
@@ -49,7 +52,20 @@ public abstract class ScriptManagerAbstract {
 
 	public void saveDefaultFiles() {
 		for (String s : getDefaultFiles()) {
-			plugin.saveResource(new File(this.directory, s).toString().substring("plugins/MapMenus/".length()), false);
+			String resourcePath = new File(this.directory, s).toString().substring("plugins/MapMenus/".length());
+			File file = new File(plugin.getDataFolder(),resourcePath);
+			File directory = file.getParentFile();
+
+			if (!directory.exists()) { directory.mkdirs(); }
+			if (!file.exists()) {
+				try {
+					try (InputStream in = plugin.getResource(resourcePath.replace('\\', '/'))) {
+						Files.copy(in, file.toPath());
+					}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
 		}
 	}
 
