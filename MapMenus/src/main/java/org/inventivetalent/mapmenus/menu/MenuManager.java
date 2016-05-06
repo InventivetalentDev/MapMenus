@@ -75,6 +75,11 @@ public class MenuManager {
 	}
 
 	@Synchronized
+	public ScriptMapMenu getMenu(String name) {
+		return menuMap.get(name);
+	}
+
+	@Synchronized
 	public boolean doesMenuExist(String name) {
 		return menuMap.containsKey(name);
 	}

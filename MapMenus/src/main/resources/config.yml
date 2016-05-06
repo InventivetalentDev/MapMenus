@@ -15,6 +15,8 @@ message:
         created: "&aMenu created."
     remove:
       removed: "&aMenu removed"
+    reload:
+      reloaded: "&aMenu script reloaded"
     error:
       create:
         exists: "&cMenu already exists"

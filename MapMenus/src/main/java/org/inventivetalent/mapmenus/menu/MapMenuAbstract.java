@@ -91,5 +91,6 @@ public abstract class MapMenuAbstract extends BaseFrameMapAbstract implements IR
 		return new HashSet<>(components.values());
 	}
 
+
 }
 

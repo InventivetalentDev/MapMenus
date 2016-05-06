@@ -50,6 +50,7 @@ import org.inventivetalent.vectors.d3.Vector3DDouble;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class MenuCommands {
@@ -188,7 +189,7 @@ public class MenuCommands {
 	}
 
 	@Completion(name = "removemenu")
-	public void removeMenu(final List<String> completions, final String name) {
+	public void removeMenu(final List<String> completions,final CommandSender sender, final String name) {
 		for (ScriptMapMenu menu : plugin.menuManager.getMenus()) {
 			completions.add(menu.getName());
 		}
@@ -227,5 +228,41 @@ public class MenuCommands {
 			}
 		}
 	}
+
+
+	@Command(name="reloadmenu",
+			 aliases = {
+					 "reloadmapmenus","mapmenureload",
+					 "mmrl"
+			 },
+			 usage="<Name>",
+			 min = 1,max=1,fallbackPrefix = "mapmenus")
+	@Permission("mapmenus.reloadmenu")
+	public void reloadMenu(final CommandSender sender, final String name) {
+		if (!plugin.menuManager.doesMenuExist(name)) {
+			sender.sendMessage(MESSAGE_LOADER.getMessage("error.remove.notFound", "error.remove.notFound"));
+			return;
+		}
+		final ScriptMapMenu menu = plugin.menuManager.getMenu(name);
+		// Dispose existing components
+		for (UUID componentId : menu.getComponentIds()) {
+			menu.getComponent(componentId).dispose();
+		}
+
+		menu.renderer.dispose();
+
+		menu.initRenderer();
+		menu.reloadScript();
+
+		sender.sendMessage(MESSAGE_LOADER.getMessage("reload.reloaded","reload.reloaded"));
+	}
+
+	@Completion(name = "reloadmenu")
+	public void reloadMenu(final List<String> completions,final CommandSender sender, final String name) {
+		for (ScriptMapMenu menu : plugin.menuManager.getMenus()) {
+			completions.add(menu.getName());
+		}
+	}
+
 
 }
