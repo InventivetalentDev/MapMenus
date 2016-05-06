@@ -46,7 +46,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.inventivetalent.boundingbox.BoundingBoxAPI;
 import org.inventivetalent.eventcallbacks.PlayerEventCallback;
 import org.inventivetalent.mapmanager.controller.MapController;
-import org.inventivetalent.mapmenus.*;
+import org.inventivetalent.mapmenus.MapMenusPlugin;
+import org.inventivetalent.mapmenus.MenuScriptExecutionException;
+import org.inventivetalent.mapmenus.MoveDirection;
+import org.inventivetalent.mapmenus.TimingsHelper;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.component.AnonymousScriptComponent;
 import org.inventivetalent.mapmenus.component.FileScriptComponent;
@@ -56,6 +59,7 @@ import org.inventivetalent.mapmenus.menu.data.MapperData;
 import org.inventivetalent.mapmenus.menu.data.MapperStates;
 import org.inventivetalent.mapmenus.menu.data.ScriptMenuData;
 import org.inventivetalent.mapmenus.menu.data.ScriptMenuStates;
+import org.inventivetalent.mapmenus.provider.MenuProviders;
 import org.inventivetalent.mapmenus.render.IFrameContainer;
 import org.inventivetalent.mapmenus.render.Renderer;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
@@ -102,11 +106,12 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	int componentCounter = 1;
 
 	// Script references
-	public         ScriptMapMenu       menu         = this;
-	@Expose public ScriptOptions       options      = new ScriptOptions();
-	@Expose public ScriptMenuData      data         = new ScriptMenuData();
-	@Expose public ScriptMenuStates    states       = new ScriptMenuStates();
-	public         PlaceholderProvider placeholders = MapMenusPlugin.instance.placeholderProvider;
+	public         ScriptMapMenu    menu      = this;
+	@Expose public ScriptOptions    options   = new ScriptOptions();
+	@Expose public ScriptMenuData   data      = new ScriptMenuData();
+	@Expose public ScriptMenuStates states    = new ScriptMenuStates();
+	public         MenuProviders    providers = MapMenusPlugin.instance.menuProviders;
+	//	public         PlaceholderProvider placeholders = MapMenusPlugin.instance.placeholderProvider;
 
 	public ScriptMapMenu(@NonNull ItemFrame baseFrame, @NonNull Vector3DDouble firstCorner, @NonNull Vector3DDouble secondCorner, @NonNull String name) {
 		super(baseFrame, firstCorner, secondCorner);
@@ -213,7 +218,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		this.script.setVariable("options", this.options);
 		this.script.setVariable("data", this.data);
 		this.script.setVariable("states", this.states);
-		this.script.setVariable("placeholders", this.placeholders);
+		this.script.setVariable("providers", this.providers);
+		//		this.script.setVariable("placeholders", this.placeholders);
 	}
 
 	/*

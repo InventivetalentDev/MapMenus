@@ -32,12 +32,12 @@ import lombok.*;
 import org.bukkit.entity.Player;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.MenuScriptExecutionException;
-import org.inventivetalent.mapmenus.PlaceholderProvider;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.inventivetalent.mapmenus.menu.data.IData;
 import org.inventivetalent.mapmenus.menu.data.IStates;
+import org.inventivetalent.mapmenus.provider.MenuProviders;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
 import org.inventivetalent.scriptconfig.RuntimeScriptException;
 
@@ -71,8 +71,9 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 	public ScriptMapMenu menu;
 	public IData         data;
 	public IStates       states;
-	public ScriptComponentAbstract component    = this;
-	public PlaceholderProvider     placeholders = MapMenusPlugin.instance.placeholderProvider;
+	public ScriptComponentAbstract component = this;
+	public MenuProviders           providers = MapMenusPlugin.instance.menuProviders;
+	//	public PlaceholderProvider     placeholders = MapMenusPlugin.instance.placeholderProvider;
 
 	public ScriptComponentAbstract(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds) {
 		super(uuid, parentBounds, bounds);
