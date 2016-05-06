@@ -38,6 +38,7 @@ import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.inventivetalent.mapmenus.menu.data.IData;
 import org.inventivetalent.mapmenus.menu.data.IStates;
 import org.inventivetalent.mapmenus.provider.MenuProviders;
+import org.inventivetalent.mapmenus.provider.internal.PlaceholderProvider;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
 import org.inventivetalent.scriptconfig.RuntimeScriptException;
 
@@ -71,9 +72,9 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 	public ScriptMapMenu menu;
 	public IData         data;
 	public IStates       states;
-	public ScriptComponentAbstract component = this;
-	public MenuProviders           providers = MapMenusPlugin.instance.menuProviders;
-	//	public PlaceholderProvider     placeholders = MapMenusPlugin.instance.placeholderProvider;
+	public ScriptComponentAbstract component    = this;
+	public MenuProviders           providers    = MapMenusPlugin.instance.menuProviders;
+	public PlaceholderProvider     placeholders = providers.get("Placeholders");
 
 	public ScriptComponentAbstract(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds) {
 		super(uuid, parentBounds, bounds);

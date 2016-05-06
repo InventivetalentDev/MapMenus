@@ -107,7 +107,8 @@ public class FileScriptComponent extends ScriptComponentAbstract implements IScr
 		this.script.setVariable("data", this.data);
 		this.script.setVariable("states", this.states);
 		this.script.setVariable("providers", this.providers);
-//		this.script.setVariable("placeholders", this.placeholders);
+
+		this.script.setVariable("placeholders", this.placeholders);
 	}
 
 	@Override

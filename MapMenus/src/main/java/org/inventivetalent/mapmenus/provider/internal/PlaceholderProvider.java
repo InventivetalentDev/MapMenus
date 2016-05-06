@@ -26,21 +26,26 @@
  *  either expressed or implied, of anybody else.
  */
 
-package org.inventivetalent.mapmenus;
+package org.inventivetalent.mapmenus.provider.internal;
 
 import lombok.Synchronized;
 import org.bukkit.entity.Player;
+import org.inventivetalent.mapmenus.provider.MenuProvider;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class PlaceholderProvider {
+public class PlaceholderProvider extends MenuProvider {
 
-	private MapMenusPlugin plugin;
 	private final Set<IPlaceholderReplacer> replacers = new HashSet<>();
 
-	public PlaceholderProvider(MapMenusPlugin plugin) {
-		this.plugin = plugin;
+	public PlaceholderProvider() {
+		super("Placeholders");
+	}
+
+	@Override
+	public String getAuthor() {
+		return "inventivetalent";
 	}
 
 	@Synchronized
@@ -50,7 +55,6 @@ public class PlaceholderProvider {
 
 	@Synchronized
 	public String replace(Player player, String string) {
-		System.out.println("replace "+string);
 		for (IPlaceholderReplacer replacer : this.replacers)
 			string = replacer.replace(player, string);
 		return string;

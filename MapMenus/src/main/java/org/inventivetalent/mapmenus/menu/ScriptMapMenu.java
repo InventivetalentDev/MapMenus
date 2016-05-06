@@ -60,6 +60,7 @@ import org.inventivetalent.mapmenus.menu.data.MapperStates;
 import org.inventivetalent.mapmenus.menu.data.ScriptMenuData;
 import org.inventivetalent.mapmenus.menu.data.ScriptMenuStates;
 import org.inventivetalent.mapmenus.provider.MenuProviders;
+import org.inventivetalent.mapmenus.provider.internal.PlaceholderProvider;
 import org.inventivetalent.mapmenus.render.IFrameContainer;
 import org.inventivetalent.mapmenus.render.Renderer;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
@@ -106,12 +107,12 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	int componentCounter = 1;
 
 	// Script references
-	public         ScriptMapMenu    menu      = this;
-	@Expose public ScriptOptions    options   = new ScriptOptions();
-	@Expose public ScriptMenuData   data      = new ScriptMenuData();
-	@Expose public ScriptMenuStates states    = new ScriptMenuStates();
-	public         MenuProviders    providers = MapMenusPlugin.instance.menuProviders;
-	//	public         PlaceholderProvider placeholders = MapMenusPlugin.instance.placeholderProvider;
+	public         ScriptMapMenu       menu         = this;
+	@Expose public ScriptOptions       options      = new ScriptOptions();
+	@Expose public ScriptMenuData      data         = new ScriptMenuData();
+	@Expose public ScriptMenuStates    states       = new ScriptMenuStates();
+	public         MenuProviders       providers    = MapMenusPlugin.instance.menuProviders;
+	public         PlaceholderProvider placeholders = providers.get("Placeholders");
 
 	public ScriptMapMenu(@NonNull ItemFrame baseFrame, @NonNull Vector3DDouble firstCorner, @NonNull Vector3DDouble secondCorner, @NonNull String name) {
 		super(baseFrame, firstCorner, secondCorner);
@@ -219,7 +220,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		this.script.setVariable("data", this.data);
 		this.script.setVariable("states", this.states);
 		this.script.setVariable("providers", this.providers);
-		//		this.script.setVariable("placeholders", this.placeholders);
+
+		this.script.setVariable("placeholders", this.placeholders);
 	}
 
 	/*

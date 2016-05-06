@@ -42,6 +42,8 @@ import org.inventivetalent.mapmenus.command.MenuCommands;
 import org.inventivetalent.mapmenus.component.ComponentScriptManager;
 import org.inventivetalent.mapmenus.menu.MenuManager;
 import org.inventivetalent.mapmenus.menu.MenuScriptManager;
+import org.inventivetalent.mapmenus.provider.MenuProviders;
+import org.inventivetalent.mapmenus.provider.internal.PlaceholderProvider;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
 import org.inventivetalent.pluginannotations.config.ConfigValue;
 import org.inventivetalent.scriptconfig.ScriptConfigProvider;
@@ -62,7 +64,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 	public MenuScriptManager      menuScriptManager;
 	public ComponentScriptManager componentScriptManager;
 
-	public PlaceholderProvider placeholderProvider;
+	public MenuProviders menuProviders;
 
 	//	public InputListener inputListener;
 	public EventCallbacks eventCallbacks;
@@ -96,10 +98,12 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 		(menuScriptManager = new MenuScriptManager(this)).saveDefaultFiles();
 		(componentScriptManager = new ComponentScriptManager(this)).saveDefaultFiles();
 
-		placeholderProvider = new PlaceholderProvider(this);
+		menuProviders = new MenuProviders(this);
+		// Internal providers
+		new PlaceholderProvider().register();
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			getLogger().info("Found PlaceholderAPI!");
-			placeholderProvider.addReplacer(new PlaceholderProvider.IPlaceholderReplacer() {
+			((PlaceholderProvider) menuProviders.get("Placeholders")).addReplacer(new PlaceholderProvider.IPlaceholderReplacer() {
 				@Override
 				public String replace(Player player, String string) {
 					return PlaceholderAPI.setPlaceholders(player, string);
