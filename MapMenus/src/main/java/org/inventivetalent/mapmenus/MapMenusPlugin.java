@@ -43,6 +43,7 @@ import org.inventivetalent.mapmenus.component.ComponentScriptManager;
 import org.inventivetalent.mapmenus.menu.MenuManager;
 import org.inventivetalent.mapmenus.menu.MenuScriptManager;
 import org.inventivetalent.mapmenus.provider.MenuProviders;
+import org.inventivetalent.mapmenus.provider.internal.EventProvider;
 import org.inventivetalent.mapmenus.provider.internal.PlaceholderProvider;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
 import org.inventivetalent.pluginannotations.config.ConfigValue;
@@ -110,6 +111,7 @@ public class MapMenusPlugin extends JavaPlugin implements Listener {
 				}
 			});
 		}
+		new EventProvider(this).register();
 
 		getLogger().fine("Waiting 5 seconds before loading menus...");
 		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
