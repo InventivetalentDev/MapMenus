@@ -1,6 +1,6 @@
 var JavaColor = Java.type("java.awt.Color");
 var Bukkit = Java.type("org.bukkit.Bukkit");
-var MinecraftServer = Java.type("net.minecraft.server.v1_9_R1.MinecraftServer"); // Note: change the version to your server version
+var MinecraftServer = Java.type(providers.get("Reflection").getNMSClass("MinecraftServer"));
 
 var onlinePlayers = "0";
 var tps = "0";

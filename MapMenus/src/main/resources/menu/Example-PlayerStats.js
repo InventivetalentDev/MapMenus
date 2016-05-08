@@ -1,7 +1,6 @@
 var JavaColor = Java.type("java.awt.Color");
 var JavaSystem = Java.type("java.lang.System");
 var Bukkit = Java.type("org.bukkit.Bukkit");
-var MinecraftServer = Java.type("net.minecraft.server.v1_9_R1.MinecraftServer"); // Note: change the version to your server version
 
 
 var ticks = 9;
