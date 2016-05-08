@@ -1,6 +1,5 @@
 debug:
   enabled: false
-  particles: false
 
 message:
   command:
