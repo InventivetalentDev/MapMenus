@@ -40,6 +40,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.inventivetalent.mapmanager.event.MapInteractEvent;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
+import org.inventivetalent.reflection.minecraft.Minecraft;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
 import java.util.Set;
@@ -72,7 +73,9 @@ public class MenuInteractListener implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
-		if (event.getHand() != EquipmentSlot.HAND) { return; }
+		if (Minecraft.VERSION.newerThan(Minecraft.Version.v1_9_R1)) {
+			if (event.getHand() != EquipmentSlot.HAND) { return; }
+		}
 
 		int actionId = 0;
 		switch (event.getAction()) {
