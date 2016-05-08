@@ -13,7 +13,7 @@ function tick() {
   if (ticks > 1) {
     renderer.render();
   }
-  if (ticks > 10) {
+  if (ticks > 5) {
     ticks = 0;
 
     renderer.refresh();
