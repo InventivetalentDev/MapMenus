@@ -35,7 +35,7 @@ function render(graphics, player) {
     });
   } else {
     var avatarData = data.get("Avatar", player);
-    renderer.drawImageData(graphics, avatarData, 0, 0, Math.round(bounds.width / 2), Math.round(bounds.height / 2));
+    renderer.drawImageData(graphics, avatarData, 0, 0, Math.max(128, Math.round(bounds.width / 2)), Math.max(128, Math.round(bounds.height / 2)));
   }
 
 
