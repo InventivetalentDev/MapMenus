@@ -127,6 +127,13 @@ public class ScriptMenuStates implements IStates {
 		stateMap.put(key, entries);
 	}
 
+	@Override
+	public void deleteAll(String key) {
+		if (key == null) { return; }
+		if (!stateMap.containsKey(key)) { return; }
+		stateMap.remove(key);
+	}
+
 	@Data
 	@AllArgsConstructor
 	@RequiredArgsConstructor

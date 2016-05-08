@@ -30,8 +30,6 @@ package org.inventivetalent.mapmenus.menu.data;
 
 import org.bukkit.entity.Player;
 
-import java.awt.*;
-
 public interface IStates extends IPlayerStorage {
 
 	void put(String key, Player player, long ttl);
@@ -43,5 +41,7 @@ public interface IStates extends IPlayerStorage {
 	boolean toggle(String key, Player player);
 
 	boolean get(String key, Player player);
+
+	void deleteAll(String key);
 
 }

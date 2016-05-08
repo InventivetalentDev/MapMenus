@@ -73,4 +73,9 @@ public class MapperStates implements IStates {
 	public void delete(String key, Player player) {
 		parentStates.delete(formatKey(key), player);
 	}
+
+	@Override
+	public void deleteAll(String key) {
+		parentStates.deleteAll(key);
+	}
 }
