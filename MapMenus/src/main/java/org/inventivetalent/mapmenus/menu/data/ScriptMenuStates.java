@@ -141,6 +141,27 @@ public class ScriptMenuStates implements IStates {
 		stateMap.remove(key);
 	}
 
+	@Override
+	@Synchronized
+	public void deleteAllExcept(String key, Player... exceptions) {
+		if (key == null) { return; }
+		if (exceptions == null || exceptions.length == 0) {
+			deleteAll(key);
+			return;
+		}
+		if (!stateMap.containsKey(key)) { return; }
+		Collection<StateEntry> entries = stateMap.get(key);
+		for (Iterator<StateEntry> iterator = entries.iterator(); iterator.hasNext(); ) {
+			StateEntry entry = iterator.next();
+			for (Player player : exceptions) {
+				if (!player.getUniqueId().equals(entry.getPlayer())) {
+					iterator.remove();
+				}
+			}
+		}
+		stateMap.put(key, entries);
+	}
+
 	@Data
 	@AllArgsConstructor
 	@RequiredArgsConstructor

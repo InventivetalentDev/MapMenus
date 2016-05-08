@@ -78,4 +78,9 @@ public class MapperStates implements IStates {
 	public void deleteAll(String key) {
 		parentStates.deleteAll(key);
 	}
+
+	@Override
+	public void deleteAllExcept(String key, Player... exceptions) {
+		parentStates.deleteAllExcept(key, exceptions);
+	}
 }

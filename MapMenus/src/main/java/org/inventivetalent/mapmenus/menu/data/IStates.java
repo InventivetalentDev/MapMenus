@@ -32,16 +32,64 @@ import org.bukkit.entity.Player;
 
 public interface IStates extends IPlayerStorage {
 
+	/**
+	 * Sets a state to <code>true</code>
+	 *
+	 * @param key    state key
+	 * @param player state player
+	 * @param ttl    TimeToLive
+	 */
 	void put(String key, Player player, long ttl);
 
+	/**
+	 * Sets a state to <code>true</code>
+	 *
+	 * @param key    state key
+	 * @param player state player
+	 */
 	void put(String key, Player player);
 
+	/**
+	 * Toggles a state
+	 *
+	 * @param key    state key
+	 * @param player state player
+	 * @param ttl    TimeToLive
+	 * @return the new state (<code>true</code>/<code>false</code>)
+	 */
 	boolean toggle(String key, Player player, long ttl);
 
+	/**
+	 * Toggles a state
+	 *
+	 * @param key    state key
+	 * @param player state player
+	 * @return the new state (<code>true</code>/<code>false</code>)
+	 */
 	boolean toggle(String key, Player player);
 
+	/**
+	 * Get a state
+	 *
+	 * @param key    state key
+	 * @param player state player
+	 * @return the state
+	 */
 	boolean get(String key, Player player);
 
+	/**
+	 * Deletes the state for all players
+	 *
+	 * @param key state key
+	 */
 	void deleteAll(String key);
+
+	/**
+	 * Deletes the state for all players, except for the specified players
+	 *
+	 * @param key        state key
+	 * @param exceptions players to not delete
+	 */
+	void deleteAllExcept(String key, Player... exceptions);
 
 }
