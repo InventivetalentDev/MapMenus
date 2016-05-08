@@ -1,6 +1,6 @@
 var JavaColor = Java.type("java.awt.Color");
 var Bukkit = Java.type("org.bukkit.Bukkit");
-var MinecraftServer = Java.type(providers.get("Reflection").getNMSClass("MinecraftServer"));
+var MinecraftServer;
 
 var onlinePlayers = "0";
 var tps = "0";
@@ -10,6 +10,9 @@ var world = "";
 var ticks = 9;
 
 function init() {
+    // Initialize this here, as we don't have access to the "providers" yet above
+    MinecraftServer = Java.type(providers.get("Reflection").getNMSClass("MinecraftServer"));
+
   options.tickSpeed = 20;
 
   world = menu.getWorldName();
