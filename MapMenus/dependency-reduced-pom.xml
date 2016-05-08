@@ -68,6 +68,14 @@
                   <pattern>org.inventivetalent.frameutil</pattern>
                   <shadedPattern>org.inventivetalent.mapmenus.util</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>org.inventivetalent.boundingbox</pattern>
+                  <shadedPattern>org.inventivetalent.mapmenus.boundingbox</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.inventivetalent.vectors</pattern>
+                  <shadedPattern>org.inventivetalent.mapmenus.vectors</shadedPattern>
+                </relocation>
               </relocations>
             </configuration>
           </execution>
