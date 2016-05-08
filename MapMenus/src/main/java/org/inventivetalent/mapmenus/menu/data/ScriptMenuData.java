@@ -31,6 +31,7 @@ package org.inventivetalent.mapmenus.menu.data;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
+import lombok.Synchronized;
 import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
@@ -45,6 +46,7 @@ public class ScriptMenuData implements IData {
 	@Expose public JsonObject storage = new JsonObject();
 
 	@Override
+	@Synchronized
 	public void put(String key, Object value) {
 		if (value == null) {
 			storage.remove(key);
@@ -54,6 +56,7 @@ public class ScriptMenuData implements IData {
 	}
 
 	@Override
+	@Synchronized
 	public void put(String key, Player player, Object value, long ttl) {
 		if (key == null || player == null) { return; }
 		if (value instanceof Boolean) {
@@ -78,10 +81,12 @@ public class ScriptMenuData implements IData {
 	}
 
 	@Override
+	@Synchronized
 	public void put(String key, Player player, Object value) {
 		put(key, player, value, -1);
 	}
 
+	@Synchronized
 	JsonObject getPlayerStorage(Player player) {
 		String objectKey = getPlayerKey(player);
 		JsonElement jsonElement = storage.get(objectKey);
@@ -97,11 +102,13 @@ public class ScriptMenuData implements IData {
 	}
 
 	@Override
+	@Synchronized
 	public void delete(String key) {
 		storage.remove(key);
 	}
 
 	@Override
+	@Synchronized
 	public void delete(String key, Player player) {
 		JsonObject playerStorage = getPlayerStorage(player);
 		playerStorage.remove(key);
@@ -110,12 +117,14 @@ public class ScriptMenuData implements IData {
 	}
 
 	@Override
+	@Synchronized
 	public Object get(String key) {
 		JsonElement jsonElement = storage.get(key);
 		return parseFromJson(jsonElement);
 	}
 
 	@Override
+	@Synchronized
 	public Object get(String key, Player player) {
 		JsonObject jsonObject = getPlayerStorage(player);
 		JsonElement entryElement = jsonObject.get(key);
@@ -132,11 +141,13 @@ public class ScriptMenuData implements IData {
 	}
 
 	@Override
+	@Synchronized
 	public boolean has(String key) {
 		return storage.has(key);
 	}
 
 	@Override
+	@Synchronized
 	public boolean has(String key, Player player) {
 		return getPlayerStorage(player).has(key);
 	}

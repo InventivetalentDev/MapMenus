@@ -34,7 +34,6 @@ import lombok.*;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class to store boolean-states specific to keys and players
@@ -43,14 +42,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @ToString
 public class ScriptMenuStates implements IStates {
 
-	@SerializedName("storage") @Expose public Map<String, Collection<StateEntry>> stateMap = new ConcurrentHashMap<>();
+	@SerializedName("storage") @Expose public Map<String, Collection<StateEntry>> stateMap = new HashMap<>();
 
 	@Override
+	@Synchronized
 	public void put(String key, Player player) {
 		put(key, player, -1);
 	}
 
 	@Override
+	@Synchronized
 	public void put(String key, Player player, long ttl) {
 		if (key == null || player == null) { return; }
 
@@ -67,11 +68,13 @@ public class ScriptMenuStates implements IStates {
 	}
 
 	@Override
+	@Synchronized
 	public boolean toggle(String key, Player player) {
 		return toggle(key, player, -1);
 	}
 
 	@Override
+	@Synchronized
 	public boolean toggle(String key, Player player, long ttl) {
 		boolean b = get(key, player);
 		if (!b) {
@@ -82,6 +85,7 @@ public class ScriptMenuStates implements IStates {
 		return !b;
 	}
 
+	@Synchronized
 	private StateEntry getEntry(String key, Player player) {
 		if (!stateMap.containsKey(key)) { return null; }
 		StateEntry entry = null;
@@ -106,6 +110,7 @@ public class ScriptMenuStates implements IStates {
 	}
 
 	@Override
+	@Synchronized
 	public boolean get(String key, Player player) {
 		if (key == null || player == null) { return false; }
 
@@ -113,6 +118,7 @@ public class ScriptMenuStates implements IStates {
 	}
 
 	@Override
+	@Synchronized
 	public void delete(String key, Player player) {
 		if (key == null || player == null) { return; }
 
@@ -128,6 +134,7 @@ public class ScriptMenuStates implements IStates {
 	}
 
 	@Override
+	@Synchronized
 	public void deleteAll(String key) {
 		if (key == null) { return; }
 		if (!stateMap.containsKey(key)) { return; }
