@@ -98,6 +98,10 @@
                                     <pattern>org.mcstats</pattern>
                                     <shadedPattern>org.inventivetalent.mapmenus.mcstats</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.inventivetalent.frameutil</pattern>
+                                    <shadedPattern>org.inventivetalent.mapmenus.util</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
