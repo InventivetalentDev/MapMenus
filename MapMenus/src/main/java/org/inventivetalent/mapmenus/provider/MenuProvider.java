@@ -37,24 +37,45 @@ public abstract class MenuProvider {
 
 	private final String name;
 
+	/**
+	 * Initialize a new provider
+	 *
+	 * @param name Name of the provider
+	 * @throws IllegalArgumentException if the name is null or empty
+	 */
 	public MenuProvider(@NonNull String name) {
-		if (name == null) { throw new IllegalArgumentException("provider name cannot be null"); }
+		if (name == null || name.isEmpty()) { throw new IllegalArgumentException("provider name cannot be null or empty"); }
 		this.name = name;
 	}
 
+	/**
+	 * Registers this provider
+	 *
+	 * @return <code>true</code> if the new provider was registered, <code>false</code> if the MapMenus plugin is disabled, or the provider is already registered
+	 */
 	public final boolean register() {
 		Plugin plugin = Bukkit.getPluginManager().getPlugin("MapMenus");
 		if (plugin == null || !plugin.isEnabled()) {
 			return false;
 		}
-		((MapMenusPlugin) plugin).menuProviders.registerProvider(this);
-		return true;
+		try {
+			((MapMenusPlugin) plugin).menuProviders.registerProvider(this);
+			return true;
+		} catch (Exception ignored) {
+		}
+		return false;
 	}
 
+	/**
+	 * @return The provider's name
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * @return The author of the provider
+	 */
 	public abstract String getAuthor();
 
 }

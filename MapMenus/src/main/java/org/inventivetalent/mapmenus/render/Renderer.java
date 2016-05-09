@@ -92,16 +92,30 @@ public class Renderer {
 		this.imageGraphics = menuImage.createGraphics();
 	}
 
+	/**
+	 * Renders & displays the menu for all players in the world
+	 */
 	public void render() {
 		for (Player player : frameContainer.getWorld().getPlayers()) {
 			render(player);
 		}
 	}
 
+	/**
+	 * Renders & displays the menu for a player
+	 *
+	 * @param player the player
+	 */
 	public void render(Player player) {
 		render(player, true);
 	}
 
+	/**
+	 * Renders and optionally displays the menu for a player
+	 *
+	 * @param player  the player
+	 * @param display whether to also display to menu
+	 */
 	public void render(Player player, boolean display) {
 		// Render the actual menu
 		TimingsHelper.startTiming("MapMenu:renderer:render");
@@ -125,6 +139,9 @@ public class Renderer {
 		}
 	}
 
+	/**
+	 * Refreshes the item frames the menu is displayed in
+	 */
 	public void refresh() {
 		TimingsHelper.startTiming("MapMenu:renderer:refresh");
 		frameContainer.refreshFrames();
@@ -143,6 +160,11 @@ public class Renderer {
 		TimingsHelper.stopTiming("MapMenu:renderer:refresh");
 	}
 
+	/**
+	 * Removes a viewer from the menu
+	 *
+	 * @param player player to remove
+	 */
 	public MapWrapper removeViewer(OfflinePlayer player) {
 		MapWrapper wrapper = wrapperMap.remove(player.getUniqueId());
 		if (wrapper != null) {
@@ -151,6 +173,11 @@ public class Renderer {
 		return wrapper;
 	}
 
+	/**
+	 * Sends the menu content to the player and shows it in the item frames
+	 *
+	 * @param player player to display the content to
+	 */
 	public void display(final Player player) {
 		MapWrapper mapWrapper = wrapperMap.get(player.getUniqueId());
 		final MultiMapController[] mapController = new MultiMapController[1];
@@ -182,6 +209,9 @@ public class Renderer {
 		}
 	}
 
+	/**
+	 * Removes all viewers from the menu & disposes it
+	 */
 	public void dispose() {
 		final int[][] frameIds = frameContainer.getItemFrameIds();
 		for (Map.Entry<UUID, MapWrapper> entry : wrapperMap.entrySet()) {
@@ -194,6 +224,16 @@ public class Renderer {
 
 	// Util render methods
 
+	/**
+	 * Draws a centered string
+	 *
+	 * @param graphics Graphics to draw with
+	 * @param x        x-position
+	 * @param y        y-position
+	 * @param width    width
+	 * @param height   height
+	 * @param text     string to draw
+	 */
 	public void drawStringCentered(Graphics graphics, int x, int y, int width, int height, String text) {
 		FontMetrics metrics = graphics.getFontMetrics(graphics.getFont());
 		x += (width - metrics.stringWidth(text)) / 2;
@@ -201,14 +241,37 @@ public class Renderer {
 		graphics.drawString(text, x, y);
 	}
 
+	/**
+	 * Draws a centered string
+	 *
+	 * @param graphics Graphics to draw with
+	 * @param bounds   bounds to draw in
+	 * @param text     string to draw
+	 */
 	public void drawStringCentered(Graphics graphics, FixedBounds bounds, String text) {
 		drawStringCentered(graphics, bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), text);
 	}
 
+	/**
+	 * Draws a centered string
+	 *
+	 * @param graphics Graphics to draw with
+	 * @param bounds   bounds to draw in
+	 * @param text     string to draw
+	 * @param xOffset  x-offset
+	 * @param yOffset  y-offset
+	 */
 	public void drawStringCentered(Graphics graphics, FixedBounds bounds, String text, int xOffset, int yOffset) {
 		drawStringCentered(graphics, bounds.getX() + xOffset, bounds.getY() + yOffset, bounds.getWidth(), bounds.getHeight(), text);
 	}
 
+	/**
+	 * Downloads an image as Base64 data
+	 *
+	 * @param source   image source URL
+	 * @param callback function to call when the image is downloaded
+	 * @see #drawImageData(Graphics2D, String, int, int, int, int)
+	 */
 	public void downloadImageData(final String source, final Callback<String> callback) {
 		if (source == null || source.isEmpty()) { callback.call(""); }
 		Bukkit.getScheduler().runTaskAsynchronously(MapMenusPlugin.instance, new Runnable() {
@@ -227,6 +290,17 @@ public class Renderer {
 		});
 	}
 
+	/**
+	 * Draws a Base64-encoded image
+	 *
+	 * @param graphics  Graphics to draw with
+	 * @param imageData data to draw
+	 * @param x         x-position
+	 * @param y         y-position
+	 * @param width     width
+	 * @param height    height
+	 * @see #downloadImageData(String, Callback)
+	 */
 	public void drawImageData(Graphics2D graphics, String imageData, int x, int y, int width, int height) {
 		if (imageData == null) { return; }
 		try {

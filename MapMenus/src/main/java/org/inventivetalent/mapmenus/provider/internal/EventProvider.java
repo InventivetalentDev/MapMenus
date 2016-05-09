@@ -35,6 +35,13 @@ import org.inventivetalent.eventcallbacks.EventCallbacks;
 import org.inventivetalent.mapmenus.provider.MenuProvider;
 import org.inventivetalent.reflection.resolver.ClassResolver;
 
+/**
+ * Provider to listen for events
+ * <p>
+ * Bukkit events can either be specified with their full package name, or just as the class name.
+ * <p>
+ * External events have to be specified as the full package name.
+ */
 public class EventProvider extends MenuProvider {
 
 	public static final String[]      EVENT_CLASS_FORMATS = {
@@ -65,6 +72,13 @@ public class EventProvider extends MenuProvider {
 		return "inventivetalent";
 	}
 
+	/**
+	 * Listens for an event
+	 *
+	 * @param eventClassName Name of the event class
+	 * @param priority       listener priority
+	 * @param callback       function to call when the event occurs
+	 */
 	public void listen(String eventClassName, EventPriority priority, EventCallback callback) {
 		Class eventClass = findEventClass(eventClassName);
 		if (eventClass == null) {
@@ -73,18 +87,43 @@ public class EventProvider extends MenuProvider {
 		this.eventCallbacks.listenFor(eventClass, priority, callback);
 	}
 
+	/**
+	 * Listens for an event
+	 *
+	 * @param eventClassName Name of the event class
+	 * @param callback       function to call when the event occurs
+	 */
 	public void listen(String eventClassName, EventCallback callback) {
 		listen(eventClassName, EventPriority.NORMAL, callback);
 	}
 
+	/**
+	 * Check if an event class exists
+	 *
+	 * @param eventClassName Name of the event class
+	 * @return <code>true</code> if the event exists
+	 */
 	public boolean doesEventExist(String eventClassName) {
 		return findEventClass(eventClassName) != null;
 	}
 
+	/**
+	 * Check if an event class exists
+	 *
+	 * @param eventClassName Name of the event class
+	 * @return <code>true</code> if the event exists
+	 * @see #doesEventExist(String)
+	 */
 	public boolean exists(String eventClassName) {
 		return doesEventExist(eventClassName);
 	}
 
+	/**
+	 * Attempts to find a event class
+	 *
+	 * @param className name of the class
+	 * @return the class, or <code>null</code>
+	 */
 	public Class<?> findEventClass(String className) {
 		String[] queries = new String[EVENT_CLASS_FORMATS.length];
 		for (int i = 0; i < queries.length; i++)

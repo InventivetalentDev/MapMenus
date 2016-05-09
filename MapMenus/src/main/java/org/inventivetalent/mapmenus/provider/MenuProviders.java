@@ -45,24 +45,52 @@ public class MenuProviders {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Registers a provider
+	 *
+	 * @param provider MenuProvider to register
+	 * @throws IllegalArgumentException if the provider is already registered
+	 * @see MenuProvider#register()
+	 */
 	@Synchronized
 	public void registerProvider(@NonNull MenuProvider provider) {
 		if (providerMap.containsKey(provider.getName())) { throw new IllegalArgumentException("Provider '" + provider.getName() + "' is already registered"); }
 		providerMap.put(provider.getName(), provider);
 	}
 
+	/**
+	 * Check if a provider is available
+	 *
+	 * @param name name of the provider
+	 * @return <code>true</code> if the provider is available, <code>false</code> otherwise
+	 */
 	@Synchronized
 	public boolean isAvailable(@Nullable String name) {
 		if (name == null) { return false; }
 		return providerMap.containsKey(name);
 	}
 
+	/**
+	 * Check if a provider is available
+	 *
+	 * @param name name of the provider
+	 * @return <code>true</code> if the provider is available, <code>false</code> otherwise
+	 * @see #isAvailable(String)
+	 */
 	@Synchronized
 	public boolean has(@Nullable String name) {
 		if (name == null) { return false; }
 		return providerMap.containsKey(name);
 	}
 
+	/**
+	 * Get a provider
+	 *
+	 * @param name name of the provider
+	 * @param <T>  (optional) type of the provider class
+	 * @return the provider if it is registered, <code>null</code> otherwise
+	 * @see #isAvailable(String)
+	 */
 	@Synchronized
 	public <T extends MenuProvider> T get(@NonNull String name) {
 		return (T) providerMap.get(name);
