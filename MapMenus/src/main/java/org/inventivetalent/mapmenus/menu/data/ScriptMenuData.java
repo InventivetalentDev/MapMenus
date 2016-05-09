@@ -76,8 +76,6 @@ public class ScriptMenuData implements IData {
 
 		playerStorage.add(key, entryObject);
 		storage.add(getPlayerKey(player), playerStorage);
-
-		System.out.println(storage);
 	}
 
 	@Override
