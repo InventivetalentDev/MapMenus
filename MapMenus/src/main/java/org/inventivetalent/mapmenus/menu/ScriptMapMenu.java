@@ -64,6 +64,8 @@ import org.inventivetalent.mapmenus.render.IFrameContainer;
 import org.inventivetalent.mapmenus.render.Renderer;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
 import org.inventivetalent.mapmenus.script.ScriptManagerAbstract;
+import org.inventivetalent.mapmenus.script.Scriptifier;
+import org.inventivetalent.mapmenus.script.Scriptify;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
 import org.inventivetalent.scriptconfig.RuntimeScriptException;
 import org.inventivetalent.scriptconfig.api.ScriptConfig;
@@ -87,8 +89,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	//	private static final Executor SCRIPT_TICK_EXECUTOR = Executors.newSingleThreadExecutor();
 	static final int[][] NULL_INT_ARRAY = new int[0][0];
 
-	@Expose private String   name;
-	public          Renderer renderer;
+	@Expose private String name;
 
 	protected HoverCallable hoverCallable;
 
@@ -106,12 +107,13 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	int componentCounter = 1;
 
 	// Script references
-	public         ScriptMapMenu       menu         = this;
-	@Expose public ScriptOptions       options      = new ScriptOptions();
-	@Expose public ScriptMenuData      data         = new ScriptMenuData();
-	@Expose public ScriptMenuStates    states       = new ScriptMenuStates();
-	public         MenuProviders       providers    = MapMenusPlugin.instance.menuProviders;
-	public         PlaceholderProvider placeholders = providers.get("Placeholders");
+	@Scriptify public ScriptMapMenu menu = this;
+	@Scriptify public Renderer renderer;
+	@Scriptify @Expose public ScriptOptions       options      = new ScriptOptions();
+	@Scriptify @Expose public ScriptMenuData      data         = new ScriptMenuData();
+	@Scriptify @Expose public ScriptMenuStates    states       = new ScriptMenuStates();
+	@Scriptify public         MenuProviders       providers    = MapMenusPlugin.instance.menuProviders;
+	@Scriptify public         PlaceholderProvider placeholders = providers.get("Placeholders");
 
 	public ScriptMapMenu(@NonNull ItemFrame baseFrame, @NonNull Vector3DDouble firstCorner, @NonNull Vector3DDouble secondCorner, @NonNull String name) {
 		super(baseFrame, firstCorner, secondCorner);
@@ -140,9 +142,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 				((ScriptComponentAbstract) component).data = new MapperData(this.data, "__comp#" + ((ScriptComponentAbstract) component).id + "__%s");
 				((ScriptComponentAbstract) component).states = new MapperStates(this.states, "__comp#" + ((ScriptComponentAbstract) component).id + "__%s");
 			}
-			if (component instanceof IScriptContainer) {
-				((IScriptContainer) component).reloadScript();
-			}
+//			if (component instanceof IScriptContainer) {
+//				((IScriptContainer) component).reloadScript();
+//			}
 		}
 	}
 
@@ -213,34 +215,37 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	}
 
 	void initScriptVariables() {
-		this.script.setVariable("menu", this);
-		this.script.setVariable("renderer", this.renderer);
-		this.script.setVariable("options", this.options);
-		this.script.setVariable("data", this.data);
-		this.script.setVariable("states", this.states);
-		this.script.setVariable("providers", this.providers);
-
-		this.script.setVariable("placeholders", this.placeholders);
+		//		this.script.setVariable("menu", this);
+		//		this.script.setVariable("renderer", this.renderer);
+		//		this.script.setVariable("options", this.options);
+		//		this.script.setVariable("data", this.data);
+		//		this.script.setVariable("states", this.states);
+		//		this.script.setVariable("providers", this.providers);
+		//
+		//		this.script.setVariable("placeholders", this.placeholders);
+		Scriptifier.scriptify(this, getScript().getScriptEngine());
 	}
 
 	/*
 	 * File Script Components
 	 */
 
-	public FileScriptComponent addComponent(String script, int x, int y, int width, int height) {
+	@Scriptify(targetVar = "menu")
+	public JSObject addComponent(String script, int x, int y, int width, int height) {
 		return addComponent(script, x, y, width, height, new Object[0]);
 	}
 
-	public FileScriptComponent addComponent(String script, int x, int y, int width, int height, Object... initArgs) {
+	@Scriptify(targetVar = "menu")
+	public JSObject addComponent(String script, int x, int y, int width, int height, Object... initArgs) {
 		return addComponent(script, new FixedBounds(x, y, width, height), initArgs);
 	}
 
-	public FileScriptComponent addComponent(String scriptName, FixedBounds bounds, Object[] initArgs) {
+	@Scriptify(targetVar = "menu")
+	public JSObject addComponent(String scriptName, FixedBounds bounds, Object[] initArgs) {
 		if (!MapMenusPlugin.instance.componentScriptManager.doesScriptExist(scriptName)) {
 			MapMenusPlugin.instance.getLogger().warning("Component Script '" + scriptName + "' does not exist");
 			return null;
 		}
-
 		tickLocked = true;
 
 		FileScriptComponent component = new FileScriptComponent(this.bounds, bounds, scriptName, initArgs);
@@ -250,32 +255,33 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		component.states = new MapperStates(this.states, "__comp#" + componentCounter + "__%s");
 		components.put(component.getUuid(), component);
 		component.reloadScript();
+		//		Scriptifier.scriptify(component, component.getScript().getScriptEngine());
 
 		tickLocked = false;
-		return component;
+		return (JSObject) component.getScript().getContent();
 	}
-
 
 	/*
 	 * Anonymous Script Components
 	 */
-
-	public AnonymousScriptComponent addComponent(int x, int y, int width, int height, Object function) {
+	@Scriptify(targetVar = "menu")
+	public JSObject addComponent(int x, int y, int width, int height, Object function) {
 		return addComponent(new FixedBounds(x, y, width, height), function);
 	}
 
-	public AnonymousScriptComponent addComponent(FixedBounds bounds, Object function) {
+	@Scriptify(targetVar = "menu")
+	public JSObject addComponent(FixedBounds bounds, Object function) {
 		if (function == null || !(function instanceof JSObject)) {
 			MapMenusPlugin.instance.getLogger().info("Menu " + getName() + " attempted to add anonymous component, but the parameter is no function (It's " + (function == null ? "null" : function.getClass()) + ")");
 			return null;
 		}
-
 		tickLocked = true;
 
 		AnonymousScriptComponent component = new AnonymousScriptComponent(this.bounds, bounds, (JSObject) function);
 		component.id = componentCounter++;
 		component.menu = this;
 		components.put(component.getUuid(), component);
+		Scriptifier.scriptify(component, component.getScript());
 		try {
 			component.init();
 		} catch (NoSuchFunctionException e) {
@@ -285,7 +291,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		}
 
 		tickLocked = false;
-		return component;
+		return component.getScript();
 	}
 
 	public ScriptComponentAbstract removeComponent(UUID uuid) {
@@ -297,6 +303,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		return component;
 	}
 
+	@Scriptify(targetVar = "menu")
 	public CursorPosition getCursorPosition(Player player) {
 		if (baseVector.distanceSquared(new Vector3DDouble(player.getLocation())) > 1024) {
 			return null;// Player is too far away
@@ -394,10 +401,12 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		MapMenusPlugin.instance.menuManager.removeMenu(this);
 	}
 
+	@Scriptify(targetVar = "menu")
 	public void requestKeyboardInput(Player player, Object invocable) {
 		requestKeyboardInput(player, invocable, true);
 	}
 
+	@Scriptify(targetVar = "menu")
 	public void requestKeyboardInput(final Player player, final Object invocable, final boolean cancelMessage) {
 		if (invocable instanceof JSObject) {
 			MapMenusPlugin.instance.eventCallbacks.listenFor(AsyncPlayerChatEvent.class, new PlayerEventCallback<AsyncPlayerChatEvent>(player) {
@@ -418,10 +427,12 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		}
 	}
 
+	@Scriptify(targetVar = "menu")
 	public void requestCommandInput(Player player, Object invocable) {
 		requestCommandInput(player, invocable, true);
 	}
 
+	@Scriptify(targetVar = "menu")
 	public void requestCommandInput(Player player, final Object invocable, final boolean cancelCommand) {
 		if (invocable instanceof JSObject) {
 			MapMenusPlugin.instance.eventCallbacks.listenFor(PlayerCommandPreprocessEvent.class, new PlayerEventCallback<PlayerCommandPreprocessEvent>(player) {
@@ -442,10 +453,12 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		}
 	}
 
+	@Scriptify(targetVar = "menu")
 	public void requestMovementInput(Player player, Object invocable) {
 		requestMovementInput(player, invocable, true);
 	}
 
+	@Scriptify(targetVar = "menu")
 	public void requestMovementInput(final Player player, final Object invocable, final boolean cancelMove) {
 		if (invocable instanceof JSObject) {
 			MapMenusPlugin.instance.eventCallbacks.listenFor(PlayerMoveEvent.class, new PlayerEventCallback<PlayerMoveEvent>(player) {

@@ -39,6 +39,7 @@ import org.inventivetalent.mapmenus.menu.data.IData;
 import org.inventivetalent.mapmenus.menu.data.IStates;
 import org.inventivetalent.mapmenus.provider.MenuProviders;
 import org.inventivetalent.mapmenus.provider.internal.PlaceholderProvider;
+import org.inventivetalent.mapmenus.script.Scriptify;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
 import org.inventivetalent.scriptconfig.RuntimeScriptException;
 
@@ -69,32 +70,36 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 	private boolean visible = true;
 
 	// Script references
-	public ScriptMapMenu menu;
-	public IData         data;
-	public IStates       states;
-	public ScriptComponentAbstract component    = this;
-	public MenuProviders           providers    = MapMenusPlugin.instance.menuProviders;
-	public PlaceholderProvider     placeholders = providers.get("Placeholders");
+	@Scriptify public ScriptMapMenu menu;
+	@Scriptify public IData         data;
+	@Scriptify public IStates       states;
+	@Scriptify public ScriptComponentAbstract component    = this;
+	@Scriptify public MenuProviders           providers    = MapMenusPlugin.instance.menuProviders;
+	@Scriptify public PlaceholderProvider     placeholders = providers.get("Placeholders");
 
 	public ScriptComponentAbstract(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds) {
 		super(uuid, parentBounds, bounds);
 	}
 
+	@Scriptify(targetVar = "component")
 	@Override
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
 
+	@Scriptify(targetVar = "component")
 	@Override
 	public boolean isVisible() {
 		return visible;
 	}
 
+	@Scriptify(targetVar = "component")
 	@Override
 	public void show() {
 		setVisible(true);
 	}
 
+	@Scriptify(targetVar = "component")
 	@Override
 	public void hide() {
 		setVisible(false);

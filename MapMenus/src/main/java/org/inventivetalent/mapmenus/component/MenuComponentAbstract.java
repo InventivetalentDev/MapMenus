@@ -39,6 +39,7 @@ import org.inventivetalent.mapmenus.ITickable;
 import org.inventivetalent.mapmenus.IVisibility;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.render.IRenderable;
+import org.inventivetalent.mapmenus.script.Scriptify;
 
 import java.util.UUID;
 
@@ -66,6 +67,7 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 	/**
 	 * @return The unique ID of this component
 	 */
+	@Scriptify(targetVar = "component")
 	public UUID getUuid() {
 		return uuid;
 	}
@@ -73,6 +75,7 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 	/**
 	 * @return bounds of the component (Must be inside of the containing menu's bounds)
 	 */
+	@Scriptify(targetVar = "component")
 	public FixedBounds getBounds() {
 		return bounds;
 	}
@@ -82,6 +85,7 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 	//	}
 
 	// Method with doubles, so you don't have to always parse all numbers to integers
+	@Scriptify(targetVar = "component")
 	public void setBounds(double x, double y, double width, double height) {
 		setBounds(new FixedBounds((int) x, (int) y, (int) width, (int) height));
 	}
@@ -93,6 +97,7 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 	/**
 	 * Moves the component to a new point
 	 */
+	@Scriptify(targetVar = "component")
 	public void move(int x, int y) {
 		setBounds(new FixedBounds(x, y, getBounds().getWidth(), getBounds().getHeight()));
 	}
@@ -100,6 +105,7 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 	/**
 	 * Moves the component relative to its current position
 	 */
+	@Scriptify(targetVar = "component")
 	public void moveRelative(int x, int y) {
 		move((getBounds().getX() + x), (getBounds().getY() + y));
 	}

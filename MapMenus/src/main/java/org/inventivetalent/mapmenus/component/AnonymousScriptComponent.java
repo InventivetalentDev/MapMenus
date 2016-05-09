@@ -52,6 +52,10 @@ public class AnonymousScriptComponent extends ScriptComponentAbstract {
 		this(UUID.randomUUID(), parentBounds, bounds, script);
 	}
 
+	public JSObject getScript() {
+		return script;
+	}
+
 	public void init() throws NoSuchFunctionException, RuntimeScriptException {
 		Object member = script.getMember("init");
 		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'init' is null or not JSObject"); }

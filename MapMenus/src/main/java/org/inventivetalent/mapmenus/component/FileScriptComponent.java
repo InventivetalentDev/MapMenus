@@ -36,6 +36,7 @@ import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
 import org.inventivetalent.mapmenus.script.ScriptManagerAbstract;
+import org.inventivetalent.mapmenus.script.Scriptifier;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
 import org.inventivetalent.scriptconfig.RuntimeScriptException;
 import org.inventivetalent.scriptconfig.api.ScriptConfig;
@@ -102,13 +103,14 @@ public class FileScriptComponent extends ScriptComponentAbstract implements IScr
 	}
 
 	void initScriptVariables() {
-		this.script.setVariable("menu", this.menu);
-		this.script.setVariable("component", this);
-		this.script.setVariable("data", this.data);
-		this.script.setVariable("states", this.states);
-		this.script.setVariable("providers", this.providers);
-
-		this.script.setVariable("placeholders", this.placeholders);
+		//		this.script.setVariable("menu", this.menu);
+		//		this.script.setVariable("component", this);
+		//		this.script.setVariable("data", this.data);
+		//		this.script.setVariable("states", this.states);
+		//		this.script.setVariable("providers", this.providers);
+		//
+		//		this.script.setVariable("placeholders", this.placeholders);
+		Scriptifier.scriptify(this, getScript().getContent());
 	}
 
 	@Override
