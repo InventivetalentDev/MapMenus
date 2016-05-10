@@ -4,7 +4,6 @@
     BukkitSound: Java.type("org.bukkit.Sound")
   },
   text: "",
-  ticks: 0,
   setText: function(text) {
     this.text = text;
   },
@@ -13,7 +12,6 @@
   },
   init: function(text) {
     this.text = text;
-    options.tickSpeed = 20;
   },
   click: function(player) {
     this.states.put("clicked", player, 250);
