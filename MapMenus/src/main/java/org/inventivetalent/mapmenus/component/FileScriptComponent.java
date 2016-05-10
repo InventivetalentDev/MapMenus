@@ -29,7 +29,11 @@
 package org.inventivetalent.mapmenus.component;
 
 import com.google.gson.annotations.Expose;
-import lombok.*;
+import jdk.nashorn.api.scripting.JSObject;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
 import org.bukkit.entity.Player;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
@@ -50,11 +54,10 @@ import java.util.logging.Level;
 				   doNotUseGetters = true)
 @ToString(callSuper = true,
 		  doNotUseGetters = true)
-@NoArgsConstructor
-public class FileScriptComponent extends ScriptComponentAbstract implements IScriptContainer {
+public class FileScriptComponent extends AnonymousScriptComponent implements IScriptContainer {
 
 	@Expose private String       scriptName;
-	private         ScriptConfig script;
+	private         ScriptConfig scriptConfig;
 
 	private Object[] initArgs = new Object[0];
 
@@ -68,12 +71,13 @@ public class FileScriptComponent extends ScriptComponentAbstract implements IScr
 		this(UUID.randomUUID(), parentBounds, bounds, scriptName, initArgs);
 	}
 
-	public ScriptConfig getScript() {
-		return script;
-	}
+	//	public ScriptConfig getScript() {
+	//		return scriptConfig;
+	//	}
 
-	@Override
-	public void setScript(String scriptName) {
+
+
+	public void setScriptConfig(String scriptName) {
 		this.scriptName = scriptName;
 	}
 
@@ -87,49 +91,71 @@ public class FileScriptComponent extends ScriptComponentAbstract implements IScr
 			throw new IllegalStateException("Script not yet set");
 		}
 		if (!scriptManager.doesScriptExist(this.scriptName)) {
-			MapMenusPlugin.instance.getLogger().warning("Component Script '" + script + "' does not exist (any longer)");
+			MapMenusPlugin.instance.getLogger().warning("Component Script '" + scriptConfig + "' does not exist (any longer)");
 			return;
 		}
-		this.script = scriptManager.wrapScript(this.scriptName);
+		this.scriptConfig = scriptManager.wrapScript(this.scriptName);
+		((AnonymousScriptComponent) this).script = (JSObject) this.scriptConfig.getContent();
 
 		initScriptVariables();
 		try {
-			this.script.callFunction("init", this.initArgs);
-		} catch (NoSuchFunctionException e) {
-			// Ignore
-		} catch (RuntimeScriptException e) {
-			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + e.getException().getMessage(), e);
+			super.init(this.initArgs);
+		} catch (Exception e) {
+			try {
+				this.scriptConfig.callFunction("init", this.initArgs);
+			} catch (NoSuchFunctionException ex) {
+				// Ignore
+			} catch (RuntimeScriptException ex) {
+				MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + ex.getException().getMessage(), e);
+			}
 		}
 	}
 
 	void initScriptVariables() {
-		//		this.script.setVariable("menu", this.menu);
-		//		this.script.setVariable("component", this);
-		//		this.script.setVariable("data", this.data);
-		//		this.script.setVariable("states", this.states);
-		//		this.script.setVariable("providers", this.providers);
+		//		this.scriptConfig.setVariable("menu", this.menu);
+		//		this.scriptConfig.setVariable("component", this);
+		//		this.scriptConfig.setVariable("data", this.data);
+		//		this.scriptConfig.setVariable("states", this.states);
+		//		this.scriptConfig.setVariable("providers", this.providers);
 		//
-		//		this.script.setVariable("placeholders", this.placeholders);
-		Scriptifier.scriptify(this, getScript().getContent());
+		//		this.scriptConfig.setVariable("placeholders", this.placeholders);
+		System.out.println("Scriptify file component");
+		Scriptifier.scriptify(this, getScriptConfig().getContent());
 	}
 
 	@Override
 	protected void tick0() throws NoSuchFunctionException, RuntimeScriptException {
-		script.callFunction("tick");
+		try {
+			super.tick0();
+		} catch (NoSuchFunctionException| RuntimeScriptException  e) {
+			scriptConfig.callFunction("tick");
+		}
 	}
 
 	@Override
 	protected void render0(Graphics2D graphics, Player player) {
-		script.callFunction("render", graphics, player);
+		try {
+			super.render0(graphics, player);
+		} catch (NoSuchFunctionException| RuntimeScriptException e) {
+			scriptConfig.callFunction("render", graphics, player);
+		}
 	}
 
 	@Override
 	protected Object click0(Player player, CursorPosition relativePosition, CursorPosition absolutePosition, int action) {
-		return script.callFunction("click", player, relativePosition, absolutePosition, action);
+		try {
+			return super.click0(player, relativePosition, absolutePosition, action);
+		} catch (NoSuchFunctionException| RuntimeScriptException  e) {
+			return scriptConfig.callFunction("click", player, relativePosition, absolutePosition, action);
+		}
 	}
 
 	@Override
 	protected void dispose0() throws NoSuchFunctionException, RuntimeScriptException {
-		script.callFunction("dispose");
+		try {
+			super.dispose0();
+		} catch (NoSuchFunctionException| RuntimeScriptException  e) {
+			scriptConfig.callFunction("dispose");
+		}
 	}
 }

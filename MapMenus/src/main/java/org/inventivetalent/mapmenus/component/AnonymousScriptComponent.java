@@ -41,7 +41,11 @@ import java.util.UUID;
 
 public class AnonymousScriptComponent extends ScriptComponentAbstract {
 
-	private JSObject script;
+	protected JSObject script;
+
+	protected AnonymousScriptComponent(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds) {
+		super(uuid, parentBounds, bounds);
+	}
 
 	public AnonymousScriptComponent(@NonNull UUID uuid, @NonNull FixedBounds parentBounds, @NonNull FixedBounds bounds, @NonNull JSObject script) {
 		super(uuid, parentBounds, bounds);
@@ -56,37 +60,37 @@ public class AnonymousScriptComponent extends ScriptComponentAbstract {
 		return script;
 	}
 
-	public void init() throws NoSuchFunctionException, RuntimeScriptException {
+	public void init(Object... initArgs) throws NoSuchFunctionException, RuntimeScriptException {
 		Object member = script.getMember("init");
 		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'init' is null or not JSObject"); }
-		((JSObject) member).call(this);
+		((JSObject) member).call(getScript(), initArgs); // Passing getScript instead of "this" is important to pass the javascript-this and not the java-this object
 	}
 
 	@Override
 	protected void tick0() throws NoSuchFunctionException, RuntimeScriptException {
 		Object member = script.getMember("tick");
 		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'tick' is null or not JSObject"); }
-		((JSObject) member).call(this);
+		((JSObject) member).call(getScript());
 	}
 
 	@Override
 	protected void render0(Graphics2D graphics, Player player) throws NoSuchFunctionException, RuntimeScriptException {
 		Object member = script.getMember("render");
 		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'render' is null or not JSObject"); }
-		((JSObject) member).call(this, graphics, player);
+		((JSObject) member).call(getScript(), graphics, player);
 	}
 
 	@Override
 	protected Object click0(Player player, CursorPosition relativePosition, CursorPosition absolutePosition, int action) throws NoSuchFunctionException, RuntimeScriptException {
 		Object member = script.getMember("click");
 		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'click' is null or not JSObject"); }
-		return ((JSObject) member).call(this, player, relativePosition, absolutePosition, action);
+		return ((JSObject) member).call(getScript(), player, relativePosition, absolutePosition, action);
 	}
 
 	@Override
 	protected void dispose0() throws NoSuchFunctionException, RuntimeScriptException {
 		Object member = script.getMember("dispose");
 		if (member == null || !(member instanceof JSObject)) { throw new NoSuchFunctionException("Function 'dispose' is null or not JSObject"); }
-		((JSObject) member).call(this);
+		((JSObject) member).call(getScript());
 	}
 }
