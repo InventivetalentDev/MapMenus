@@ -1,38 +1,44 @@
-var JavaColor = Java.type("java.awt.Color");
-var BukkitSound = Java.type("org.bukkit.Sound");
+({
+  classes: {
+    JavaColor: Java.type("java.awt.Color"),
+    BukkitSound: Java.type("org.bukkit.Sound")
+  },
+  text: "",
+  ticks: 0,
+  setText: function(text) {
+    this.text = text;
+  },
+  getText: function() {
+    return this.text;
+  },
+  init: function(text) {
+    this.text = text;
+    options.tickSpeed = 20;
+  },
+  click: function(player) {
+    this.states.put("clicked", player, 250);
+    player.playSound(player.getLocation(), this.classes.BukkitSound.UI_BUTTON_CLICK, 0.5, 1.0);
+  },
+  render: function(graphics, player) {
+    var bounds = this.component.getBounds();
+    var cursor = this.menu.getCursorPosition(player);
 
-var text;
-
-function init(t) {
-    this.text = t;
-}
-
-function click(player) {
-    // Store the player's click
-    states.put("clicked", player, 250);
-
-    player.playSound(player.getLocation(), BukkitSound.UI_BUTTON_CLICK, 0.5, 1.0);
-}
-
-function render(graphics, player) {
-    var bounds = component.getBounds();
-    var cursor = menu.getCursorPosition(player);
-
-    if(states.get("clicked", player)) {
-        graphics.setColor(new JavaColor(37, 67, 207));
+    if (this.states.get("clicked", player)) {
+      graphics.setColor(new this.classes.JavaColor(37, 67, 207));
     } else {
-        if(cursor !== null && bounds.contains(cursor)) {
-            graphics.setColor(new JavaColor(126, 136, 191));
-        } else {
-            graphics.setColor(new JavaColor(117, 117, 117));
-        }
+      if (cursor !== null && bounds.contains(cursor)) {
+        graphics.setColor(new this.classes.JavaColor(126, 136, 191));
+      } else {
+        graphics.setColor(new this.classes.JavaColor(117, 117, 117));
+      }
     }
     graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
-    graphics.setColor(new JavaColor(0, 0, 0));
+    graphics.setColor(new this.classes.JavaColor(0, 0, 0));
     graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
-    if(text !== undefined) {
-        menu.renderer.drawStringCentered(graphics, bounds, text);
+    if (this.text !== undefined) {
+      this.menu.renderer.drawStringCentered(graphics, bounds, this.text);
     }
-}
+  }
+});
