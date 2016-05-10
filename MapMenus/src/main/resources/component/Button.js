@@ -6,7 +6,19 @@
         BukkitSound: Java.type("org.bukkit.Sound")
     },
     text: "",
-    ticks: 0,
+    colors: {
+        inactive: new this.classes.JavaColor(117, 117, 117),
+        hover: new this.classes.JavaColor(126, 136, 191),
+        clicked: new this.classes.JavaColor(37, 67, 207)
+    },
+    click: {
+        timeout: 250,
+        sound: {
+            enabled: true,
+            pitch: 0.5,
+            volume: 1.0
+        }
+    },
     setText: function(text) {
         this.text = text;
     },
@@ -15,28 +27,31 @@
     },
     init: function(text) {
         this.text = text;
-        options.tickSpeed = 20;
     },
     click: function(player) {
-        this.states.put("clicked", player, 250);
-        player.playSound(player.getLocation(), this.classes.BukkitSound.UI_BUTTON_CLICK, 0.5, 1.0);
+        this.states.put("clicked", player, this.click.timeout);
+        if (this.click.sound.enabled) {
+            player.playSound(player.getLocation(), this.classes.BukkitSound.UI_BUTTON_CLICK, this.click.sound.pitch, this.click.sound.volume);
+        }
     },
     render: function(graphics, player) {
         var bounds = this.component.getBounds();
         var cursor = this.menu.getCursorPosition(player);
 
         if (this.states.get("clicked", player)) {
-            graphics.setColor(new this.classes.JavaColor(37, 67, 207));
-        } else {
+            graphics.setColor(this.colors.clicked);
+        }
+        else {
             if (cursor !== null && bounds.contains(cursor)) {
-                graphics.setColor(new this.classes.JavaColor(126, 136, 191));
-            } else {
-                graphics.setColor(new this.classes.JavaColor(117, 117, 117));
+                graphics.setColor(this.colors.hover);
+            }
+            else {
+                graphics.setColor(this.colors.inactive);
             }
         }
         graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
-        graphics.setColor(new this.classes.JavaColor(0, 0, 0));
+        graphics.setColor(this.classes.JavaColor.black);
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
         if (this.text !== undefined) {
