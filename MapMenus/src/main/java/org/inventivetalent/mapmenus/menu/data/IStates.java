@@ -84,6 +84,8 @@ public interface IStates extends IPlayerStorage {
 	 */
 	void deleteAll(String key);
 
+	void removeAll(String key);
+
 	/**
 	 * Deletes the state for all players, except for the specified players
 	 *
@@ -91,5 +93,7 @@ public interface IStates extends IPlayerStorage {
 	 * @param exceptions players to not delete
 	 */
 	void deleteAllExcept(String key, Player... exceptions);
+
+	void removeAllExcept(String key, Player... exceptions);
 
 }

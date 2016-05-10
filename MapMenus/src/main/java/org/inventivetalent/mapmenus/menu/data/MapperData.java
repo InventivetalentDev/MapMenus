@@ -65,8 +65,18 @@ public class MapperData implements IData {
 	}
 
 	@Override
+	public void remove(String key) {
+		parentData.remove(formatKey(key));
+	}
+
+	@Override
 	public void delete(String key, Player player) {
 		parentData.delete(formatKey(key), player);
+	}
+
+	@Override
+	public void remove(String key, Player player) {
+		parentData.remove(formatKey(key), player);
 	}
 
 	@Override

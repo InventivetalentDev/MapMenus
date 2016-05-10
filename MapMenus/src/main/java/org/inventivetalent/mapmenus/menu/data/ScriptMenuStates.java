@@ -134,11 +134,21 @@ public class ScriptMenuStates implements IStates {
 	}
 
 	@Override
+	public void remove(String key, Player player) {
+		delete(key, player);
+	}
+
+	@Override
 	@Synchronized
 	public void deleteAll(String key) {
 		if (key == null) { return; }
 		if (!stateMap.containsKey(key)) { return; }
 		stateMap.remove(key);
+	}
+
+	@Override
+	public void removeAll(String key) {
+		deleteAll(key);
 	}
 
 	@Override
@@ -160,6 +170,11 @@ public class ScriptMenuStates implements IStates {
 			}
 		}
 		stateMap.put(key, entries);
+	}
+
+	@Override
+	public void removeAllExcept(String key, Player... exceptions) {
+		deleteAllExcept(key, exceptions);
 	}
 
 	@Data

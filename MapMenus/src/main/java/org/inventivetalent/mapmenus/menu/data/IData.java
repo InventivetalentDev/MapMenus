@@ -40,6 +40,8 @@ public interface IData extends IPlayerStorage {
 
 	void delete(String key);
 
+	void remove(String key);
+
 	Object get(String key);
 
 	Object get(String key, Player player);

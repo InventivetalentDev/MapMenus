@@ -34,4 +34,6 @@ public interface IPlayerStorage {
 
 	void delete(String key, Player player);
 
+	void remove(String key, Player player);
+
 }

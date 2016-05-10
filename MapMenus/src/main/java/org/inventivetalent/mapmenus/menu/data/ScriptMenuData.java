@@ -106,12 +106,22 @@ public class ScriptMenuData implements IData {
 	}
 
 	@Override
+	public void remove(String key) {
+		delete(key);
+	}
+
+	@Override
 	@Synchronized
 	public void delete(String key, Player player) {
 		JsonObject playerStorage = getPlayerStorage(player);
 		playerStorage.remove(key);
 
 		storage.add(getPlayerKey(player), playerStorage);
+	}
+
+	@Override
+	public void remove(String key, Player player) {
+		delete(key, player);
 	}
 
 	@Override

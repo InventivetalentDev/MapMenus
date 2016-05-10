@@ -75,12 +75,27 @@ public class MapperStates implements IStates {
 	}
 
 	@Override
+	public void remove(String key, Player player) {
+		parentStates.remove(formatKey(key), player);
+	}
+
+	@Override
 	public void deleteAll(String key) {
-		parentStates.deleteAll(key);
+		parentStates.deleteAll(formatKey(key));
+	}
+
+	@Override
+	public void removeAll(String key) {
+		parentStates.removeAll(formatKey(key));
 	}
 
 	@Override
 	public void deleteAllExcept(String key, Player... exceptions) {
-		parentStates.deleteAllExcept(key, exceptions);
+		parentStates.deleteAllExcept(formatKey(key), exceptions);
+	}
+
+	@Override
+	public void removeAllExcept(String key, Player... exceptions) {
+		parentStates.removeAllExcept(formatKey(key), exceptions);
 	}
 }
