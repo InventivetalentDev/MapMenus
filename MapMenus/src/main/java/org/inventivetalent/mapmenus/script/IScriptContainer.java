@@ -30,7 +30,7 @@ package org.inventivetalent.mapmenus.script;
 
 public interface IScriptContainer {
 
-	void setScript(String scriptName);
+	void setScriptConfig(String scriptName);
 
 	void reloadScript();
 

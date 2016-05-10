@@ -96,7 +96,7 @@ public class MenuManager {
 
 		ScriptMapMenu mapMenu = new ScriptMapMenu(itemFrameA, new Vector3DDouble(itemFrameA.getLocation().toVector()), new Vector3DDouble(itemFrameB.getLocation().toVector()), name);
 		menuMap.put(mapMenu.getName(), mapMenu);
-		mapMenu.setScript(script);
+		mapMenu.setScriptConfig(script);
 		mapMenu.reloadScript();
 
 		return mapMenu;

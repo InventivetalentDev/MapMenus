@@ -125,8 +125,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		renderer = new Renderer(this, bounds, this);
 	}
 
-	@Override
-	public void setScript(String scriptName) {
+	public void setScriptConfig(String scriptName) {
 		this.scriptName = scriptName;
 	}
 
@@ -223,6 +222,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		//		this.script.setVariable("providers", this.providers);
 		//
 		//		this.script.setVariable("placeholders", this.placeholders);
+		System.out.println("Scriptify menu");
 		Scriptifier.scriptify(this, getScript().getScriptEngine());
 	}
 
@@ -258,7 +258,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		//		Scriptifier.scriptify(component, component.getScript().getScriptEngine());
 
 		tickLocked = false;
-		return (JSObject) component.getScript().getContent();
+		return (JSObject) component.getScriptConfig().getContent();
 	}
 
 	/*
@@ -281,6 +281,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		component.id = componentCounter++;
 		component.menu = this;
 		components.put(component.getUuid(), component);
+		System.out.println("Scriptify anonymous component");
 		Scriptifier.scriptify(component, component.getScript());
 		try {
 			component.init();
