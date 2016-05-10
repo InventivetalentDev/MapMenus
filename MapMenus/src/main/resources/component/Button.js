@@ -9,7 +9,8 @@
     colors: {
         inactive: new this.classes.JavaColor(117, 117, 117),
         hover: new this.classes.JavaColor(126, 136, 191),
-        clicked: new this.classes.JavaColor(37, 67, 207)
+        clicked: new this.classes.JavaColor(37, 67, 207),
+        border: this.classes.JavaColor.black
     },
     click: {
         timeout: 250,
@@ -51,7 +52,7 @@
         }
         graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
-        graphics.setColor(this.classes.JavaColor.black);
+        graphics.setColor(this.colors.border);
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
         if (this.text !== undefined) {
