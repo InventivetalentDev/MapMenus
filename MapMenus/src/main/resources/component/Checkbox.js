@@ -1,4 +1,4 @@
-// BasicCheckbox
+// Checkbox
 // author: inventivetalent
 ({
     classes: {

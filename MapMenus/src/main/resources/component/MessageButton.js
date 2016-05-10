@@ -1,3 +1,6 @@
+// TODO: actually implement this
+// (example for extending BasicButton)
+
 var text;
 var message;
 

@@ -1,4 +1,4 @@
-// BasicButton
+// Button
 // author: inventivetalent
 ({
     classes: {

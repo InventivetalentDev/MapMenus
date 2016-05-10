@@ -1,4 +1,4 @@
-// BasicInputBox
+// InputBox
 // author: inventivetalent
 ({
     classes: {

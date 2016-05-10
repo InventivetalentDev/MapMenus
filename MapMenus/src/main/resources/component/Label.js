@@ -1,4 +1,4 @@
-// BasicLabel
+// Label
 // author: inventivetalent
 ({
     classes: {
