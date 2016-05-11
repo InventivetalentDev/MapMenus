@@ -120,7 +120,7 @@ public class FileScriptComponent extends AnonymousScriptComponent implements ISc
 		//
 		//		this.scriptConfig.setVariable("placeholders", this.placeholders);
 		System.out.println("Scriptify file component");
-		Scriptifier.scriptify(this, getScriptConfig().getContent());
+		Scriptifier.scriptify(this, getScript());
 	}
 
 	@Override
