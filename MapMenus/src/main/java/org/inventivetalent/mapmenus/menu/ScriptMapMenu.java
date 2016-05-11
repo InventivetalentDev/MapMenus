@@ -66,6 +66,7 @@ import org.inventivetalent.mapmenus.script.IScriptContainer;
 import org.inventivetalent.mapmenus.script.ScriptManagerAbstract;
 import org.inventivetalent.mapmenus.script.Scriptifier;
 import org.inventivetalent.mapmenus.script.Scriptify;
+import org.inventivetalent.reflection.minecraft.Minecraft;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
 import org.inventivetalent.scriptconfig.RuntimeScriptException;
 import org.inventivetalent.scriptconfig.api.ScriptConfig;
@@ -73,6 +74,7 @@ import org.inventivetalent.vectors.d2.Vector2DDouble;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -420,7 +422,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 							event.setCancelled(true);
 						}
 					}
-					((JSObject) invocable).call(ScriptMapMenu.this.menu, message);
+					((JSObject) invocable).call(ScriptMapMenu.this.menu, message); // TODO: find another parameter for "this"
 				}
 			});
 		} else {
@@ -446,7 +448,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 							event.setCancelled(true);
 						}
 					}
-					((JSObject) invocable).call(ScriptMapMenu.this.menu, message);
+					((JSObject) invocable).call(ScriptMapMenu.this.menu, message); // TODO: find another parameter for "this"
 				}
 			});
 		} else {
@@ -485,9 +487,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 					if (((JSObject) invocable).keySet().isEmpty()) {// function(type, amount)
 						if (moveDiff == null) {
-							((JSObject) invocable).call(ScriptMapMenu.this.menu, null, 0);
+							((JSObject) invocable).call(ScriptMapMenu.this.menu, null, 0); // TODO: find another parameter for "this"
 						} else {
-							((JSObject) invocable).call(ScriptMapMenu.this.menu, moveDirection.getCodeName(), value);
+							((JSObject) invocable).call(ScriptMapMenu.this.menu, moveDirection.getCodeName(), value); // TODO: find another parameter for "this"
 						}
 					} else {// {north:function(amount){},...}
 						if (moveDiff != null) {
@@ -495,11 +497,11 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 								Object member = ((JSObject) invocable).getMember(s);
 								if (member instanceof JSObject) {
 									if (s.equals(baseDirection.getCodeName())) {
-										((JSObject) member).call(ScriptMapMenu.this.menu, value);
+										((JSObject) member).call(ScriptMapMenu.this.menu, value); // TODO: find another parameter for "this"
 									}
 									if (baseDirection == moveDirection) { continue; }
 									if (s.equals(moveDirection.getCodeName())) {
-										((JSObject) member).call(ScriptMapMenu.this.menu, value);
+										((JSObject) member).call(ScriptMapMenu.this.menu, value); // TODO: find another parameter for "this"
 									}
 								}
 							}
@@ -534,7 +536,13 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 					//				Vector startVector = new Vector(boundingBox.minX, boundingBox.minY, boundingBox.minZ);
 					Vector2DDouble startVector = minCorner2d;
 
-					for (Entity entity : world.getNearbyEntities(baseVector.toBukkitLocation(world), getBlockWidth(), getBlockHeight(), getBlockWidth())) {
+					Collection<? extends Entity> entities;
+					if (Minecraft.VERSION.olderThan(Minecraft.Version.v1_8_R2)) {
+						entities = world.getEntitiesByClass(ItemFrame.class);
+					} else {
+						entities = world.getNearbyEntities(baseVector.toBukkitLocation(world), getBlockWidth(), getBlockHeight(), getBlockWidth());
+					}
+					for (Entity entity : entities) {
 						if (entity instanceof ItemFrame) {
 							if (MapMenusPlugin.instance.debugParticles) { getWorld().spawnParticle(Particle.FLAME, entity.getLocation(), 0); }
 							if (ScriptMapMenu.this.boundingBox.expand(0.1).contains(new Vector3DDouble(entity.getLocation()))) {
