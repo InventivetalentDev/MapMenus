@@ -174,8 +174,6 @@ public class MenuManager {
 
 	@Synchronized
 	public void writeMenusToFile() {
-		TimingsHelper.startTiming("MapMenu - writeToFile");
-
 		for (ScriptMapMenu menu : getMenus()) {
 			plugin.getLogger().fine("Saving '" + menu.getName() + "' in world '" + menu.getWorld().getName() + "'...");
 			try {
@@ -196,14 +194,10 @@ public class MenuManager {
 		} catch (IOException e) {
 			plugin.getLogger().log(Level.WARNING, "Failed to save Menu-Index file", e);
 		}
-
-		TimingsHelper.stopTiming("MapMenu - writeToFile");
 	}
 
 	@Synchronized
 	public void readMenusFromFile() {
-		TimingsHelper.startTiming("MapMenu - readFromFile");
-
 		Set<String> index;
 		try {
 			try (Reader reader = new FileReader(indexFile)) {
@@ -231,8 +225,6 @@ public class MenuManager {
 				plugin.getLogger().log(Level.WARNING, "Failed to load Menu '" + name + "'", e);
 			}
 		}
-
-		TimingsHelper.stopTiming("MapMenu - readFromFile");
 	}
 
 }
