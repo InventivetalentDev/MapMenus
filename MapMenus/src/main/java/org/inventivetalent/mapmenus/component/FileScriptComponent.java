@@ -34,20 +34,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
-import org.bukkit.entity.Player;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
-import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
 import org.inventivetalent.mapmenus.script.ScriptManagerAbstract;
 import org.inventivetalent.mapmenus.script.Scriptifier;
-import org.inventivetalent.scriptconfig.NoSuchFunctionException;
-import org.inventivetalent.scriptconfig.RuntimeScriptException;
 import org.inventivetalent.scriptconfig.api.ScriptConfig;
 
-import java.awt.*;
 import java.util.UUID;
-import java.util.logging.Level;
 
 @Data
 @EqualsAndHashCode(callSuper = true,
@@ -75,8 +69,6 @@ public class FileScriptComponent extends AnonymousScriptComponent implements ISc
 	//		return scriptConfig;
 	//	}
 
-
-
 	public void setScriptConfig(String scriptName) {
 		this.scriptName = scriptName;
 	}
@@ -95,20 +87,10 @@ public class FileScriptComponent extends AnonymousScriptComponent implements ISc
 			return;
 		}
 		this.scriptConfig = scriptManager.wrapScript(this.scriptName);
-		((AnonymousScriptComponent) this).script = (JSObject) this.scriptConfig.getContent();
+		this.script = (JSObject) this.scriptConfig.getContent();
 
 		initScriptVariables();
-		try {
-			super.init(this.initArgs);
-		} catch (Exception e) {
-			try {
-				this.scriptConfig.callFunction("init", this.initArgs);
-			} catch (NoSuchFunctionException ex) {
-				// Ignore
-			} catch (RuntimeScriptException ex) {
-				MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + ex.getException().getMessage(), e);
-			}
-		}
+		super.init(this.initArgs);
 	}
 
 	void initScriptVariables() {
@@ -123,39 +105,4 @@ public class FileScriptComponent extends AnonymousScriptComponent implements ISc
 		Scriptifier.scriptify(this, getScript());
 	}
 
-	@Override
-	protected void tick0() throws NoSuchFunctionException, RuntimeScriptException {
-		try {
-			super.tick0();
-		} catch (NoSuchFunctionException| RuntimeScriptException  e) {
-			scriptConfig.callFunction("tick");
-		}
-	}
-
-	@Override
-	protected void render0(Graphics2D graphics, Player player) {
-		try {
-			super.render0(graphics, player);
-		} catch (NoSuchFunctionException| RuntimeScriptException e) {
-			scriptConfig.callFunction("render", graphics, player);
-		}
-	}
-
-	@Override
-	protected Object click0(Player player, CursorPosition relativePosition, CursorPosition absolutePosition, int action) {
-		try {
-			return super.click0(player, relativePosition, absolutePosition, action);
-		} catch (NoSuchFunctionException| RuntimeScriptException  e) {
-			return scriptConfig.callFunction("click", player, relativePosition, absolutePosition, action);
-		}
-	}
-
-	@Override
-	protected void dispose0() throws NoSuchFunctionException, RuntimeScriptException {
-		try {
-			super.dispose0();
-		} catch (NoSuchFunctionException| RuntimeScriptException  e) {
-			scriptConfig.callFunction("dispose");
-		}
-	}
 }
