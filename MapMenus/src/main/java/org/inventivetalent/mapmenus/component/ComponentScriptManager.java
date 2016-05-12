@@ -45,7 +45,6 @@ public class ComponentScriptManager extends ScriptManagerAbstract {
 				"Button.js",
 				"Checkbox.js",
 				"InputBox.js",
-				"Label.js",
-				"MessageButton.js" };
+				"Label.js" };
 	}
 }
