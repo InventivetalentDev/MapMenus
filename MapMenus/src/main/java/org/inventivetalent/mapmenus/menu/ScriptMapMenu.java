@@ -46,7 +46,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.inventivetalent.eventcallbacks.PlayerEventCallback;
 import org.inventivetalent.mapmanager.controller.MapController;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
-import org.inventivetalent.mapmenus.MenuScriptExecutionException;
+import org.inventivetalent.mapmenus.MenuScriptException;
 import org.inventivetalent.mapmenus.MoveDirection;
 import org.inventivetalent.mapmenus.TimingsHelper;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
@@ -67,6 +67,7 @@ import org.inventivetalent.mapmenus.script.ScriptManagerAbstract;
 import org.inventivetalent.mapmenus.script.Scriptifier;
 import org.inventivetalent.mapmenus.script.Scriptify;
 import org.inventivetalent.reflection.minecraft.Minecraft;
+import org.inventivetalent.scriptconfig.InvalidScriptException;
 import org.inventivetalent.scriptconfig.NoSuchFunctionException;
 import org.inventivetalent.scriptconfig.RuntimeScriptException;
 import org.inventivetalent.scriptconfig.api.ScriptConfig;
@@ -143,9 +144,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 				((ScriptComponentAbstract) component).data = new MapperData(this.data, "__comp#" + ((ScriptComponentAbstract) component).id + "__%s");
 				((ScriptComponentAbstract) component).states = new MapperStates(this.states, "__comp#" + ((ScriptComponentAbstract) component).id + "__%s");
 			}
-//			if (component instanceof IScriptContainer) {
-//				((IScriptContainer) component).reloadScript();
-//			}
+			//			if (component instanceof IScriptContainer) {
+			//				((IScriptContainer) component).reloadScript();
+			//			}
 		}
 	}
 
@@ -204,7 +205,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 				try {
 					tick();
-				} catch (MenuScriptExecutionException e) {
+				} catch (MenuScriptException e) {
 					cancel();
 					TimingsHelper.stopTiming("MapMenu - tick");
 					throw e;
@@ -255,8 +256,12 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		component.menu = this;
 		component.data = new MapperData(this.data, "__comp#" + componentCounter + "__%s");
 		component.states = new MapperStates(this.states, "__comp#" + componentCounter + "__%s");
-		components.put(component.getUuid(), component);
-		component.reloadScript();
+		try {
+			component.reloadScript();
+			components.put(component.getUuid(), component);
+		} catch (InvalidScriptException e) {
+			throw new MenuScriptException("Invalid script in file " + e.getScriptSource() + ", line " + e.getScriptException().getLineNumber() + ":" + e.getScriptException().getColumnNumber());
+		}
 		//		Scriptifier.scriptify(component, component.getScript().getScriptEngine());
 
 		tickLocked = false;
@@ -326,7 +331,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 				noTickFunction = true;
 			} catch (RuntimeScriptException e) {
 				MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling tick(): " + e.getException().getMessage(), e);
-				throw new MenuScriptExecutionException("ScriptException in Menu tick()", e);
+				throw new MenuScriptException("ScriptException in Menu tick()", e);
 			}
 		}
 
@@ -347,7 +352,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 				noRenderFunction = true;
 			} catch (RuntimeScriptException e) {
 				MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling render(): " + e.getException().getMessage(), e);
-				throw new MenuScriptExecutionException("ScriptException in Menu render()", e);
+				throw new MenuScriptException("ScriptException in Menu render()", e);
 			}
 		}
 
@@ -369,7 +374,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 				noClickFunction = true;
 			} catch (RuntimeScriptException e) {
 				MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling click(): " + e.getException().getMessage(), e);
-				throw new MenuScriptExecutionException("ScriptException in Menu click()", e);
+				throw new MenuScriptException("ScriptException in Menu click()", e);
 			}
 		}
 

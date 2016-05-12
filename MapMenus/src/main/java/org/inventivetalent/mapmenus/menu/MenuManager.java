@@ -37,7 +37,9 @@ import lombok.Synchronized;
 import lombok.ToString;
 import org.bukkit.entity.ItemFrame;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
+import org.inventivetalent.mapmenus.MenuScriptException;
 import org.inventivetalent.mapmenus.TimingsHelper;
+import org.inventivetalent.scriptconfig.InvalidScriptException;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
 import java.io.*;
@@ -95,9 +97,13 @@ public class MenuManager {
 		}
 
 		ScriptMapMenu mapMenu = new ScriptMapMenu(itemFrameA, new Vector3DDouble(itemFrameA.getLocation().toVector()), new Vector3DDouble(itemFrameB.getLocation().toVector()), name);
-		menuMap.put(mapMenu.getName(), mapMenu);
 		mapMenu.setScriptConfig(script);
-		mapMenu.reloadScript();
+		try {
+			mapMenu.reloadScript();
+			menuMap.put(mapMenu.getName(), mapMenu);
+		} catch (InvalidScriptException e) {
+			throw new MenuScriptException("Invalid script in file " + e.getScriptSource() + ", line " + e.getScriptException().getLineNumber() + ":" + e.getScriptException().getColumnNumber());
+		}
 
 		return mapMenu;
 	}

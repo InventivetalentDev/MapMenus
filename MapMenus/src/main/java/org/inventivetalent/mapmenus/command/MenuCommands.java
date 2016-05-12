@@ -38,6 +38,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.inventivetalent.eventcallbacks.PlayerEventCallback;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
+import org.inventivetalent.mapmenus.MenuScriptException;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
 import org.inventivetalent.pluginannotations.command.Command;
@@ -46,11 +47,13 @@ import org.inventivetalent.pluginannotations.command.OptionalArg;
 import org.inventivetalent.pluginannotations.command.Permission;
 import org.inventivetalent.pluginannotations.message.MessageFormatter;
 import org.inventivetalent.pluginannotations.message.MessageLoader;
+import org.inventivetalent.scriptconfig.InvalidScriptException;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class MenuCommands {
@@ -73,7 +76,7 @@ public class MenuCommands {
 		sender.sendMessage("§6MapMenus v" + plugin.getDescription().getVersion() + (plugin.updateAvailable ? " §a*Update available" : ""));
 		sender.sendMessage(" ");
 
-		int c=0;
+		int c = 0;
 		if (sender.hasPermission("mapmenus.create")) {
 			c++;
 			sender.sendMessage("§e/mmc <Name> <Script>");
@@ -148,8 +151,13 @@ public class MenuCommands {
 											}
 										}));
 
-										ScriptMapMenu menu = plugin.menuManager.createMenu(name, firstFrame, secondFrame, script);
-										sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.created", "create.setup.created"));
+										try {
+											ScriptMapMenu menu = plugin.menuManager.createMenu(name, firstFrame, secondFrame, script);
+											sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.created", "create.setup.created"));
+										} catch (MenuScriptException e) {
+											sender.sendMessage("§c" + e.getMessage());
+											plugin.getLogger().log(Level.WARNING, e.getMessage(), e);
+										}
 									}
 								}
 							});
@@ -189,7 +197,7 @@ public class MenuCommands {
 	}
 
 	@Completion(name = "removemenu")
-	public void removeMenu(final List<String> completions,final CommandSender sender, final String name) {
+	public void removeMenu(final List<String> completions, final CommandSender sender, final String name) {
 		for (ScriptMapMenu menu : plugin.menuManager.getMenus()) {
 			completions.add(menu.getName());
 		}
@@ -212,7 +220,7 @@ public class MenuCommands {
 		Set<ScriptMapMenu> menus = plugin.menuManager.getMenus();
 		sender.sendMessage("§eMenus (" + menus.size() + ")");
 		for (ScriptMapMenu menu : menus) {
-			if(scriptPattern.matcher(menu.getScriptName()).matches()) {
+			if (scriptPattern.matcher(menu.getScriptName()).matches()) {
 				TextComponent component = new TextComponent(menu.getName());
 				component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] { new TextComponent("§8Script: §7" + menu.getScriptName()) }));
 
@@ -229,14 +237,15 @@ public class MenuCommands {
 		}
 	}
 
-
-	@Command(name="reloadmenu",
+	@Command(name = "reloadmenu",
 			 aliases = {
-					 "reloadmapmenus","mapmenureload",
-					 "mmrl"
-			 },
-			 usage="<Name>",
-			 min = 1,max=1,fallbackPrefix = "mapmenus")
+					 "reloadmapmenus",
+					 "mapmenureload",
+					 "mmrl" },
+			 usage = "<Name>",
+			 min = 1,
+			 max = 1,
+			 fallbackPrefix = "mapmenus")
 	@Permission("mapmenus.reloadmenu")
 	public void reloadMenu(final CommandSender sender, final String name) {
 		if (!plugin.menuManager.doesMenuExist(name)) {
@@ -252,17 +261,21 @@ public class MenuCommands {
 		menu.renderer.dispose();
 
 		menu.initRenderer();
-		menu.reloadScript();
-
-		sender.sendMessage(MESSAGE_LOADER.getMessage("reload.reloaded","reload.reloaded"));
+		try {
+			menu.reloadScript();
+			sender.sendMessage(MESSAGE_LOADER.getMessage("reload.reloaded", "reload.reloaded"));
+		} catch (InvalidScriptException e) {
+			MenuScriptException exception = new MenuScriptException("Invalid script in file " + e.getScriptSource() + ", line " + e.getScriptException().getLineNumber() + ":" + e.getScriptException().getColumnNumber());
+			sender.sendMessage("§c" + exception.getMessage());
+			plugin.getLogger().log(Level.WARNING, exception.getMessage(), exception);
+		}
 	}
 
 	@Completion(name = "reloadmenu")
-	public void reloadMenu(final List<String> completions,final CommandSender sender, final String name) {
+	public void reloadMenu(final List<String> completions, final CommandSender sender, final String name) {
 		for (ScriptMapMenu menu : plugin.menuManager.getMenus()) {
 			completions.add(menu.getName());
 		}
 	}
-
 
 }

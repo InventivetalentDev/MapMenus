@@ -31,7 +31,7 @@ package org.inventivetalent.mapmenus.component;
 import lombok.*;
 import org.bukkit.entity.Player;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
-import org.inventivetalent.mapmenus.MenuScriptExecutionException;
+import org.inventivetalent.mapmenus.MenuScriptException;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.menu.CursorPosition;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
@@ -115,7 +115,7 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 			noTickFunction = true;
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling tick(): " + e.getException().getMessage(), e);
-			throw new MenuScriptExecutionException("ScriptException in Component tick()", e);
+			throw new MenuScriptException("ScriptException in Component tick()", e);
 		}
 	}
 
@@ -138,7 +138,7 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 			noRenderFunction = true;
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling render(): " + e.getException().getMessage(), e);
-			throw new MenuScriptExecutionException("ScriptException in Component render()", e);
+			throw new MenuScriptException("ScriptException in Component render()", e);
 		}
 	}
 
@@ -161,7 +161,7 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 			noClickFunction = true;
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling click(): " + e.getException().getMessage(), e);
-			throw new MenuScriptExecutionException("ScriptException in Component click()", e);
+			throw new MenuScriptException("ScriptException in Component click()", e);
 		}
 		return false;
 	}

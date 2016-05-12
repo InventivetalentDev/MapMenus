@@ -28,16 +28,16 @@
 
 package org.inventivetalent.mapmenus;
 
-public class MenuScriptExecutionException extends RuntimeException {
-	public MenuScriptExecutionException(String message) {
+public class MenuScriptException extends RuntimeException {
+	public MenuScriptException(String message) {
 		super(message);
 	}
 
-	public MenuScriptExecutionException(String message, Throwable cause) {
+	public MenuScriptException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public MenuScriptExecutionException(Throwable cause) {
+	public MenuScriptException(Throwable cause) {
 		super(cause);
 	}
 }
