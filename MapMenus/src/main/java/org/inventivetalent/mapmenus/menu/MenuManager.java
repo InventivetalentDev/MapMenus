@@ -36,9 +36,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Synchronized;
 import lombok.ToString;
 import org.bukkit.entity.ItemFrame;
+import org.inventivetalent.mapmanager.TimingsHelper;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.MenuScriptException;
-import org.inventivetalent.mapmenus.TimingsHelper;
 import org.inventivetalent.scriptconfig.InvalidScriptException;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 

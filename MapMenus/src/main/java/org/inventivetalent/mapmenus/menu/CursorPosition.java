@@ -40,7 +40,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.inventivetalent.boundingbox.BoundingBox;
 import org.inventivetalent.boundingbox.BoundingBoxAPI;
-import org.inventivetalent.mapmenus.TimingsHelper;
+import org.inventivetalent.mapmanager.TimingsHelper;
 import org.inventivetalent.vectors.d2.Vector2DDouble;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
