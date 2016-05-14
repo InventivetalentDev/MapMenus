@@ -48,6 +48,7 @@ import org.inventivetalent.mapmanager.TimingsHelper;
 import org.inventivetalent.mapmanager.controller.MapController;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.MenuScriptException;
+import org.inventivetalent.mapmenus.MoveDifference;
 import org.inventivetalent.mapmenus.MoveDirection;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.component.AnonymousScriptComponent;
@@ -490,11 +491,13 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 					MoveDirection moveDirection = baseDirection.getLookDirection(player.getLocation());
 					double value = baseDirection.getValue(moveDiff);
 
+					MoveDifference difference = moveDiff != null ? new MoveDifference(moveDiff.getX(), moveDiff.getY(), moveDiff.getZ(), moveDiff.getYaw(), moveDiff.getPitch()) : null;
+
 					if (((JSObject) invocable).keySet().isEmpty()) {// function(type, amount)
 						if (moveDiff == null) {
 							((JSObject) invocable).call(ScriptMapMenu.this.menu, null, 0, null); // TODO: find another parameter for "this"
 						} else {
-							((JSObject) invocable).call(ScriptMapMenu.this.menu, moveDirection.getCodeName(), value, moveDiff); // TODO: find another parameter for "this"
+							((JSObject) invocable).call(ScriptMapMenu.this.menu, moveDirection.getCodeName(), value, difference); // TODO: find another parameter for "this"
 						}
 					} else {// {north:function(amount){},...}
 						if (moveDiff != null) {
@@ -502,11 +505,11 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 								Object member = ((JSObject) invocable).getMember(s);
 								if (member instanceof JSObject) {
 									if (s.equals(baseDirection.getCodeName())) {
-										((JSObject) member).call(ScriptMapMenu.this.menu, value, moveDiff); // TODO: find another parameter for "this"
+										((JSObject) member).call(ScriptMapMenu.this.menu, value, difference); // TODO: find another parameter for "this"
 									}
 									if (baseDirection == moveDirection) { continue; }
 									if (s.equals(moveDirection.getCodeName())) {
-										((JSObject) member).call(ScriptMapMenu.this.menu, value, moveDiff); // TODO: find another parameter for "this"
+										((JSObject) member).call(ScriptMapMenu.this.menu, value, difference); // TODO: find another parameter for "this"
 									}
 								}
 							}
