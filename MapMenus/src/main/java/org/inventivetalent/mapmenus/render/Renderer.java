@@ -92,6 +92,10 @@ public class Renderer {
 		this.imageGraphics = menuImage.createGraphics();
 	}
 
+	public Graphics2D getGraphics() {
+		return this.imageGraphics;
+	}
+
 	/**
 	 * Renders & displays the menu for all players in the world
 	 */
