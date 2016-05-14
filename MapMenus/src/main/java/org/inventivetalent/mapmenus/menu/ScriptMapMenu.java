@@ -492,9 +492,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 					if (((JSObject) invocable).keySet().isEmpty()) {// function(type, amount)
 						if (moveDiff == null) {
-							((JSObject) invocable).call(ScriptMapMenu.this.menu, null, 0); // TODO: find another parameter for "this"
+							((JSObject) invocable).call(ScriptMapMenu.this.menu, null, 0, null); // TODO: find another parameter for "this"
 						} else {
-							((JSObject) invocable).call(ScriptMapMenu.this.menu, moveDirection.getCodeName(), value); // TODO: find another parameter for "this"
+							((JSObject) invocable).call(ScriptMapMenu.this.menu, moveDirection.getCodeName(), value, moveDiff); // TODO: find another parameter for "this"
 						}
 					} else {// {north:function(amount){},...}
 						if (moveDiff != null) {
@@ -502,11 +502,11 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 								Object member = ((JSObject) invocable).getMember(s);
 								if (member instanceof JSObject) {
 									if (s.equals(baseDirection.getCodeName())) {
-										((JSObject) member).call(ScriptMapMenu.this.menu, value); // TODO: find another parameter for "this"
+										((JSObject) member).call(ScriptMapMenu.this.menu, value, moveDiff); // TODO: find another parameter for "this"
 									}
 									if (baseDirection == moveDirection) { continue; }
 									if (s.equals(moveDirection.getCodeName())) {
-										((JSObject) member).call(ScriptMapMenu.this.menu, value); // TODO: find another parameter for "this"
+										((JSObject) member).call(ScriptMapMenu.this.menu, value, moveDiff); // TODO: find another parameter for "this"
 									}
 								}
 							}
