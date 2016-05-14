@@ -28,7 +28,10 @@
 
 package org.inventivetalent.mapmenus.menu.data;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
 import lombok.Synchronized;
@@ -58,6 +61,7 @@ public class ScriptMenuData implements IData {
 	@Override
 	@Synchronized
 	public void put(String key, Player player, Object value, long ttl) {
+		System.out.println("put "+value);
 		if (key == null || player == null) { return; }
 		if (value instanceof Boolean) {
 			MapMenusPlugin.instance.getLogger().warning("ScriptMenuStates ('states') should be used for boolean values");
@@ -170,7 +174,10 @@ public class ScriptMenuData implements IData {
 		} else if (value instanceof Character) {
 			jsonObject.addProperty(key, (Character) value);
 		} else {
-			jsonObject.add(key, new JsonParser().parse(value.toString()));
+			JsonObject classObject = new JsonObject();
+			classObject.addProperty("__class", value.getClass().getName());
+			classObject.add("__value", new Gson().toJsonTree(value));
+			jsonObject.add(key, /*new JsonParser().parse(value.toString())*/classObject);
 		}
 	}
 
@@ -188,6 +195,15 @@ public class ScriptMenuData implements IData {
 					return jsonPrimitive.getAsBoolean();
 				} else {
 					return jsonPrimitive.toString();
+				}
+			} else if (jsonElement.isJsonObject()) {
+				JsonObject object = jsonElement.getAsJsonObject();
+				if (object.has("__class")) {
+					try {
+						Class clazz = Class.forName(object.get("__class").getAsString());
+						return new Gson().fromJson(object.getAsJsonObject("__value"), clazz);
+					} catch (ClassNotFoundException ignored) {
+					}
 				}
 			}
 		}
