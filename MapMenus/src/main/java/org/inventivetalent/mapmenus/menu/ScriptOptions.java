@@ -36,7 +36,22 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class ScriptOptions {
 
-	@Expose public long tickSpeed      = 1;// interval of ticks
-	@Expose public int  cursorDistance = 10;// Maximum distance of players to track the cursor
+	/**
+	 * The speed at which the <code>tick()</code> function is called (Defaults to 1)
+	 */
+	@Expose public long tickSpeed      = 1;
+	/**
+	 * Maximum distance of players to the menu to track the cursor (Defaults to 10)
+	 */
+	@Expose public int  cursorDistance = 10;
+
+	/**
+	 * Whether to save states to file (Defaults to true)
+	 */
+	@Expose public boolean persistentStates = true;
+	/**
+	 * Whether to save data to file (Defaults to true)
+	 */
+	@Expose public boolean persistentData   = true;
 
 }
