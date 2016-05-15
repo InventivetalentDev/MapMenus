@@ -50,6 +50,10 @@ public abstract class ScriptManagerAbstract {
 		if (!this.directory.exists()) { this.directory.exists(); }
 	}
 
+	public File getDirectory() {
+		return directory;
+	}
+
 	public void saveDefaultFiles() {
 		for (String s : getDefaultFiles()) {
 			String resourcePath = new File(this.directory, s).toString().substring("plugins/MapMenus/".length());

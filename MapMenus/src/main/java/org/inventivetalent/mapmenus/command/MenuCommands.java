@@ -50,6 +50,14 @@ import org.inventivetalent.pluginannotations.message.MessageLoader;
 import org.inventivetalent.scriptconfig.InvalidScriptException;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -239,7 +247,7 @@ public class MenuCommands {
 
 	@Command(name = "reloadmenu",
 			 aliases = {
-					 "reloadmapmenus",
+					 "reloadmapmenu",
 					 "mapmenureload",
 					 "mmrl" },
 			 usage = "<Name>",
@@ -276,6 +284,71 @@ public class MenuCommands {
 		for (ScriptMapMenu menu : plugin.menuManager.getMenus()) {
 			completions.add(menu.getName());
 		}
+	}
+
+	//TODO
+	@Command(name = "downloadmenu",
+			 aliases = {
+					 "downloadmapmenu",
+					 "mapmenudownload",
+					 "mmdl" },
+			 usage = "<URL> <Name> [Menu|Component]",
+			 min = 2,
+			 max = 3,
+			 fallbackPrefix = "mapmenus")
+	@Permission("mapmenus.downloadmenu")
+	public void downloadMenu(final CommandSender sender, final String source,  String name, final @OptionalArg(def = "menu") String type) {
+		if (!"menu".equalsIgnoreCase(type) && !"component".equalsIgnoreCase(type)) {
+			sender.sendMessage(MESSAGE_LOADER.getMessage("error.download.invalidType", "error.download.invalidType"));
+			return;
+		}
+
+		if (!name.endsWith(".js")) {
+			name += ".js";
+		}
+
+		final File targetFile;
+		if ("menu".equalsIgnoreCase(type)) {
+			targetFile = new File(plugin.menuScriptManager.getDirectory(), name);
+		} else /*if ("component".equalsIgnoreCase(type))*/ {
+			targetFile = new File(plugin.componentScriptManager.getDirectory(), name);
+		}
+		if (targetFile.exists()) {
+			sender.sendMessage(MESSAGE_LOADER.getMessage("error.download.fileExists", "error.download.fileExists"));
+			return;
+		}
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+			@Override
+			public void run() {
+				try {
+					boolean loaded = false;
+					try {
+						URL url = new URL(source);
+						HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+						connection.setRequestProperty("User-Agent", "MapMenus/" + plugin.getDescription().getVersion());
+						try (InputStream in = connection.getInputStream()) {
+							Files.copy(in, targetFile.toPath());
+							loaded = true;
+						}
+						connection.disconnect();
+					} catch (MalformedURLException e) {
+						try {
+							Files.copy(new File(source).toPath(), targetFile.toPath());
+							loaded = true;
+						} catch (FileNotFoundException e1) {
+						}
+					}
+					if (loaded) {
+						sender.sendMessage(MESSAGE_LOADER.getMessage("download.loaded", "download.loaded"));
+					} else {
+						sender.sendMessage(MESSAGE_LOADER.getMessage("error.download.failed", "error.download.failed"));
+					}
+				} catch (IOException e) {
+					sender.sendMessage(MESSAGE_LOADER.getMessage("error.download.exception", "error.download.exception"));
+					plugin.getLogger().log(Level.WARNING, "File download failed", e);
+				}
+			}
+		});
 	}
 
 }

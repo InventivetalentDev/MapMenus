@@ -16,9 +16,16 @@ message:
       removed: "&aMenu removed"
     reload:
       reloaded: "&aMenu script reloaded"
+    download:
+      loaded: "&aFile downloaded."
     error:
       create:
         exists: "&cMenu already exists"
         unknownScript: "&cThat script does not exist"
       remove:
         notFound: "&cMenu not found"
+      download:
+        invalidType: "&cInvalid file type"
+        fileExists: "&cTarget file already exists. Please specify a different name."
+        failed: "&cDownload failed. The source is no valid URL or File"
+        exception: "&cUnexpected exception while downloading. See console for details."
