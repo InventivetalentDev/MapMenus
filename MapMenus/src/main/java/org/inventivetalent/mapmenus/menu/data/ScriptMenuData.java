@@ -28,18 +28,16 @@
 
 package org.inventivetalent.mapmenus.menu.data;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import com.google.gson.annotations.Expose;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import lombok.*;
 import org.bukkit.entity.Player;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Class to store data for menus & components
@@ -48,6 +46,24 @@ import java.util.UUID;
 @ToString
 public class ScriptMenuData implements IData {
 
+	public static final TypeAdapter<DataEntry> JSON_ADAPTER = new TypeAdapter<DataEntry>() {
+
+		@Override
+		public void write(JsonWriter out, DataEntry entry) throws IOException {
+			new Gson().toJson(entry, entry.getClass(), out);
+		}
+
+		@Override
+		public DataEntry read(JsonReader in) throws IOException {
+			JsonObject jsonObject = (JsonObject) new JsonParser().parse(in);
+			try {
+				return(DataEntry) new Gson().fromJson(jsonObject, Class.forName(jsonObject.get("_type").getAsString()));
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	};
+
 	@Data
 	@EqualsAndHashCode(exclude = {
 			"time",
@@ -55,7 +71,9 @@ public class ScriptMenuData implements IData {
 	@ToString
 	@AllArgsConstructor
 	@NoArgsConstructor
-	static class DataEntry {
+	public static class DataEntry {
+		@Expose final String _type = getClass().getName();
+
 		@Expose String key;
 		@Expose Object value;
 		@Expose long   time;
@@ -67,12 +85,46 @@ public class ScriptMenuData implements IData {
 	@ToString(callSuper = true)
 	@NoArgsConstructor
 	@AllArgsConstructor
-	static class PlayerDataEntry extends DataEntry {
+	public static class PlayerDataEntry extends DataEntry {
 		@Expose UUID player;
+	}
+
+	@Data
+	@EqualsAndHashCode(callSuper = true,
+					   exclude = "values")
+	@ToString(callSuper = true)
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class ArrayDataEntry extends DataEntry {
+		@Expose List<DataEntry> values = new ArrayList<>();
+
+		@Synchronized
+		DataEntry getEntry(int index) {
+			if (index < 0) { return null; }
+			if (index >= values.size()) { return null; }
+
+			DataEntry entry = values.get(index);
+			if (entry == null) { return null; }
+			if (entry.getTtl() == -1) { return entry; }
+			if (System.currentTimeMillis() - entry.getTime() > entry.getTtl()) {
+				System.out.println("value expired");
+				values.remove(index);
+				return null;
+			}
+			return entry;
+		}
 	}
 
 	//	@Expose public JsonObject storage = new JsonObject();
 	@Expose public Map<String, DataEntry> storage = new HashMap<>();
+
+	String getPlayerKey(Player player, String key) {
+		return "__player" + player.getUniqueId() + "__" + key;
+	}
+
+	//	String getArrayKey(String key) {
+	//		return "__array__" + key;
+	//	}
 
 	@Synchronized
 	DataEntry getOrCreateEntry(String key) {
@@ -93,6 +145,29 @@ public class ScriptMenuData implements IData {
 		}
 		if (!(entry instanceof PlayerDataEntry)) { throw new IllegalStateException("entry is not a player entry"); }
 		return (PlayerDataEntry) entry;
+	}
+
+	@Synchronized
+	DataEntry getEntry(String key) {
+		DataEntry entry = storage.get(key);
+		if (entry == null) { return null; }
+		if (entry.getTtl() == -1) { return entry; }
+		if (System.currentTimeMillis() - entry.getTime() > entry.getTtl()) {
+			storage.remove(key);
+			return null;
+		}
+		return entry;
+	}
+
+	@Synchronized
+	ArrayDataEntry getOrCreateArrayEntry(String key) {
+		DataEntry entry = storage.get(/*getArrayKey(key)*/key);
+		if (entry == null) {
+			entry = new ArrayDataEntry();
+			entry.setKey(key);
+		}
+		if (!(entry instanceof ArrayDataEntry)) { throw new IllegalStateException("entry is not an array entry"); }
+		return (ArrayDataEntry) entry;
 	}
 
 	@Override
@@ -159,6 +234,66 @@ public class ScriptMenuData implements IData {
 		put(key, player, value, -1);
 	}
 
+	@Synchronized
+	public void putArray(String key, Object value, long ttl) {
+		ArrayDataEntry entry = getOrCreateArrayEntry(key);
+
+		DataEntry newEntry = new DataEntry(key + "-" + entry.values.size(), value, ttl != -1 ? System.currentTimeMillis() : 0, ttl);
+		entry.values.add(newEntry);
+
+		storage.put(entry.getKey(), entry);
+	}
+
+	@Synchronized
+	public void putArray(String key, Object value) {
+		putArray(key, value, -1);
+	}
+
+	@Synchronized
+	public Object getArray(String key, int index) {
+		DataEntry entry = storage.get(key);
+		if (entry == null) { return null; }
+		if (!(entry instanceof ArrayDataEntry)) { return null; }
+		if (((ArrayDataEntry) entry).values.size() <= index) { return null; }
+		return ((ArrayDataEntry) entry).getEntry(index).value;
+	}
+
+	@Synchronized
+	public Object[] getArray(String key) {
+		DataEntry entry = storage.get(key);
+		if (entry == null) { return null; }
+		if (!(entry instanceof ArrayDataEntry)) { return null; }
+		// First iteration to remove expired elements
+		Object[] objects = new Object[((ArrayDataEntry) entry).values.size()];
+		for (int i = 0; i < objects.length; i++) {
+			objects[i] = ((ArrayDataEntry) entry).getEntry(i);
+		}
+
+		// Actual iteration after all null-elements are removed
+		objects = new Object[((ArrayDataEntry) entry).values.size()];
+		for (int i = 0; i < objects.length; i++) {
+			DataEntry entry1 = ((ArrayDataEntry) entry).getEntry(i);
+			objects[i] = entry1 != null ? entry1.value : null;
+		}
+
+		return objects;
+	}
+
+	@Synchronized
+	public void deleteArray(String key, int index) {
+		DataEntry entry = storage.get(key);
+		if (entry == null) { return; }
+		if (!(entry instanceof ArrayDataEntry)) { return; }
+		if (((ArrayDataEntry) entry).values.size() <= index) { return; }
+		((ArrayDataEntry) entry).values.remove(index);
+		storage.put(key, entry);
+	}
+
+	@Synchronized
+	public void removeArray(String key, int index) {
+		deleteArray(key, index);
+	}
+
 	//	@Synchronized
 	//	JsonObject getPlayerStorage(Player player) {
 	//		String objectKey = getPlayerKey(player);
@@ -169,10 +304,6 @@ public class ScriptMenuData implements IData {
 	//		}
 	//		return (JsonObject) jsonElement;
 	//	}
-
-	String getPlayerKey(Player player, String key) {
-		return "__player" + player.getUniqueId() + "__" + key;
-	}
 
 	@Override
 	@Synchronized
@@ -198,18 +329,6 @@ public class ScriptMenuData implements IData {
 	@Override
 	public void remove(String key, Player player) {
 		delete(key, player);
-	}
-
-	@Synchronized
-	DataEntry getEntry(String key) {
-		DataEntry entry = storage.get(key);
-		if (entry == null) { return null; }
-		if (entry.getTtl() == -1) { return entry; }
-		if (System.currentTimeMillis() - entry.getTime() > entry.getTtl()) {
-			storage.remove(key);
-			return null;
-		}
-		return entry;
 	}
 
 	@Override

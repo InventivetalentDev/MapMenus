@@ -39,6 +39,7 @@ import org.bukkit.entity.ItemFrame;
 import org.inventivetalent.mapmanager.TimingsHelper;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.MenuScriptException;
+import org.inventivetalent.mapmenus.menu.data.ScriptMenuData;
 import org.inventivetalent.scriptconfig.InvalidScriptException;
 import org.inventivetalent.vectors.d3.Vector3DDouble;
 
@@ -54,7 +55,7 @@ import java.util.logging.Level;
 @ToString
 public class MenuManager {
 
-	public static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+	public static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().registerTypeHierarchyAdapter(ScriptMenuData.DataEntry.class,ScriptMenuData.JSON_ADAPTER).create();
 
 	private MapMenusPlugin plugin;
 

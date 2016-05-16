@@ -52,4 +52,16 @@ public interface IData extends IPlayerStorage {
 
 	boolean has(String key, Player player);
 
+	void putArray(String key, Object value, long ttl);
+
+	void putArray(String key, Object value);
+
+	Object getArray(String key, int index);
+
+	Object[] getArray(String key);
+
+	void deleteArray(String key, int index);
+
+	void removeArray(String key, int index);
+
 }

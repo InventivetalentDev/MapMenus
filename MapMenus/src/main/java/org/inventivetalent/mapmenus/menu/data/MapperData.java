@@ -103,4 +103,34 @@ public class MapperData implements IData {
 	public boolean has(String key, Player player) {
 		return parentData.has(formatKey(key), player);
 	}
+
+	@Override
+	public void putArray(String key, Object value, long ttl) {
+		parentData.putArray(formatKey(key), value, ttl);
+	}
+
+	@Override
+	public void putArray(String key, Object value) {
+		parentData.putArray(formatKey(key), value);
+	}
+
+	@Override
+	public Object getArray(String key, int index) {
+		return parentData.getArray(formatKey(key), index);
+	}
+
+	@Override
+	public Object[] getArray(String key) {
+		return parentData.getArray(formatKey(key));
+	}
+
+	@Override
+	public void deleteArray(String key, int index) {
+		parentData.deleteArray(formatKey(key), index);
+	}
+
+	@Override
+	public void removeArray(String key, int index) {
+		parentData.removeArray(formatKey(key), index);
+	}
 }
