@@ -59,7 +59,9 @@ public class ScriptMenuStates implements IStates {
 		if (collection == null) { collection = new ArrayList<>(); }
 		StateEntry entry = getEntry(key, player);
 		if (entry == null) {
-			entry = new StateEntry(key, player.getUniqueId());
+			entry = new StateEntry();
+			entry.setKey(key);
+			entry.setPlayer(player.getUniqueId());
 		}
 		entry.setTime(System.currentTimeMillis());
 		entry.setTtl(ttl);
@@ -179,15 +181,15 @@ public class ScriptMenuStates implements IStates {
 
 	@Data
 	@AllArgsConstructor
-	@RequiredArgsConstructor
+	@NoArgsConstructor
 	@EqualsAndHashCode(exclude = {
 			"time",
 			"ttl" })
 	class StateEntry {
-		@Expose final String key;
-		@Expose final UUID   player;
-		@Expose       long   time;
-		@Expose       long   ttl;
+		@Expose String key;
+		@Expose UUID   player;
+		@Expose long   time;
+		@Expose long   ttl;
 	}
 
 }
