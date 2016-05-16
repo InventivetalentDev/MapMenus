@@ -57,7 +57,7 @@ public abstract class ScriptManagerAbstract {
 	public void saveDefaultFiles() {
 		for (String s : getDefaultFiles()) {
 			String resourcePath = new File(this.directory, s).toString().substring("plugins/MapMenus/".length());
-			File file = new File(plugin.getDataFolder(),resourcePath);
+			File file = new File(plugin.getDataFolder(), resourcePath);
 			File directory = file.getParentFile();
 
 			if (!directory.exists()) { directory.mkdirs(); }
@@ -92,7 +92,31 @@ public abstract class ScriptManagerAbstract {
 	}
 
 	public Collection<String> getScriptsWithExtension() {
-		return new ArrayList<>(Arrays.asList(directory.list()));
+		List<String> tempList = new ArrayList<>();
+		listFiles(tempList, directory);
+
+		List<String> list = new ArrayList<>();
+		int substring = directory.getAbsolutePath().length();
+		for (String s : tempList) {
+			list.add(s.substring(substring + 1));
+		}
+
+		return list;
+	}
+
+	void listFiles(Collection<String> list, File directory) {
+		File[] baseFileList = directory.listFiles();
+		if (baseFileList != null) {
+			for (File file : baseFileList) {
+				if (file.isFile()) {
+					list.add(file.getAbsolutePath());
+				} else if (file.isDirectory()) {
+					listFiles(list, file);
+				} else {
+					plugin.getLogger().info("'" + file.getAbsolutePath() + "' is not a file or directory?!");
+				}
+			}
+		}
 	}
 
 	public Collection<String> getScripts() {
