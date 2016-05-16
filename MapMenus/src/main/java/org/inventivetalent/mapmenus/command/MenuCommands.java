@@ -41,10 +41,7 @@ import org.inventivetalent.mapmenus.MapMenusPlugin;
 import org.inventivetalent.mapmenus.MenuScriptException;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
-import org.inventivetalent.pluginannotations.command.Command;
-import org.inventivetalent.pluginannotations.command.Completion;
-import org.inventivetalent.pluginannotations.command.OptionalArg;
-import org.inventivetalent.pluginannotations.command.Permission;
+import org.inventivetalent.pluginannotations.command.*;
 import org.inventivetalent.pluginannotations.message.MessageFormatter;
 import org.inventivetalent.pluginannotations.message.MessageLoader;
 import org.inventivetalent.scriptconfig.InvalidScriptException;
@@ -114,13 +111,13 @@ public class MenuCommands {
 					 "createmapmenu",
 					 "mapmenucreate",
 					 "mmc" },
-			 usage = "<Name> <Script>",
+			 usage = "<Name> <Script> [Args]",
 			 description = "Create a new menu",
 			 min = 2,
 			 max = 2,
 			 fallbackPrefix = "mapmenus")
 	@Permission("mapmenus.create")
-	public void createMenu(final Player sender, final String name, final String script) {
+	public void createMenu(final Player sender, final String name, final String script, @OptionalArg @JoinedArg final String args) {
 		if (plugin.menuManager.doesMenuExist(name)) {
 			sender.sendMessage(MESSAGE_LOADER.getMessage("error.create.exists", "error.create.exists"));
 			return;
@@ -160,7 +157,7 @@ public class MenuCommands {
 										}));
 
 										try {
-											ScriptMapMenu menu = plugin.menuManager.createMenu(name, firstFrame, secondFrame, script);
+											ScriptMapMenu menu = plugin.menuManager.createMenu(name, firstFrame, secondFrame, script, args);
 											sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.created", "create.setup.created"));
 										} catch (MenuScriptException e) {
 											sender.sendMessage("§c" + e.getMessage());
@@ -297,7 +294,7 @@ public class MenuCommands {
 			 max = 3,
 			 fallbackPrefix = "mapmenus")
 	@Permission("mapmenus.downloadmenu")
-	public void downloadMenu(final CommandSender sender, final String source,  String name, final @OptionalArg(def = "menu") String type) {
+	public void downloadMenu(final CommandSender sender, final String source, String name, final @OptionalArg(def = "menu") String type) {
 		if (!"menu".equalsIgnoreCase(type) && !"component".equalsIgnoreCase(type)) {
 			sender.sendMessage(MESSAGE_LOADER.getMessage("error.download.invalidType", "error.download.invalidType"));
 			return;

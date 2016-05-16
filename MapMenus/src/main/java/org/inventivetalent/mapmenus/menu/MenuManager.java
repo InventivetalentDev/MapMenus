@@ -55,7 +55,7 @@ import java.util.logging.Level;
 @ToString
 public class MenuManager {
 
-	public static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().registerTypeHierarchyAdapter(ScriptMenuData.DataEntry.class,ScriptMenuData.JSON_ADAPTER).create();
+	public static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().registerTypeHierarchyAdapter(ScriptMenuData.DataEntry.class, ScriptMenuData.JSON_ADAPTER).create();
 
 	private MapMenusPlugin plugin;
 
@@ -88,7 +88,7 @@ public class MenuManager {
 	}
 
 	@Synchronized
-	public ScriptMapMenu createMenu(String name, ItemFrame itemFrameA, ItemFrame itemFrameB, String script) {
+	public ScriptMapMenu createMenu(String name, ItemFrame itemFrameA, ItemFrame itemFrameB, String script, String initArgsString) {
 		if (menuMap.containsKey(name)) {
 			throw new IllegalArgumentException("Menu '" + name + "' already exists");
 		}
@@ -97,7 +97,19 @@ public class MenuManager {
 			return null;
 		}
 
+		Object[] initArgs;
+		if (initArgsString == null || initArgsString.isEmpty()) {
+			initArgs = new Object[0];
+		} else {
+			String[] split = initArgsString.split(",");
+			initArgs = new Object[split.length];
+			for (int i = 0; i < split.length; i++) {
+				initArgs[i] = split[i].trim();
+			}
+		}
+
 		ScriptMapMenu mapMenu = new ScriptMapMenu(itemFrameA, new Vector3DDouble(itemFrameA.getLocation().toVector()), new Vector3DDouble(itemFrameB.getLocation().toVector()), name);
+		mapMenu.setInitArgs(initArgs);
 		mapMenu.setScriptConfig(script);
 		try {
 			mapMenu.reloadScript();

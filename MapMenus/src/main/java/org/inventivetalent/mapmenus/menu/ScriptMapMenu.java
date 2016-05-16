@@ -100,6 +100,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	@Expose private String         scriptName;
 	private         ScriptConfig   script;
 	public          BukkitRunnable scriptTask;
+	@Expose private Object[]       initArgs;
 
 	boolean noTickFunction;
 	boolean noRenderFunction;
@@ -192,7 +193,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		};
 
 		try {
-			this.script.callFunction("init");
+			this.script.callFunction("init", this.initArgs);
 		} catch (NoSuchFunctionException e) {
 			// Ignore
 		} catch (RuntimeScriptException e) {
