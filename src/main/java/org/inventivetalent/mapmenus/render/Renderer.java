@@ -46,7 +46,6 @@ import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.bounds.IBounds;
 import org.inventivetalent.mapmenus.menu.ScriptMapMenu;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-import sun.java2d.SunGraphics2D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -136,11 +135,11 @@ public class Renderer {
 		this.menuImage.flush();
 		this.menuImage.rgbData = null;
 		// Reset component translation
-		this.imageGraphics.translate(0, 0);
-		if (this.imageGraphics instanceof SunGraphics2D) {
-			((SunGraphics2D) this.imageGraphics).transX = 0;
-			((SunGraphics2D) this.imageGraphics).transY = 0;
-		}
+//		this.imageGraphics.translate(0, 0);
+//		if (this.imageGraphics instanceof SunGraphics2D) {
+//			((SunGraphics2D) this.imageGraphics).transX = 0;
+//			((SunGraphics2D) this.imageGraphics).transY = 0;
+//		}
 	}
 
 	/**

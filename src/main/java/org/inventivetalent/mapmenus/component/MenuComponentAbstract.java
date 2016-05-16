@@ -80,10 +80,6 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 		return bounds;
 	}
 
-	//	public void setBounds(int x, int y, int width, int height) {
-	//		setBounds(new FixedBounds(x, y, width, height));
-	//	}
-
 	// Method with doubles, so you don't have to always parse all numbers to integers
 	@Scriptify(targetVar = "component")
 	public void setBounds(double x, double y, double width, double height) {

@@ -127,12 +127,12 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 		if (!visible) { return; }
 		try {
 			// Translate to the component's position
-			graphics.translate(getBounds().x, getBounds().y);
+//			graphics.translate(getAbsoluteBounds().x, getAbsoluteBounds().y);
 
 			render0(graphics, player);
 
 			// Translate back
-			graphics.translate(-getBounds().x, -getBounds().y);
+//			graphics.translate(-getAbsoluteBounds().x, -getAbsoluteBounds().y);
 		} catch (NoSuchFunctionException e) {
 			// Ignore this, the element doesn't want to be rendered
 			noRenderFunction = true;
