@@ -114,7 +114,7 @@ public class MenuCommands {
 			 usage = "<Name> <Script> [Args]",
 			 description = "Create a new menu",
 			 min = 2,
-			 max = 2,
+			 max = 3,
 			 fallbackPrefix = "mapmenus")
 	@Permission("mapmenus.create")
 	public void createMenu(final Player sender, final String name, final String script, @OptionalArg @JoinedArg final String args) {
@@ -232,10 +232,13 @@ public class MenuCommands {
 				Vector3DDouble teleportVector = menu.getBaseVector();
 				ClickEvent teleportClick = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp " + teleportVector.getX() + " " + teleportVector.getY() + " " + teleportVector.getZ());
 				HoverEvent teleportHover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Teleport to " + teleportVector.getX() + "," + teleportVector.getY() + "," + teleportVector.getZ()).color(ChatColor.GRAY).create());
-				component.addExtra(new ComponentBuilder(" [Teleport]").color(ChatColor.YELLOW).bold(true).event(teleportClick).event(teleportHover).create()[0]);
+				component.addExtra(new ComponentBuilder("  [Teleport]").color(ChatColor.YELLOW).bold(true).event(teleportClick).event(teleportHover).create()[0]);
+
+				ClickEvent reloadClick = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mapmenus:reloadmenu " + menu.getName());
+				component.addExtra(new ComponentBuilder("  [Reload]").color(ChatColor.GREEN).bold(true).event(reloadClick).create()[0]);
 
 				ClickEvent deleteClick = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mapmenus:removemenu " + menu.getName());
-				component.addExtra(new ComponentBuilder(" [Delete]").color(ChatColor.RED).bold(true).event(deleteClick).create()[0]);
+				component.addExtra(new ComponentBuilder("  [Delete]").color(ChatColor.RED).bold(true).event(deleteClick).create()[0]);
 
 				sender.spigot().sendMessage(component);
 			}
