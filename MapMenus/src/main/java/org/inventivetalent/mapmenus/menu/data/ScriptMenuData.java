@@ -246,13 +246,13 @@ public class ScriptMenuData implements IData {
 	@Override
 	@Synchronized
 	public boolean has(String key) {
-		return storage.containsKey(key);
+		return storage.containsKey(key) && get(key) != null;
 	}
 
 	@Override
 	@Synchronized
 	public boolean has(String key, Player player) {
-		return storage.containsKey(getPlayerKey(player, key));
+		return storage.containsKey(getPlayerKey(player, key)) && get(key, player) != null;
 	}
 
 	void addObjectToJson(JsonObject jsonObject, String key, Object value) {
