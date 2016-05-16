@@ -6,11 +6,18 @@
         BukkitSound: Java.type("org.bukkit.Sound")
     },
     text: "",
+    disabled: false,
     setText: function(text) {
         this.text = text;
     },
     getText: function() {
         return this.text;
+    },
+    setDisabled: function(disabled) {
+        this.disabled = disabled;
+    },
+    isDisabled: function() {
+        return this.disabled;
     },
     init: function(text) {
         this.text = text;
@@ -28,14 +35,17 @@
             graphics.setColor(new this.classes.JavaColor(37, 67, 207));
         }
         else {
-
-            if (cursor !== null && bounds.contains(cursor)) { // Mouse hover
-                graphics.setColor(new this.classes.JavaColor(126, 136, 191));
+            if (this.disabled) {
+                graphics.setColor(new this.classes.JavaColor(204, 204, 204));
             }
-            else { // Inactive
-                graphics.setColor(new this.classes.JavaColor(117, 117, 117));
+            else {
+                if (cursor !== null && bounds.contains(cursor)) { // Mouse hover
+                    graphics.setColor(new this.classes.JavaColor(126, 136, 191));
+                }
+                else { // Inactive
+                    graphics.setColor(new this.classes.JavaColor(117, 117, 117));
+                }
             }
-
         }
         // Fill with the color
         graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -45,6 +55,12 @@
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
         if (this.text !== undefined) {
+            if (this.disabled) {
+                graphics.setColor(new this.classes.JavaColor(135, 135, 163));
+            }
+            else {
+                graphics.setColor(this.classes.JavaColor.black);
+            }
 
             // Draw label
             this.menu.renderer.drawStringCentered(graphics, bounds, this.text);
