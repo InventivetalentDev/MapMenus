@@ -30,7 +30,6 @@ package org.inventivetalent.mapmenus.menu;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.EqualsAndHashCode;
@@ -180,7 +179,7 @@ public class MenuManager {
 
 			// TODO: find a more convenient location to do this
 			// Clear data/states if they're not persistent
-			if (!menu.options.persistentData) { menu.data.storage = new JsonObject(); }
+			if (!menu.options.persistentData) { menu.data.storage.clear(); }
 			if (!menu.options.persistentStates) { menu.states.stateMap.clear(); }
 
 			try {

@@ -50,6 +50,11 @@ public class MapperData implements IData {
 	}
 
 	@Override
+	public void put(String key, Object value, long ttl) {
+		parentData.put(formatKey(key), value, ttl);
+	}
+
+	@Override
 	public void put(String key, Player player, Object value, long ttl) {
 		parentData.put(formatKey(key), player, value, ttl);
 	}

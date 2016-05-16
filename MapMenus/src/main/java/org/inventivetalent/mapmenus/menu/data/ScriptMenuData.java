@@ -33,11 +33,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
-import lombok.EqualsAndHashCode;
-import lombok.Synchronized;
-import lombok.ToString;
+import lombok.*;
 import org.bukkit.entity.Player;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Class to store data for menus & components
@@ -46,7 +48,52 @@ import org.inventivetalent.mapmenus.MapMenusPlugin;
 @ToString
 public class ScriptMenuData implements IData {
 
-	@Expose public JsonObject storage = new JsonObject();
+	@Data
+	@EqualsAndHashCode(exclude = {
+			"time",
+			"ttl" })
+	@ToString
+	@AllArgsConstructor
+	@NoArgsConstructor
+	static class DataEntry {
+		@Expose String key;
+		@Expose Object value;
+		@Expose long   time;
+		@Expose long   ttl;
+	}
+
+	@Data
+	@EqualsAndHashCode(callSuper = true)
+	@ToString(callSuper = true)
+	@NoArgsConstructor
+	@AllArgsConstructor
+	static class PlayerDataEntry extends DataEntry {
+		@Expose UUID player;
+	}
+
+	//	@Expose public JsonObject storage = new JsonObject();
+	@Expose public Map<String, DataEntry> storage = new HashMap<>();
+
+	@Synchronized
+	DataEntry getOrCreateEntry(String key) {
+		DataEntry entry = storage.get(key);
+		if (entry == null) {
+			entry = new DataEntry();
+			entry.setKey(key);
+		}
+		return entry;
+	}
+
+	@Synchronized
+	PlayerDataEntry getOrCreatePlayerEntry(String key, Player player) {
+		DataEntry entry = storage.get(getPlayerKey(player, key));
+		if (entry == null) {
+			entry = new PlayerDataEntry();
+			entry.setKey(key);
+		}
+		if (!(entry instanceof PlayerDataEntry)) { throw new IllegalStateException("entry is not a player entry"); }
+		return (PlayerDataEntry) entry;
+	}
 
 	@Override
 	@Synchronized
@@ -54,32 +101,56 @@ public class ScriptMenuData implements IData {
 		if (value == null) {
 			storage.remove(key);
 		} else {
-			addObjectToJson(storage, key, value);
+			//			addObjectToJson(storage, key, value);
+			DataEntry entry = getOrCreateEntry(key);
+			entry.setValue(value);
+			entry.setTtl(-1);
+			entry.setTime(0);
+			storage.put(key, entry);
+		}
+	}
+
+	@Override
+	@Synchronized
+	public void put(String key, Object value, long ttl) {
+		if (value == null) {
+			storage.remove(key);
+		} else {
+			DataEntry entry = getOrCreateEntry(key);
+			entry.setValue(value);
+			entry.setTtl(ttl);
+			entry.setTime(System.currentTimeMillis());
+			storage.put(key, entry);
 		}
 	}
 
 	@Override
 	@Synchronized
 	public void put(String key, Player player, Object value, long ttl) {
-		System.out.println("put "+value);
 		if (key == null || player == null) { return; }
 		if (value instanceof Boolean) {
 			MapMenusPlugin.instance.getLogger().warning("ScriptMenuStates ('states') should be used for boolean values");
 		}
 
-		JsonObject playerStorage = getPlayerStorage(player);
-		JsonElement entryElement = playerStorage.get(key);
-		if (entryElement == null) {
-			entryElement = new JsonObject();
-		}
-		JsonObject entryObject = (JsonObject) entryElement;
+		//		JsonObject playerStorage = getPlayerStorage(player);
+		//		JsonElement entryElement = playerStorage.get(key);
+		//		if (entryElement == null) {
+		//			entryElement = new JsonObject();
+		//		}
+		//		JsonObject entryObject = (JsonObject) entryElement;
+		//
+		//		addObjectToJson(entryObject, "value", value);
+		//		entryObject.addProperty("ttl", ttl);
+		//		entryObject.addProperty("time", System.currentTimeMillis());
+		//
+		//		playerStorage.add(key, entryObject);
+		//		storage.add(getPlayerKey(player), playerStorage);
 
-		addObjectToJson(entryObject, "value", value);
-		entryObject.addProperty("ttl", ttl);
-		entryObject.addProperty("time", System.currentTimeMillis());
-
-		playerStorage.add(key, entryObject);
-		storage.add(getPlayerKey(player), playerStorage);
+		PlayerDataEntry entry = getOrCreatePlayerEntry(key, player);
+		entry.setValue(value);
+		entry.setTtl(ttl);
+		entry.setTime(System.currentTimeMillis());
+		storage.put(entry.getKey(), entry);
 	}
 
 	@Override
@@ -88,19 +159,19 @@ public class ScriptMenuData implements IData {
 		put(key, player, value, -1);
 	}
 
-	@Synchronized
-	JsonObject getPlayerStorage(Player player) {
-		String objectKey = getPlayerKey(player);
-		JsonElement jsonElement = storage.get(objectKey);
-		if (jsonElement == null) {
-			jsonElement = new JsonObject();
-			storage.add(objectKey, jsonElement);
-		}
-		return (JsonObject) jsonElement;
-	}
+	//	@Synchronized
+	//	JsonObject getPlayerStorage(Player player) {
+	//		String objectKey = getPlayerKey(player);
+	//		JsonElement jsonElement = storage.get(objectKey);
+	//		if (jsonElement == null) {
+	//			jsonElement = new JsonObject();
+	//			storage.add(objectKey, jsonElement);
+	//		}
+	//		return (JsonObject) jsonElement;
+	//	}
 
-	String getPlayerKey(Player player) {
-		return "__player" + player.getUniqueId() + "__";
+	String getPlayerKey(Player player, String key) {
+		return "__player" + player.getUniqueId() + "__" + key;
 	}
 
 	@Override
@@ -117,10 +188,11 @@ public class ScriptMenuData implements IData {
 	@Override
 	@Synchronized
 	public void delete(String key, Player player) {
-		JsonObject playerStorage = getPlayerStorage(player);
-		playerStorage.remove(key);
-
-		storage.add(getPlayerKey(player), playerStorage);
+		//		JsonObject playerStorage = getPlayerStorage(player);
+		//		playerStorage.remove(key);
+		//
+		//		storage.add(getPlayerKey(player), playerStorage);
+		storage.remove(getPlayerKey(player, key));
 	}
 
 	@Override
@@ -128,40 +200,59 @@ public class ScriptMenuData implements IData {
 		delete(key, player);
 	}
 
+	@Synchronized
+	DataEntry getEntry(String key) {
+		DataEntry entry = storage.get(key);
+		if (entry == null) { return null; }
+		if (entry.getTtl() == -1) { return entry; }
+		if (System.currentTimeMillis() - entry.getTime() > entry.getTtl()) {
+			storage.remove(key);
+			return null;
+		}
+		return entry;
+	}
+
 	@Override
 	@Synchronized
 	public Object get(String key) {
-		JsonElement jsonElement = storage.get(key);
-		return parseFromJson(jsonElement);
+		//		JsonElement jsonElement = storage.get(key);
+		//		return parseFromJson(jsonElement);
+		DataEntry entry = getEntry(key);
+		if (entry == null) { return null; }
+		return entry.getValue();
 	}
 
 	@Override
 	@Synchronized
 	public Object get(String key, Player player) {
-		JsonObject jsonObject = getPlayerStorage(player);
-		JsonElement entryElement = jsonObject.get(key);
-		if (entryElement == null) { return null; }
-		JsonObject entryObject = (JsonObject) entryElement;
-
-		if (entryObject.get("ttl").getAsLong() == -1) { return parseFromJson(entryObject.get("value")); }
-		if (System.currentTimeMillis() - entryObject.get("time").getAsLong() > entryObject.get("ttl").getAsLong()) {
-			jsonObject.remove(key);
-			return null;
-		} else {
-			return parseFromJson(entryObject.get("value"));
-		}
+		//		JsonObject jsonObject = getPlayerStorage(player);
+		//		JsonElement entryElement = jsonObject.get(key);
+		//		if (entryElement == null) { return null; }
+		//		JsonObject entryObject = (JsonObject) entryElement;
+		//
+		//		if (entryObject.get("ttl").getAsLong() == -1) { return parseFromJson(entryObject.get("value")); }
+		//		if (System.currentTimeMillis() - entryObject.get("time").getAsLong() > entryObject.get("ttl").getAsLong()) {
+		//			jsonObject.remove(key);
+		//			return null;
+		//		} else {
+		//			return parseFromJson(entryObject.get("value"));
+		//		}
+		DataEntry entry = getEntry(getPlayerKey(player, key));
+		if (entry == null) { return null; }
+		if (!(entry instanceof PlayerDataEntry)) { return null; }
+		return entry;
 	}
 
 	@Override
 	@Synchronized
 	public boolean has(String key) {
-		return storage.has(key);
+		return storage.containsKey(key);
 	}
 
 	@Override
 	@Synchronized
 	public boolean has(String key, Player player) {
-		return getPlayerStorage(player).has(key);
+		return storage.containsKey(getPlayerKey(player, key));
 	}
 
 	void addObjectToJson(JsonObject jsonObject, String key, Object value) {

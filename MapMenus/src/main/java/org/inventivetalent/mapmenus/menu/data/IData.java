@@ -34,6 +34,8 @@ public interface IData extends IPlayerStorage {
 
 	void put(String key, Object value);
 
+	void put(String key, Object value, long ttl);
+
 	void put(String key, Player player, Object value, long ttl);
 
 	void put(String key, Player player, Object value);
