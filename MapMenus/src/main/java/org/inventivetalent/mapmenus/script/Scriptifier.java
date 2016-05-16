@@ -80,8 +80,6 @@ public class Scriptifier {
 				} else {
 					throw new IllegalArgumentException("cannot @Scriptifiy " + target.getClass());
 				}
-
-				System.out.println("@Scriptified method " + name);
 			}
 		}
 		for (Field field : clazz.getDeclaredFields()) {
@@ -106,8 +104,6 @@ public class Scriptifier {
 				} catch (IllegalAccessException e) {
 					throw new RuntimeException(e);
 				}
-
-				System.out.println("@Scriptified field " + name);
 			}
 		}
 	}

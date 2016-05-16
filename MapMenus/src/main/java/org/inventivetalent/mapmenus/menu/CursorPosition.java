@@ -157,12 +157,6 @@ public class CursorPosition {
 		}
 
 		menuVector = new Vector3DDouble(vecX, vecY, vecZ);
-		//		int menuX = (int) Math.round(mapMenu.facing.getFrameModX() != 0 ? menuVector.getX() : menuVector.getZ());
-		//		int menuY = (int) Math.round(menuVector.getY());
-		//
-		//		System.out.println("TargetVector: " + targetVector);
-		//		System.out.println(" MenuVector: " + menuVector);
-		//		System.out.println("   ");
 		Vector2DDouble vector2d = mapMenu.getFacing().getPlane().to2D(menuVector);
 
 		TimingsHelper.stopTiming("MapMenu:CursorPosition:calculate:convert");

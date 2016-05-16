@@ -94,14 +94,6 @@ public class FileScriptComponent extends AnonymousScriptComponent implements ISc
 	}
 
 	void initScriptVariables() {
-		//		this.scriptConfig.setVariable("menu", this.menu);
-		//		this.scriptConfig.setVariable("component", this);
-		//		this.scriptConfig.setVariable("data", this.data);
-		//		this.scriptConfig.setVariable("states", this.states);
-		//		this.scriptConfig.setVariable("providers", this.providers);
-		//
-		//		this.scriptConfig.setVariable("placeholders", this.placeholders);
-		System.out.println("Scriptify file component");
 		Scriptifier.scriptify(this, getScript());
 	}
 

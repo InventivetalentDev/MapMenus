@@ -218,15 +218,6 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 	}
 
 	void initScriptVariables() {
-		//		this.script.setVariable("menu", this);
-		//		this.script.setVariable("renderer", this.renderer);
-		//		this.script.setVariable("options", this.options);
-		//		this.script.setVariable("data", this.data);
-		//		this.script.setVariable("states", this.states);
-		//		this.script.setVariable("providers", this.providers);
-		//
-		//		this.script.setVariable("placeholders", this.placeholders);
-		System.out.println("Scriptify menu");
 		Scriptifier.scriptify(this, getScript().getScriptEngine());
 	}
 
@@ -289,7 +280,6 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 		component.id = componentCounter++;
 		component.menu = this;
 		components.put(component.getUuid(), component);
-		System.out.println("Scriptify anonymous component");
 		Scriptifier.scriptify(component, component.getScript());
 		try {
 			component.init();

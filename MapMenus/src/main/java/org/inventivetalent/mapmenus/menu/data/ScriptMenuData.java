@@ -107,7 +107,6 @@ public class ScriptMenuData implements IData {
 			if (entry == null) { return null; }
 			if (entry.getTtl() == -1) { return entry; }
 			if (System.currentTimeMillis() - entry.getTime() > entry.getTtl()) {
-				System.out.println("value expired");
 				values.remove(index);
 				return null;
 			}
