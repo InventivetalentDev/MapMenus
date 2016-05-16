@@ -253,9 +253,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			component.reloadScript();
 			components.put(component.getUuid(), component);
 		} catch (InvalidScriptException e) {
-			throw new MenuScriptException("Invalid script in file " + e.getScriptSource() + ", line " + e.getScriptException().getLineNumber() + ":" + e.getScriptException().getColumnNumber());
+			throw new MenuScriptException("Invalid script in file " + e.getScriptSource() + ", line " + e.getScriptException().getLineNumber() + ":" + e.getScriptException().getColumnNumber(), e);
 		}
-		//		Scriptifier.scriptify(component, component.getScript().getScriptEngine());
 
 		tickLocked = false;
 		return (JSObject) component.getScriptConfig().getContent();
