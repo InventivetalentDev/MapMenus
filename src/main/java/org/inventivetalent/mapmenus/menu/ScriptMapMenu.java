@@ -304,6 +304,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 	@Scriptify(targetVar = "menu")
 	public CursorPosition getCursorPosition(Player player) {
+		if (player == null) { return null; }
+		if (!player.isOnline()) { return null; }
+		if (!player.getLocation().getWorld().getName().equals(getWorldName())) { return null; }
 		if (baseVector.distanceSquared(new Vector3DDouble(player.getLocation())) > 1024) {
 			return null;// Player is too far away
 		}
