@@ -358,7 +358,7 @@ public class ScriptMenuData implements IData {
 		DataEntry entry = getEntry(getPlayerKey(player, key));
 		if (entry == null) { return null; }
 		if (!(entry instanceof PlayerDataEntry)) { return null; }
-		return entry;
+		return entry.getValue();
 	}
 
 	@Override
