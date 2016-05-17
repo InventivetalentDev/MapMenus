@@ -76,6 +76,9 @@ public enum MoveDirection {
 
 	/**
 	 * Converts the base direction to a directional movement FORWARD, BACKWARD, LEFT or RIGHT
+	 *
+	 * @param yaw Yaw value to convert
+	 * @return the direction
 	 */
 	public MoveDirection getLookDirection(float yaw) {
 		int cardinal = floor_double(yaw * 4.0F / 360.0F + 0.5D) & 3;
@@ -121,6 +124,9 @@ public enum MoveDirection {
 
 	/**
 	 * Converts the relative movement to NORTH, EAST, SOUTH, WEST, UP, DOWN, PITCH or YAW
+	 *
+	 * @param relativeMove the relative movement
+	 * @return the base direction
 	 */
 	public static MoveDirection getBaseDirection(Location relativeMove) {
 		double highest = 0;

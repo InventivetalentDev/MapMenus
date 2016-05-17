@@ -154,6 +154,8 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 	/**
 	 * Reloads this menu's script file from the given ScriptManager
+	 *
+	 * @param scriptManager the script manager to load from
 	 */
 	public void reloadScript(ScriptManagerAbstract scriptManager) {
 		if (this.scriptName == null || this.scriptName.isEmpty()) {

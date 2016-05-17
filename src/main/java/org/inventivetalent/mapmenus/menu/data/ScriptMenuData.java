@@ -40,7 +40,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Class to store data for menus & components
+ * Class to store data for menus &amp; components
  */
 @EqualsAndHashCode
 @ToString

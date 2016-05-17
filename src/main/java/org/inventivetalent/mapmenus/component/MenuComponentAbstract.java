@@ -92,6 +92,9 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 
 	/**
 	 * Moves the component to a new point
+	 *
+	 * @param x x-position
+	 * @param y y-position
 	 */
 	@Scriptify(targetVar = "component")
 	public void move(int x, int y) {
@@ -100,6 +103,9 @@ public abstract class MenuComponentAbstract implements IRenderable, ITickable, I
 
 	/**
 	 * Moves the component relative to its current position
+	 *
+	 * @param x x-position
+	 * @param y y-position
 	 */
 	@Scriptify(targetVar = "component")
 	public void moveRelative(int x, int y) {

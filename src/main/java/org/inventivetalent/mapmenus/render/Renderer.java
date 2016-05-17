@@ -96,7 +96,7 @@ public class Renderer {
 	}
 
 	/**
-	 * Renders & displays the menu for all players in the world
+	 * Renders &amp; displays the menu for all players in the world
 	 */
 	public void render() {
 		for (Player player : frameContainer.getWorld().getPlayers()) {
@@ -105,7 +105,7 @@ public class Renderer {
 	}
 
 	/**
-	 * Renders & displays the menu for a player
+	 * Renders &amp; displays the menu for a player
 	 *
 	 * @param player the player
 	 */
@@ -135,11 +135,11 @@ public class Renderer {
 		this.menuImage.flush();
 		this.menuImage.rgbData = null;
 		// Reset component translation
-//		this.imageGraphics.translate(0, 0);
-//		if (this.imageGraphics instanceof SunGraphics2D) {
-//			((SunGraphics2D) this.imageGraphics).transX = 0;
-//			((SunGraphics2D) this.imageGraphics).transY = 0;
-//		}
+		//		this.imageGraphics.translate(0, 0);
+		//		if (this.imageGraphics instanceof SunGraphics2D) {
+		//			((SunGraphics2D) this.imageGraphics).transX = 0;
+		//			((SunGraphics2D) this.imageGraphics).transY = 0;
+		//		}
 	}
 
 	/**
@@ -167,6 +167,7 @@ public class Renderer {
 	 * Removes a viewer from the menu
 	 *
 	 * @param player player to remove
+	 * @return the removed MapWrapper
 	 */
 	public MapWrapper removeViewer(OfflinePlayer player) {
 		MapWrapper wrapper = wrapperMap.remove(player.getUniqueId());
@@ -213,7 +214,7 @@ public class Renderer {
 	}
 
 	/**
-	 * Removes all viewers from the menu & disposes it
+	 * Removes all viewers from the menu &amp; disposes it
 	 */
 	public void dispose() {
 		final int[][] frameIds = frameContainer.getItemFrameIds();
