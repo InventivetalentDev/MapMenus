@@ -10,6 +10,7 @@ message:
         set:
           first: "&aFirst corner set"
           second: "&aSecond corner set"
+        saving: "&7Saving menu to file..."
         complete: "&aSetup complete! &eCreating menu '%s' with script '%s'..."
         created: "&aMenu created."
     remove:

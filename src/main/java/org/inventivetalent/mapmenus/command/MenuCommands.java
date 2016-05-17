@@ -157,8 +157,16 @@ public class MenuCommands {
 										}));
 
 										try {
-											ScriptMapMenu menu = plugin.menuManager.createMenu(name, firstFrame, secondFrame, script, args);
-											sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.created", "create.setup.created"));
+											final ScriptMapMenu menu = plugin.menuManager.createMenu(name, firstFrame, secondFrame, script, args);
+											sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.saving", "create.setup.saving"));
+											Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+												@Override
+												public void run() {
+													plugin.menuManager.writeMenuToFile(menu);
+													plugin.menuManager.writeIndexToFile();
+													sender.sendMessage(MESSAGE_LOADER.getMessage("create.setup.created", "create.setup.created"));
+												}
+											});
 										} catch (MenuScriptException e) {
 											sender.sendMessage("§c" + e.getMessage());
 											plugin.getLogger().log(Level.WARNING, e.getMessage(), e);

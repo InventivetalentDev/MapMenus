@@ -185,27 +185,26 @@ public class MenuManager {
 		return menuMap.size();
 	}
 
-	@Synchronized
-	public void writeMenusToFile() {
-		for (ScriptMapMenu menu : getMenus()) {
-			plugin.getLogger().fine("Saving '" + menu.getName() + "' in world '" + menu.getWorld().getName() + "'...");
+	public void writeMenuToFile(ScriptMapMenu menu) {
+		plugin.getLogger().fine("Saving '" + menu.getName() + "' in world '" + menu.getWorld().getName() + "'...");
 
-			// TODO: find a more convenient location to do this
-			// Clear data/states if they're not persistent
-			if (!menu.options.persistentData) { menu.data.storage.clear(); }
-			if (!menu.options.persistentStates) { menu.states.stateMap.clear(); }
+		// TODO: find a more convenient location to do this
+		// Clear data/states if they're not persistent
+		if (!menu.options.persistentData) { menu.data.storage.clear(); }
+		if (!menu.options.persistentStates) { menu.states.stateMap.clear(); }
 
-			try {
-				File saveFile = new File(saveDirectory, URLEncoder.encode(menu.getName(), "UTF-8") + ".mmd");
-				if (!saveFile.exists()) { saveFile.createNewFile(); }
-				try (Writer writer = new FileWriter(saveFile)) {
-					GSON.toJson(menu, writer);
-				}
-			} catch (IOException e) {
-				plugin.getLogger().log(Level.WARNING, "Failed to save Menu '" + menu.getName() + "'", e);
+		try {
+			File saveFile = new File(saveDirectory, URLEncoder.encode(menu.getName(), "UTF-8") + ".mmd");
+			if (!saveFile.exists()) { saveFile.createNewFile(); }
+			try (Writer writer = new FileWriter(saveFile)) {
+				GSON.toJson(menu, writer);
 			}
+		} catch (IOException e) {
+			plugin.getLogger().log(Level.WARNING, "Failed to save Menu '" + menu.getName() + "'", e);
 		}
+	}
 
+	public void writeIndexToFile() {
 		try {
 			try (Writer writer = new FileWriter(indexFile)) {
 				new Gson().toJson(getMenuNames(), writer);
