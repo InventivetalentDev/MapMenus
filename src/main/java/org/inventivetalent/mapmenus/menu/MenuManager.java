@@ -185,6 +185,14 @@ public class MenuManager {
 		return menuMap.size();
 	}
 
+	@Synchronized
+	public void writeMenusToFile() {
+		for (ScriptMapMenu menu : getMenus()) {
+			writeMenuToFile(menu);
+		}
+		writeIndexToFile();
+	}
+
 	public void writeMenuToFile(ScriptMapMenu menu) {
 		plugin.getLogger().fine("Saving '" + menu.getName() + "' in world '" + menu.getWorld().getName() + "'...");
 
