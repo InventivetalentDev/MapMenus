@@ -44,6 +44,7 @@ public class MenuScriptManager extends ScriptManagerAbstract {
 		return new String[] {
 				"example/server/TPSChart.js",
 				"example/server/TPSPlayerChart.js",
+				"example/server/MemoryChart.js",
 				"example/Movement.js",
 				"example/PlayerStats.js",
 				"example/ServerStats.js" };
