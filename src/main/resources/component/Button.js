@@ -7,6 +7,7 @@
     },
     text: "",
     disabled: false,
+    onClick: undefined,
     setText: function(text) {
         this.text = text;
     },
@@ -26,6 +27,9 @@
         this.states.put("clicked", player, 250);
         player.playSound(player.getLocation(), this.classes.BukkitSound.UI_BUTTON_CLICK, 0.5, 1.0);
 
+        if (typeof this.onClick === "function") {
+            this.onClick(player);
+        }
     },
     render: function(graphics, player) {
         var bounds = this.component.getBounds();
