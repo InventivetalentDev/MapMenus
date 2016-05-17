@@ -84,8 +84,7 @@ public abstract class ScriptManagerAbstract {
 		name += ".js";
 		name = name.toLowerCase();
 		for (String string : getScriptsWithExtension()) {
-			string = string.toLowerCase();
-			if (string.equals(name) || string.replace("\\", "/").equals(name)) {
+			if (string.toLowerCase().equals(name) || string.toLowerCase().replace("\\", "/").equals(name)) {
 				return new File(directory, string);
 			}
 		}
