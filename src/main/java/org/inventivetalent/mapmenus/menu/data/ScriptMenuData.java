@@ -57,7 +57,7 @@ public class ScriptMenuData implements IData {
 		public DataEntry read(JsonReader in) throws IOException {
 			JsonObject jsonObject = (JsonObject) new JsonParser().parse(in);
 			try {
-				return(DataEntry) new Gson().fromJson(jsonObject, Class.forName(jsonObject.get("_type").getAsString()));
+				return (DataEntry) new Gson().fromJson(jsonObject, Class.forName(jsonObject.get("_type").getAsString()));
 			} catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
@@ -140,7 +140,7 @@ public class ScriptMenuData implements IData {
 		DataEntry entry = storage.get(getPlayerKey(player, key));
 		if (entry == null) {
 			entry = new PlayerDataEntry();
-			entry.setKey(key);
+			entry.setKey(getPlayerKey(player, key));
 		}
 		if (!(entry instanceof PlayerDataEntry)) { throw new IllegalStateException("entry is not a player entry"); }
 		return (PlayerDataEntry) entry;
