@@ -35,13 +35,17 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import org.inventivetalent.mapmenus.MapMenusPlugin;
+import org.inventivetalent.mapmenus.MenuScriptException;
 import org.inventivetalent.mapmenus.bounds.FixedBounds;
 import org.inventivetalent.mapmenus.script.IScriptContainer;
 import org.inventivetalent.mapmenus.script.ScriptManagerAbstract;
 import org.inventivetalent.mapmenus.script.Scriptifier;
+import org.inventivetalent.scriptconfig.NoSuchFunctionException;
+import org.inventivetalent.scriptconfig.RuntimeScriptException;
 import org.inventivetalent.scriptconfig.api.ScriptConfig;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 @Data
 @EqualsAndHashCode(callSuper = true,
@@ -90,7 +94,14 @@ public class FileScriptComponent extends AnonymousScriptComponent implements ISc
 		this.script = (JSObject) this.scriptConfig.getContent();
 
 		initScriptVariables();
-		super.init(this.initArgs);
+		try {
+			super.init(this.initArgs);
+		} catch (NoSuchFunctionException e) {
+			//Ignore
+		} catch (RuntimeScriptException e) {
+			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + e.getException().getMessage(), e);
+			throw new MenuScriptException("ScriptException in Component init()", e);
+		}
 	}
 
 	void initScriptVariables() {
