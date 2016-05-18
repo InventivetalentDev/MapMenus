@@ -112,6 +112,9 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 			tick0();
 		} catch (NoSuchFunctionException e) {
 			// Ignore this
+			if (MapMenusPlugin.instance.debug) {
+				MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+			}
 			noTickFunction = true;
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling tick(): " + e.getException().getMessage(), e);
@@ -136,6 +139,9 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 		} catch (NoSuchFunctionException e) {
 			// Ignore this, the element doesn't want to be rendered
 			noRenderFunction = true;
+			if (MapMenusPlugin.instance.debug) {
+				MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+			}
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling render(): " + e.getException().getMessage(), e);
 			throw new MenuScriptException("ScriptException in Component render()", e);
@@ -159,6 +165,9 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 		} catch (NoSuchFunctionException e) {
 			// Ignore this
 			noClickFunction = true;
+			if (MapMenusPlugin.instance.debug) {
+				MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+			}
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling click(): " + e.getException().getMessage(), e);
 			throw new MenuScriptException("ScriptException in Component click()", e);
@@ -174,6 +183,9 @@ public abstract class ScriptComponentAbstract extends MenuComponentAbstract {
 			dispose0();
 		} catch (NoSuchFunctionException e) {
 			// Ignore this
+			if (MapMenusPlugin.instance.debug) {
+				MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+			}
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling dispose(): " + e.getException().getMessage(), e);
 		}

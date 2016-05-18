@@ -186,6 +186,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 					} catch (NoSuchFunctionException e) {
 						// Ignore
 						noHoverTextFunction = true;
+						if (MapMenusPlugin.instance.debug) {
+							MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+						}
 					} catch (RuntimeScriptException e) {
 						MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling hoverText(): " + e.getException().getMessage(), e);
 					}
@@ -203,6 +206,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			this.script.callFunction("init", this.initArgs);
 		} catch (NoSuchFunctionException e) {
 			// Ignore
+			if (MapMenusPlugin.instance.debug) {
+				MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+			}
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + e.getException().getMessage(), e);
 		}
@@ -289,6 +295,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			component.init();
 		} catch (NoSuchFunctionException e) {
 			// Ignore
+			if (MapMenusPlugin.instance.debug) {
+				MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+			}
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + e.getException().getMessage(), e);
 		}
@@ -315,6 +324,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			} catch (NoSuchFunctionException e) {
 				// Ignore this
 				noTickFunction = true;
+				if (MapMenusPlugin.instance.debug) {
+					MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+				}
 			} catch (RuntimeScriptException e) {
 				MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling tick(): " + e.getException().getMessage(), e);
 				throw new MenuScriptException("ScriptException in Menu tick()", e);
@@ -336,6 +348,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			} catch (NoSuchFunctionException e) {
 				// Ignore this
 				noRenderFunction = true;
+				if (MapMenusPlugin.instance.debug) {
+					MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+				}
 			} catch (RuntimeScriptException e) {
 				MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling render(): " + e.getException().getMessage(), e);
 				throw new MenuScriptException("ScriptException in Menu render()", e);
@@ -358,6 +373,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			} catch (NoSuchFunctionException e) {
 				// Ignore this
 				noClickFunction = true;
+				if (MapMenusPlugin.instance.debug) {
+					MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+				}
 			} catch (RuntimeScriptException e) {
 				MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling click(): " + e.getException().getMessage(), e);
 				throw new MenuScriptException("ScriptException in Menu click()", e);
@@ -378,6 +396,9 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			script.callFunction("dispose");
 		} catch (NoSuchFunctionException e) {
 			// Ignore this
+			if (MapMenusPlugin.instance.debug) {
+				MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+			}
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling dispose(): " + e.getException().getMessage(), e);
 		}

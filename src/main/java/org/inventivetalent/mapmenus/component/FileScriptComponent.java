@@ -98,6 +98,9 @@ public class FileScriptComponent extends AnonymousScriptComponent implements ISc
 			super.init(this.initArgs);
 		} catch (NoSuchFunctionException e) {
 			//Ignore
+			if (MapMenusPlugin.instance.debug) {
+				MapMenusPlugin.instance.getLogger().log(Level.INFO, "[Ignored]", e);
+			}
 		} catch (RuntimeScriptException e) {
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + e.getException().getMessage(), e);
 			throw new MenuScriptException("ScriptException in Component init()", e);
