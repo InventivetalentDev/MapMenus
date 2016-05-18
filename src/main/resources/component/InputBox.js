@@ -8,14 +8,10 @@
     classes: {
         JavaColor: Java.type("java.awt.Color")
     },
-    colors: {
-        baseLine: this.classes.JavaColor.DARK_GRAY,
-        placeholder: this.classes.JavaColor.gray,
-        text: this.classes.JavaColor.black
-    },
     text: {
         placeholder: "Click to type!",
-        typing: "Typing..."
+        typing: "Typing...",
+        isGlobal: false
     },
     getText: function(player) {
         return this.data.get("typedText", player);
@@ -28,27 +24,31 @@
             var thisRef = this;
             this.menu.requestKeyboardInput(player, function(input) {
                 thisRef.states.remove("typing", player);
-                thisRef.data.put("typedText", player, input);
+                if(this.text.isGlobal){
+                    thisRef.data.put("typedText", input);
+                }else{
+                    thisRef.data.put("typedText", player, input);
+                }
             }, true);
         }
     },
     render: function(graphics, player) {
-        var typedText = this.data.get("typedText", player);
+        var typedText = this.text.isGlobal ? this.data.get("typedText") : this.data.get("typedText", player);
         var bounds = this.component.getBounds();
 
-        graphics.setColor(this.colors.baseLine);
+        graphics.setColor(this.classes.JavaColor.DARK_GRAY);
         graphics.drawLine(bounds.x + 5, bounds.y + bounds.height - 1, bounds.x + bounds.width - 5, bounds.y + bounds.height - 1);
 
         if (this.states.get("typing", player)) {
-            graphics.setColor(this.colors.placeholder);
+            graphics.setColor(this.classes.JavaColor.gray);
             graphics.drawString("Typing...", Math.round(bounds.x + 2), Math.round((bounds.y + bounds.height) - 5));
         }
         else if (typedText !== null) {
-            graphics.setColor(this.colors.text);
+            graphics.setColor(this.classes.JavaColor.black);
             graphics.drawString(typedText, Math.round(bounds.x + 2), Math.round((bounds.y + bounds.height) - 5));
         }
         else {
-            graphics.setColor(this.colors.placeholder);
+            graphics.setColor(this.classes.JavaColor.gray);
             graphics.drawString("Click to type!", Math.round(bounds.x + 2), Math.round((bounds.y + bounds.height) - 5));
         }
     }
