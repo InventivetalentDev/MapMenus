@@ -194,6 +194,11 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			}
 		};
 
+		// Reset
+		noTickFunction = false;
+		noClickFunction = false;
+		noRenderFunction = false;
+
 		try {
 			this.script.callFunction("init", this.initArgs);
 		} catch (NoSuchFunctionException e) {
@@ -244,22 +249,20 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			MapMenusPlugin.instance.getLogger().warning("Component Script '" + scriptName + "' does not exist");
 			return null;
 		}
-		tickLocked = true;
 
 		FileScriptComponent component = new FileScriptComponent(this.bounds, bounds, scriptName, initArgs);
 		component.id = componentCounter++;
 		component.menu = this;
 		component.data = new MapperData(this.data, "__comp#" + componentCounter + "__%s");
 		component.states = new MapperStates(this.states, "__comp#" + componentCounter + "__%s");
+		components.put(component.getUuid(), component);
 		try {
 			component.reloadScript();
-			components.put(component.getUuid(), component);
 		} catch (InvalidScriptException e) {
 			throw new MenuScriptException("Invalid script in file " + e.getScriptSource() + ", line " + e.getScriptException().getLineNumber() + ":" + e.getScriptException().getColumnNumber(), e);
 		}
 
-		tickLocked = false;
-		return (JSObject) component.getScriptConfig().getContent();
+		return (JSObject) component.getScript();
 	}
 
 	/*
@@ -276,7 +279,6 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			MapMenusPlugin.instance.getLogger().info("Menu " + getName() + " attempted to add anonymous component, but the parameter is no function (It's " + (function == null ? "null" : function.getClass()) + ")");
 			return null;
 		}
-		tickLocked = true;
 
 		AnonymousScriptComponent component = new AnonymousScriptComponent(this.bounds, bounds, (JSObject) function);
 		component.id = componentCounter++;
@@ -291,17 +293,7 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 			MapMenusPlugin.instance.getLogger().log(Level.WARNING, "Unexpected ScriptException whilst calling init(): " + e.getException().getMessage(), e);
 		}
 
-		tickLocked = false;
 		return component.getScript();
-	}
-
-	public ScriptComponentAbstract removeComponent(UUID uuid) {
-		tickLocked = true;
-
-		ScriptComponentAbstract component = components.remove(uuid);
-
-		tickLocked = false;
-		return component;
 	}
 
 	@Scriptify(targetVar = "menu")
@@ -317,8 +309,6 @@ public class ScriptMapMenu extends MapMenuAbstract implements IFrameContainer, I
 
 	@Override
 	public void tick() {
-		if (tickLocked) { return; }
-
 		if (!noTickFunction) {
 			try {
 				script.callFunction("tick");

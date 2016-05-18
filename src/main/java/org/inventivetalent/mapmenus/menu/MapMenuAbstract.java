@@ -29,10 +29,7 @@
 package org.inventivetalent.mapmenus.menu;
 
 import com.google.gson.annotations.Expose;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import org.bukkit.entity.ItemFrame;
 import org.inventivetalent.frameutil.BaseFrameMapAbstract;
 import org.inventivetalent.mapmenus.IClickable;
@@ -57,26 +54,20 @@ public abstract class MapMenuAbstract extends BaseFrameMapAbstract implements IR
 	// Don't expose the components; the script is responsible for adding them
 	/*@Expose*/ protected final Map<UUID, ScriptComponentAbstract> components = new HashMap<>();
 
-	protected boolean tickLocked;
-
 	public MapMenuAbstract(@NonNull ItemFrame baseFrame, @NonNull Vector3DDouble firstCorner, @NonNull Vector3DDouble secondCorner) {
 		super(baseFrame, firstCorner, secondCorner);
 
 		this.bounds = new FixedBounds(0, 0, getBlockWidth() * 128, getBlockHeight() * 128);
 	}
 
+	@Synchronized
 	public MenuComponentAbstract removeComponent(UUID uuid) {
-		tickLocked = true;
-		MenuComponentAbstract removed = components.remove(uuid);
-		tickLocked = false;
-		return removed;
+		return components.remove(uuid);
 	}
 
+	@Synchronized
 	public MenuComponentAbstract getComponent(UUID uuid) {
-		tickLocked = true;
-		MenuComponentAbstract component = components.get(uuid);
-		tickLocked = false;
-		return component;
+		return  components.get(uuid);
 	}
 
 	public FixedBounds getBounds() {
@@ -90,7 +81,6 @@ public abstract class MapMenuAbstract extends BaseFrameMapAbstract implements IR
 	public Set<ScriptComponentAbstract> getComponents() {
 		return new HashSet<>(components.values());
 	}
-
 
 }
 
